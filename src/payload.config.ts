@@ -5,8 +5,10 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
+import { Pages } from './collections/pages/config'
 import { Site } from './globals/site/config'
 import { Socials } from './globals/socials/config'
 
@@ -19,8 +21,30 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    livePreview: {
+      breakpoints: [
+        {
+          label: 'Mobile',
+          name: 'mobile',
+          width: 375,
+          height: 667,
+        },
+        {
+          label: 'Tablet',
+          name: 'tablet',
+          width: 768,
+          height: 1024,
+        },
+        {
+          label: 'Desktop',
+          name: 'desktop',
+          width: 1440,
+          height: 900,
+        },
+      ],
+    },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Pages],
   editor: lexicalEditor({
     features({ defaultFeatures }) {
       return [...defaultFeatures, FixedToolbarFeature()]
@@ -36,6 +60,6 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [seoPlugin({})],
   globals: [Site, Socials],
 })
