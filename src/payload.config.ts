@@ -2,12 +2,13 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { FixedToolbarFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
-import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Users } from './collections/Users'
 import { Site } from './globals/site/config'
+import { Socials } from './globals/socials/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,5 +37,5 @@ export default buildConfig({
   }),
   sharp,
   plugins: [],
-  globals: [Site],
+  globals: [Site, Socials],
 })

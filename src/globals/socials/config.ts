@@ -1,0 +1,22 @@
+import { GlobalConfig } from 'payload'
+
+export const Socials: GlobalConfig = {
+  slug: 'socials',
+  fields: [
+    {
+      type: 'array',
+      name: 'links',
+      fields: [
+        {
+          type: 'select',
+          name: 'platform',
+          label: 'Platform',
+          options: ['Facebook', 'X', 'YouTube', 'Instagram', 'TikTok', 'LinkedIn', 'Telegram'],
+          required: true,
+        },
+        { type: 'text', name: 'url', label: 'URL', required: true },
+        { type: 'upload', name: 'icon', relationTo: 'media', hasMany: false, required: true },
+      ],
+    },
+  ],
+}

@@ -89,9 +89,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     site: Site;
+    socials: Social;
   };
   globalsSelect: {
     site: SiteSelect<false> | SiteSelect<true>;
+    socials: SocialsSelect<false> | SocialsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -334,6 +336,23 @@ export interface Site {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "socials".
+ */
+export interface Social {
+  id: number;
+  links?:
+    | {
+        platform: 'Facebook' | 'X' | 'YouTube' | 'Instagram' | 'TikTok' | 'LinkedIn' | 'Telegram';
+        url: string;
+        icon: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site_select".
  */
 export interface SiteSelect<T extends boolean = true> {
@@ -343,6 +362,23 @@ export interface SiteSelect<T extends boolean = true> {
   favicon?: T;
   ogImage?: T;
   maintenanceMode?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "socials_select".
+ */
+export interface SocialsSelect<T extends boolean = true> {
+  links?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        icon?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
