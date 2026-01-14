@@ -87,8 +87,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    site: Site;
+  };
+  globalsSelect: {
+    site: SiteSelect<false> | SiteSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -312,6 +316,36 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site".
+ */
+export interface Site {
+  id: number;
+  title: string;
+  description: string;
+  logo: number | Media;
+  favicon: number | Media;
+  ogImage: number | Media;
+  maintenanceMode?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site_select".
+ */
+export interface SiteSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  logo?: T;
+  favicon?: T;
+  ogImage?: T;
+  maintenanceMode?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
