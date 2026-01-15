@@ -28,7 +28,6 @@ export default function AdminBar(props: AdminBarProps) {
         className="relative! bg-background! text-foreground!"
         preview={props.draft}
         cmsURL={process.env.NEXT_PUBLIC_SITE_URL}
-        collectionSlug="pages"
         onAuthChange={onAuthChange}
         logo={<>Dashboard</>}
         onPreviewExit={() => {

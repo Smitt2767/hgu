@@ -1,4 +1,5 @@
 import AdminBar from '@/components/admin-bar'
+import Maintenance from '@/components/maintenance'
 import { getSiteData } from '@/data/site'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
@@ -75,9 +76,13 @@ export default async function LocaleLayout({
 }) {
   const { isEnabled } = await draftMode()
   const { locale } = await params
+  const site = await getSiteData(locale)
+
   setRequestLocale(locale)
 
   if (!locale) notFound()
+
+  const showMaintenancePage = Boolean(site?.maintenanceMode)
 
   return (
     <html lang={locale}>
@@ -85,7 +90,7 @@ export default async function LocaleLayout({
         <main>
           <NextIntlClientProvider locale={locale}>
             <AdminBar draft={isEnabled} />
-            {children}
+            {showMaintenancePage ? <Maintenance /> : children}
           </NextIntlClientProvider>
         </main>
       </body>
