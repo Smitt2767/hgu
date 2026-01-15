@@ -6,6 +6,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
+import { FAQ } from './blocks/FAQ'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -17,7 +18,7 @@ export const Pages: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Content',
+          label: 'Information',
           fields: [
             {
               name: 'title',
@@ -27,6 +28,16 @@ export const Pages: CollectionConfig = {
               localized: true,
             },
             slugField(),
+          ],
+        },
+        {
+          label: 'Layout',
+          fields: [
+            {
+              name: 'layout',
+              type: 'blocks',
+              blocks: [FAQ],
+            },
           ],
         },
         {
