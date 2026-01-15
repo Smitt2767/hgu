@@ -191,7 +191,7 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
-  layout?: (FAQ | HTML)[] | null;
+  layout?: (FAQ | HTML | Quote)[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -243,6 +243,17 @@ export interface HTML {
   id?: string | null;
   blockName?: string | null;
   blockType: 'html';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Quote".
+ */
+export interface Quote {
+  quote: string;
+  author: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quote';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -467,6 +478,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         faq?: T | FAQSelect<T>;
         html?: T | HTMLSelect<T>;
+        quote?: T | QuoteSelect<T>;
       };
   meta?:
     | T
@@ -500,6 +512,16 @@ export interface FAQSelect<T extends boolean = true> {
  */
 export interface HTMLSelect<T extends boolean = true> {
   content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Quote_select".
+ */
+export interface QuoteSelect<T extends boolean = true> {
+  quote?: T;
+  author?: T;
   id?: T;
   blockName?: T;
 }
@@ -623,6 +645,7 @@ export interface Header {
  */
 export interface Footer {
   id: number;
+  copyrightText: string;
   navItems?:
     | {
         label: string;
@@ -700,6 +723,7 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  copyrightText?: T;
   navItems?:
     | T
     | {

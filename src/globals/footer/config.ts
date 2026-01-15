@@ -5,6 +5,13 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   fields: [
     {
+      type: 'text',
+      label: 'Copyright text',
+      name: 'copyrightText',
+      required: true,
+      localized: true,
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [link()],

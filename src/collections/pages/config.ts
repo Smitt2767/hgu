@@ -8,6 +8,7 @@ import {
 import { CollectionConfig, slugField } from 'payload'
 import { FAQ } from './blocks/FAQ'
 import { HTML } from './blocks/HTML'
+import { Quote } from './blocks/Quote'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -37,7 +38,7 @@ export const Pages: CollectionConfig = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [FAQ, HTML],
+              blocks: [FAQ, HTML, Quote],
             },
           ],
         },
