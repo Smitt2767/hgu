@@ -17,6 +17,11 @@ export const Socials: GlobalConfig = {
         { type: 'text', name: 'url', label: 'URL', required: true },
         { type: 'upload', name: 'icon', relationTo: 'media', hasMany: false, required: true },
       ],
+      admin: {
+        components: {
+          RowLabel: '@/globals/socials/components/RowLabel#RowLabel',
+        },
+      },
     },
   ],
 }
