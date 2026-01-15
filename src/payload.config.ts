@@ -21,7 +21,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 const generateURL: GenerateURL<Page> = ({ doc }) => {
-  const url = process.env.NEXT_PUBLIC_APP_URL!
+  const url = process.env.NEXT_PUBLIC_SITE_URL!
 
   return doc?.slug ? `${url}${slugToPath(doc.slug)}` : url
 }
