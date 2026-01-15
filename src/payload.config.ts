@@ -10,6 +10,7 @@ import { GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
 import { Pages } from './collections/pages/config'
+import { Footer } from './globals/footer/config'
 import { Header } from './globals/header/config'
 import { Site } from './globals/site/config'
 import { Socials } from './globals/socials/config'
@@ -65,7 +66,7 @@ export default buildConfig({
       return [...defaultFeatures, FixedToolbarFeature()]
     },
   }),
-  globals: [Site, Header, Socials],
+  globals: [Site, Header, Footer, Socials],
   localization: {
     locales: [
       {
