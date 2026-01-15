@@ -1,9 +1,11 @@
+import LivePreviewListener from '@/components/live-preview-listener'
 import { getPage, getPagesSlugs } from '@/data/page'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { getDBSlug } from '@/utils/slug'
 import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
+import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 export const generateStaticParams = async () => {
@@ -20,10 +22,11 @@ export const generateMetadata = async ({
   params: Promise<{ locale: string; slug?: string[] }>
 }): Promise<Metadata> => {
   const { locale, slug } = await params
+  const { isEnabled: draft } = await draftMode()
 
   const pageSlug = slug?.[0] ?? ''
 
-  const page = await getPage(getDBSlug(pageSlug), locale)
+  const page = await getPage(getDBSlug(pageSlug), locale, draft)
 
   const title = page?.meta?.title || page?.title
   const description = page?.meta?.description
@@ -37,14 +40,18 @@ export default async function Page({
 }: {
   params: Promise<{ locale: string; slug?: string[] }>
 }) {
+  const { isEnabled: draft } = await draftMode()
   const { locale, slug } = await params
   setRequestLocale(locale)
 
   const pageSlug = slug?.[0] ?? ''
 
-  const page = await getPage(getDBSlug(pageSlug), locale)
-
+  const page = await getPage(getDBSlug(pageSlug), locale, draft)
   if (!page) notFound()
 
-  return <div>{JSON.stringify(page, null, 2)}</div>
+  return (
+    <div>
+      {draft && <LivePreviewListener />},{JSON.stringify(page, null, 2)}
+    </div>
+  )
 }

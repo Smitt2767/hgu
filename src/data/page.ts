@@ -22,7 +22,7 @@ export const getPagesSlugs = cache(async () => {
   }
 })
 
-export const getPage = cache(async (slug: string, locale: string) => {
+export const getPage = cache(async (slug: string, locale: string, draft: boolean) => {
   'use cache'
   cacheLife('days')
   cacheTag('*', 'pages', `pages:${slug}`)
@@ -46,6 +46,10 @@ export const getPage = cache(async (slug: string, locale: string) => {
       },
       limit: 1,
       pagination: false,
+      ...(draft && {
+        draft: true,
+        overrideAccess: true,
+      }),
     })
 
     return pages.docs[0] ?? null

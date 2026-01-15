@@ -9,12 +9,25 @@ import { CollectionConfig, slugField } from 'payload'
 import { FAQ } from './blocks/FAQ'
 import { HTML } from './blocks/HTML'
 import { Quote } from './blocks/Quote'
+import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+    livePreview: {
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          slug: data?.slug,
+          req,
+        }),
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        slug: data?.slug as string,
+        req,
+      }),
   },
   fields: [
     {
