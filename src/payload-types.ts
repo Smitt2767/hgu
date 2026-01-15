@@ -90,7 +90,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'es') | ('en' | 'es')[];
   globals: {
     site: Site;
     socials: Social;
@@ -99,7 +99,7 @@ export interface Config {
     site: SiteSelect<false> | SiteSelect<true>;
     socials: SocialsSelect<false> | SocialsSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'es';
   user: User & {
     collection: 'users';
   };
@@ -182,12 +182,19 @@ export interface Media {
 export interface Page {
   id: number;
   title: string;
-  description?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -408,9 +415,15 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
   generateSlug?: T;
   slug?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -493,10 +506,16 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Site {
   id: number;
   title: string;
-  description: string;
   logo: number | Media;
   favicon: number | Media;
-  ogImage: number | Media;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   maintenanceMode?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -524,10 +543,15 @@ export interface Social {
  */
 export interface SiteSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
   logo?: T;
   favicon?: T;
-  ogImage?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   maintenanceMode?: T;
   updatedAt?: T;
   createdAt?: T;

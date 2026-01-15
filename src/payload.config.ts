@@ -6,14 +6,23 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
 import { Pages } from './collections/pages/config'
 import { Site } from './globals/site/config'
 import { Socials } from './globals/socials/config'
+import { Page } from './payload-types'
+import { slugToPath } from './utils/slug'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const generateURL: GenerateURL<Page> = ({ doc }) => {
+  const url = process.env.NEXT_PUBLIC_APP_URL!
+
+  return doc?.slug ? `${url}${slugToPath(doc.slug)}` : url
+}
 
 export default buildConfig({
   admin: {
@@ -45,21 +54,39 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages],
-  editor: lexicalEditor({
-    features({ defaultFeatures }) {
-      return [...defaultFeatures, FixedToolbarFeature()]
-    },
-  }),
-  secret: process.env.PAYLOAD_SECRET || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  sharp,
-  plugins: [seoPlugin({})],
+  editor: lexicalEditor({
+    features({ defaultFeatures }) {
+      return [...defaultFeatures, FixedToolbarFeature()]
+    },
+  }),
   globals: [Site, Socials],
+  localization: {
+    locales: [
+      {
+        label: 'English',
+        code: 'en',
+      },
+      {
+        label: 'Spanish',
+        code: 'es',
+      },
+    ],
+    defaultLocale: 'en',
+    fallback: true,
+  },
+  plugins: [
+    seoPlugin({
+      generateURL,
+    }),
+  ],
+  secret: process.env.PAYLOAD_SECRET || '',
+  sharp,
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
 })

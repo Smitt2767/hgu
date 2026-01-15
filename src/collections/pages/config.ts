@@ -1,3 +1,10 @@
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
 
 export const Pages: CollectionConfig = {
@@ -7,17 +14,44 @@ export const Pages: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      label: 'Title',
-      required: true,
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Content',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Title',
+              required: true,
+              localized: true,
+            },
+            slugField(),
+          ],
+        },
+        {
+          name: 'meta',
+          label: 'SEO',
+          fields: [
+            OverviewField({
+              titlePath: 'meta.title',
+              descriptionPath: 'meta.description',
+              imagePath: 'meta.image',
+            }),
+            MetaTitleField({}),
+            MetaImageField({
+              relationTo: 'media',
+            }),
+            MetaDescriptionField({}),
+            PreviewField({
+              titlePath: 'meta.title',
+              descriptionPath: 'meta.description',
+              hasGenerateFn: true,
+            }),
+          ],
+        },
+      ],
     },
-    {
-      name: 'description',
-      type: 'textarea',
-      label: 'Description',
-    },
-    slugField(),
   ],
   versions: {
     drafts: {
