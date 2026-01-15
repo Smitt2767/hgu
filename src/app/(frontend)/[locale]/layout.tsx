@@ -3,6 +3,8 @@ import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
+
 import { notFound } from 'next/navigation'
 import React from 'react'
 
@@ -62,7 +64,7 @@ export const generateMetadata = async ({
   }
 }
 
-export default async function Layout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
@@ -70,6 +72,7 @@ export default async function Layout({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
+  setRequestLocale(locale)
 
   if (!locale) notFound()
 

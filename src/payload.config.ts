@@ -15,7 +15,7 @@ import { Header } from './globals/header/config'
 import { Site } from './globals/site/config'
 import { Socials } from './globals/socials/config'
 import { Page } from './payload-types'
-import { slugToPath } from './utils/slug'
+import { getSiteSlug } from './utils/slug'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +23,7 @@ const dirname = path.dirname(filename)
 const generateURL: GenerateURL<Page> = ({ doc }) => {
   const url = process.env.NEXT_PUBLIC_SITE_URL!
 
-  return doc?.slug ? `${url}${slugToPath(doc.slug)}` : url
+  return doc?.slug ? `${url}/${getSiteSlug(doc.slug)}` : url
 }
 
 export default buildConfig({
