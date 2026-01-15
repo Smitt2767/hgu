@@ -5,6 +5,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { payloadTotp } from '@clocklimited/payload-2fa'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Media } from './collections/Media'
@@ -84,6 +85,9 @@ export default buildConfig({
   plugins: [
     seoPlugin({
       generateURL,
+    }),
+    payloadTotp({
+      collection: 'users',
     }),
   ],
   secret: process.env.PAYLOAD_SECRET || '',
