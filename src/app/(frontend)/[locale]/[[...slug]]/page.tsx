@@ -1,3 +1,4 @@
+import RenderBlocks from '@/components/blocks'
 import LivePreviewListener from '@/components/live-preview-listener'
 import { getPage, getPagesSlugs } from '@/data/page'
 import { routing } from '@/i18n/routing'
@@ -49,5 +50,10 @@ export default async function Page({
   const page = await getPage(getDBSlug(pageSlug), locale, draft)
   if (!page) notFound()
 
-  return <div>{draft && <LivePreviewListener />}</div>
+  return (
+    <>
+      {draft && <LivePreviewListener />}
+      <RenderBlocks data={page.layout} />
+    </>
+  )
 }
