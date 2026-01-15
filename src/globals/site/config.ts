@@ -6,6 +6,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { GlobalConfig } from 'payload'
+import { revalidateSite } from './hooks'
 
 export const Site: GlobalConfig = {
   slug: 'site',
@@ -77,4 +78,7 @@ export const Site: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateSite],
+  },
 }

@@ -25,7 +25,7 @@ export const getPagesSlugs = cache(async () => {
 export const getPage = cache(async (slug: string, locale: string) => {
   'use cache'
   cacheLife('days')
-  cacheTag('*', `page:${slug}`)
+  cacheTag('*', 'pages', `pages:${slug}`)
 
   try {
     const payload = await getPayload({ config })

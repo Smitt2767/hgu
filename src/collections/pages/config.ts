@@ -9,6 +9,7 @@ import { CollectionConfig, slugField } from 'payload'
 import { FAQ } from './blocks/FAQ'
 import { HTML } from './blocks/HTML'
 import { Quote } from './blocks/Quote'
+import { revalidatePage } from './hooks'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -71,5 +72,9 @@ export const Pages: CollectionConfig = {
       schedulePublish: true,
     },
     maxPerDoc: 50,
+  },
+  hooks: {
+    afterChange: [revalidatePage],
+    afterDelete: [revalidatePage],
   },
 }
