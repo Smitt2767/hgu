@@ -1,3 +1,4 @@
+import { serverEnv } from '@/env/server'
 import { getSiteSlug } from '@/utils/slug'
 import { PayloadRequest } from 'payload'
 
@@ -15,7 +16,7 @@ export const generatePreviewPath = ({ slug }: Props) => {
 
   const encodedParams = new URLSearchParams({
     path: `/${getSiteSlug(encodedSlug)}`,
-    previewSecret: process.env.PREVIEW_SECRET || '',
+    previewSecret: serverEnv.PREVIEW_SECRET,
   })
 
   const url = `/next/preview?${encodedParams.toString()}`

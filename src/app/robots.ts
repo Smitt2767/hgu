@@ -1,9 +1,10 @@
 import { getSiteData } from '@/data/site'
+import { clientEnv } from '@/env/client'
 import type { MetadataRoute } from 'next'
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const site = await getSiteData('en')
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
+  const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL
 
   if (site?.maintenanceMode) {
     return {

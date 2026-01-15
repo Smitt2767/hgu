@@ -11,6 +11,8 @@ import { GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
 import { Pages } from './collections/pages/config'
+import { clientEnv } from './env/client'
+import { serverEnv } from './env/server'
 import { Footer } from './globals/footer/config'
 import { Header } from './globals/header/config'
 import { Site } from './globals/site/config'
@@ -22,7 +24,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 const generateURL: GenerateURL<Page> = ({ doc }) => {
-  const url = process.env.NEXT_PUBLIC_SITE_URL!
+  const url = clientEnv.NEXT_PUBLIC_SITE_URL
 
   return doc?.slug ? `${url}/${getSiteSlug(doc.slug)}` : url
 }
@@ -59,7 +61,7 @@ export default buildConfig({
   collections: [Users, Media, Pages],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: serverEnv.DATABASE_URL,
     },
   }),
   editor: lexicalEditor({
@@ -90,7 +92,7 @@ export default buildConfig({
       collection: 'users',
     }),
   ],
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: serverEnv.PAYLOAD_SECRET,
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

@@ -1,6 +1,7 @@
 import AdminBar from '@/components/admin-bar'
 import Maintenance from '@/components/maintenance'
 import { getSiteData } from '@/data/site'
+import { clientEnv } from '@/env/client'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { Metadata } from 'next'
@@ -26,7 +27,7 @@ export const generateMetadata = async ({
 
   const title = site?.meta?.title || site?.title || ''
   const description = site?.meta?.description || ''
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
+  const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL
 
   const ogImage = getImageUrl(site?.meta?.image)
   const faviconUrl = getImageUrl(site?.favicon) ?? '/favicon.ico'

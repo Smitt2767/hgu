@@ -1,5 +1,6 @@
 'use client'
 
+import { clientEnv } from '@/env/client'
 import { useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { PayloadAdminBar, PayloadMeUser } from '@payloadcms/admin-bar'
@@ -27,7 +28,7 @@ export default function AdminBar(props: AdminBarProps) {
       <PayloadAdminBar
         className="relative! bg-background! text-foreground!"
         preview={props.draft}
-        cmsURL={process.env.NEXT_PUBLIC_SITE_URL}
+        cmsURL={clientEnv.NEXT_PUBLIC_SITE_URL}
         onAuthChange={onAuthChange}
         logo={<>Dashboard</>}
         onPreviewExit={() => {

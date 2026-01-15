@@ -24,6 +24,7 @@
     "@payloadcms/richtext-lexical": "3.71.1",
     "@payloadcms/translations": "3.71.1",
     "@payloadcms/ui": "3.71.1",
+    "@t3-oss/env-nextjs": "^0.13.10",
     "@tailwindcss/postcss": "4.1.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -5,6 +5,7 @@ import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 
+import { serverEnv } from '@/env/server'
 import configPromise from '@payload-config'
 
 export async function GET(req: NextRequest): Promise<Response> {
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   const path = searchParams.get('path')
   const previewSecret = searchParams.get('previewSecret')
 
-  if (previewSecret !== process.env.PREVIEW_SECRET) {
+  if (previewSecret !== serverEnv.PREVIEW_SECRET) {
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
