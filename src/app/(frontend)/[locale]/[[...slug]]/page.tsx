@@ -49,9 +49,5 @@ export default async function Page({
   const page = await getPage(getDBSlug(pageSlug), locale, draft)
   if (!page) notFound()
 
-  return (
-    <div>
-      {draft && <LivePreviewListener />},{JSON.stringify(page, null, 2)}
-    </div>
-  )
+  return <div>{draft && <LivePreviewListener />}</div>
 }
