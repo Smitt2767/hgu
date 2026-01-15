@@ -5,17 +5,11 @@ export const HTML: Block = {
   slug: 'html',
   fields: [
     {
-      type: 'group',
-      label: 'Config',
-      fields: [
-        {
-          type: 'richText',
-          name: 'content',
-          label: 'Content',
-          required: true,
-          localized: true,
-        },
-      ],
+      type: 'richText',
+      name: 'content',
+      label: 'Content',
+      required: true,
+      localized: true,
     },
   ],
 }

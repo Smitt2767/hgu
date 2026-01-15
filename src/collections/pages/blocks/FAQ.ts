@@ -5,47 +5,41 @@ export const FAQ: Block = {
   interfaceName: 'FAQ',
   fields: [
     {
-      type: 'group',
-      label: 'Config',
+      label: 'Question & Answers',
+      type: 'array',
+      name: 'data',
       fields: [
         {
-          label: 'Question & Answers',
-          type: 'array',
-          name: 'data',
+          type: 'row',
           fields: [
             {
-              type: 'row',
-              fields: [
-                {
-                  type: 'text',
-                  name: 'question',
-                  label: 'Question',
-                  required: true,
-                  localized: true,
-                  admin: {
-                    width: '50%',
-                  },
-                },
-                {
-                  type: 'textarea',
-                  name: 'answer',
-                  label: 'Answer',
-                  required: true,
-                  localized: true,
-                  admin: {
-                    width: '50%',
-                  },
-                },
-              ],
+              type: 'text',
+              name: 'question',
+              label: 'Question',
+              required: true,
+              localized: true,
+              admin: {
+                width: '50%',
+              },
+            },
+            {
+              type: 'textarea',
+              name: 'answer',
+              label: 'Answer',
+              required: true,
+              localized: true,
+              admin: {
+                width: '50%',
+              },
             },
           ],
-          admin: {
-            components: {
-              RowLabel: '@/collections/pages/blocks/components/FAQRawLabel#RowLabel',
-            },
-          },
         },
       ],
+      admin: {
+        components: {
+          RowLabel: '@/collections/pages/blocks/components/FAQRawLabel#RowLabel',
+        },
+      },
     },
   ],
 }
