@@ -1,9 +1,11 @@
+import AdminBar from '@/components/admin-bar'
 import { getSiteData } from '@/data/site'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
+import { draftMode } from 'next/headers'
 
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -71,6 +73,7 @@ export default async function LocaleLayout({
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }) {
+  const { isEnabled } = await draftMode()
   const { locale } = await params
   setRequestLocale(locale)
 
@@ -80,7 +83,10 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <main>
-          <NextIntlClientProvider locale={locale}>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider locale={locale}>
+            <AdminBar draft={isEnabled} />
+            {children}
+          </NextIntlClientProvider>
         </main>
       </body>
     </html>
