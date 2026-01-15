@@ -191,7 +191,7 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
-  layout?: FAQ[] | null;
+  layout?: (FAQ | HTML)[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -219,6 +219,30 @@ export interface FAQ {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HTML".
+ */
+export interface HTML {
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'html';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -442,6 +466,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         faq?: T | FAQSelect<T>;
+        html?: T | HTMLSelect<T>;
       };
   meta?:
     | T
@@ -466,6 +491,15 @@ export interface FAQSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HTML_select".
+ */
+export interface HTMLSelect<T extends boolean = true> {
+  content?: T;
   id?: T;
   blockName?: T;
 }

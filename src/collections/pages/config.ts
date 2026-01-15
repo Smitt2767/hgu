@@ -7,6 +7,7 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
 import { FAQ } from './blocks/FAQ'
+import { HTML } from './blocks/HTML'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -36,7 +37,7 @@ export const Pages: CollectionConfig = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [FAQ],
+              blocks: [FAQ, HTML],
             },
           ],
         },
