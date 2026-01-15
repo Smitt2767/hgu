@@ -18,7 +18,7 @@ export const Site: GlobalConfig = {
           fields: [
             {
               type: 'text',
-              label: 'title',
+              label: 'Title',
               name: 'title',
               required: true,
               localized: true,
