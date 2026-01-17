@@ -30,7 +30,7 @@ export const Socials: GlobalConfig = {
           hasMany: false,
           required: true,
           filterOptions: {
-            mimeType: { contains: 'image' },
+            mimeType: { equals: 'image/svg+xml' },
           },
         },
       ],

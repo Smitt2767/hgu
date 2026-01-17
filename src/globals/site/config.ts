@@ -41,7 +41,7 @@ export const Site: GlobalConfig = {
               required: true,
               hasMany: false,
               filterOptions: {
-                mimeType: { contains: 'image' },
+                mimeType: { equals: 'image/svg+xml' },
               },
             },
             {
@@ -52,7 +52,7 @@ export const Site: GlobalConfig = {
               required: true,
               hasMany: false,
               filterOptions: {
-                mimeType: { contains: 'image' },
+                mimeType: { equals: 'image/vnd.microsoft.icon' },
               },
             },
           ],
