@@ -1,4 +1,4 @@
-import { canCreate, canDelete, canUpdateRole, canUpdateUser } from '@/access'
+import { admin, canCreate, canDelete, canUpdateRole, canUpdateUser } from '@/access'
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -13,6 +13,7 @@ export const Users: CollectionConfig = {
     update: canUpdateUser,
     delete: canDelete,
     create: canCreate,
+    unlock: admin,
   },
   fields: [
     {
