@@ -10,32 +10,25 @@ export const FAQ: Block = {
       name: 'data',
       fields: [
         {
-          type: 'row',
-          fields: [
-            {
-              type: 'text',
-              name: 'question',
-              label: 'Question',
-              required: true,
-              localized: true,
-              admin: {
-                width: '50%',
-              },
-            },
-            {
-              type: 'textarea',
-              name: 'answer',
-              label: 'Answer',
-              required: true,
-              localized: true,
-              admin: {
-                width: '50%',
-              },
-            },
-          ],
+          type: 'text',
+          name: 'question',
+          label: 'Question',
+          required: true,
+          localized: true,
+        },
+        {
+          type: 'textarea',
+          name: 'answer',
+          label: 'Answer',
+          required: true,
+          localized: true,
+          admin: {
+            rows: 3,
+          },
         },
       ],
       admin: {
+        initCollapsed: true,
         components: {
           RowLabel: '@/collections/pages/blocks/components/FAQRawLabel#RowLabel',
         },

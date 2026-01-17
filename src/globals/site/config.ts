@@ -40,6 +40,9 @@ export const Site: GlobalConfig = {
               relationTo: 'media',
               required: true,
               hasMany: false,
+              filterOptions: {
+                mimeType: { contains: 'image' },
+              },
             },
             {
               type: 'upload',
@@ -48,6 +51,9 @@ export const Site: GlobalConfig = {
               relationTo: 'media',
               required: true,
               hasMany: false,
+              filterOptions: {
+                mimeType: { contains: 'image' },
+              },
             },
           ],
         },
@@ -63,6 +69,11 @@ export const Site: GlobalConfig = {
             MetaTitleField({}),
             MetaImageField({
               relationTo: 'media',
+              overrides: {
+                filterOptions: {
+                  mimeType: { contains: 'image' },
+                },
+              },
             }),
             MetaDescriptionField({}),
             PreviewField({

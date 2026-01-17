@@ -18,6 +18,7 @@ export const Header: GlobalConfig = {
       fields: [link()],
       maxRows: 6,
       admin: {
+        initCollapsed: true,
         components: {
           RowLabel: '@/globals/header/components/RowLabel#RowLabel',
         },

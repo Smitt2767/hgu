@@ -23,9 +23,19 @@ export const Socials: GlobalConfig = {
           required: true,
         },
         { type: 'text', name: 'url', label: 'URL', required: true },
-        { type: 'upload', name: 'icon', relationTo: 'media', hasMany: false, required: true },
+        {
+          type: 'upload',
+          name: 'icon',
+          relationTo: 'media',
+          hasMany: false,
+          required: true,
+          filterOptions: {
+            mimeType: { contains: 'image' },
+          },
+        },
       ],
       admin: {
+        initCollapsed: true,
         components: {
           RowLabel: '@/globals/socials/components/RowLabel#RowLabel',
         },

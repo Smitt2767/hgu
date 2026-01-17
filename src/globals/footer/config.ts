@@ -25,6 +25,7 @@ export const Footer: GlobalConfig = {
       fields: [link()],
       maxRows: 6,
       admin: {
+        initCollapsed: true,
         components: {
           RowLabel: '@/globals/footer/components/RowLabel#RowLabel',
         },

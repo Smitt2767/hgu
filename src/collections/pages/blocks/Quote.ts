@@ -10,6 +10,9 @@ export const Quote: Block = {
       label: 'Quote',
       required: true,
       localized: true,
+      admin: {
+        rows: 3,
+      },
     },
     {
       type: 'text',

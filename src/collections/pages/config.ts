@@ -18,6 +18,13 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     description: 'Create and manage website pages with customizable layouts and SEO settings.',
+    livePreview: {
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          slug: data?.slug,
+          req,
+        }),
+    },
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
@@ -53,6 +60,9 @@ export const Pages: CollectionConfig = {
             {
               name: 'layout',
               type: 'blocks',
+              admin: {
+                initCollapsed: true,
+              },
               blocks: [FAQ, HTML, Quote],
             },
           ],
@@ -69,6 +79,11 @@ export const Pages: CollectionConfig = {
             MetaTitleField({}),
             MetaImageField({
               relationTo: 'media',
+              overrides: {
+                filterOptions: {
+                  mimeType: { contains: 'image' },
+                },
+              },
             }),
             MetaDescriptionField({}),
             PreviewField({
