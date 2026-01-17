@@ -3,6 +3,9 @@ import { link } from '../utils/links'
 
 export const Header: GlobalConfig = {
   slug: 'header',
+  admin: {
+    description: 'Manage the site header navigation links.',
+  },
   fields: [
     {
       name: 'navItems',

@@ -10,6 +10,9 @@ import { revalidateSite } from './hooks'
 
 export const Site: GlobalConfig = {
   slug: 'site',
+  admin: {
+    description: 'Configure global site settings including branding, SEO defaults, and maintenance mode.',
+  },
   fields: [
     {
       type: 'tabs',

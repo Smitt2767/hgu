@@ -2,6 +2,9 @@ import { GlobalConfig } from 'payload'
 
 export const Socials: GlobalConfig = {
   slug: 'socials',
+  admin: {
+    description: 'Configure social media links and icons displayed across the site.',
+  },
   fields: [
     {
       type: 'array',

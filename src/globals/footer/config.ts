@@ -3,6 +3,9 @@ import { link } from '../utils/links'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  admin: {
+    description: 'Manage the site footer including copyright text and navigation links.',
+  },
   fields: [
     {
       type: 'text',

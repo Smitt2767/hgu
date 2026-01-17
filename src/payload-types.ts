@@ -137,11 +137,14 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Manage user accounts and authentication credentials.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  role: 'admin' | 'editor' | 'user';
   totpSecret?: string | null;
   hasTotp?: boolean | null;
   updatedAt: string;
@@ -163,6 +166,8 @@ export interface User {
   password?: string | null;
 }
 /**
+ * Upload and manage images, videos, and other media files.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -182,6 +187,8 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Create and manage website pages with customizable layouts and SEO settings.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -432,6 +439,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   totpSecret?: T;
   hasTotp?: T;
   updatedAt?: T;
@@ -601,6 +609,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Configure global site settings including branding, SEO defaults, and maintenance mode.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site".
  */
@@ -622,6 +632,8 @@ export interface Site {
   createdAt?: string | null;
 }
 /**
+ * Manage the site header navigation links.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header".
  */
@@ -644,6 +656,8 @@ export interface Header {
   createdAt?: string | null;
 }
 /**
+ * Manage the site footer including copyright text and navigation links.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
  */
@@ -667,6 +681,8 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Configure social media links and icons displayed across the site.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "socials".
  */
