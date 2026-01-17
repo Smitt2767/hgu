@@ -1,3 +1,4 @@
+import { canRead, canUpdate } from '@/access'
 import { GlobalConfig } from 'payload'
 import { link } from '../utils/links'
 
@@ -5,6 +6,10 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   admin: {
     description: 'Manage the site footer including copyright text and navigation links.',
+  },
+  access: {
+    read: canRead,
+    update: canUpdate,
   },
   fields: [
     {

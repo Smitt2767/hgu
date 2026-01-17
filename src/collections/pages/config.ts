@@ -1,3 +1,4 @@
+import { canCreate, canDelete, canRead, canUpdate } from '@/access'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -29,6 +30,12 @@ export const Pages: CollectionConfig = {
         slug: data?.slug as string,
         req,
       }),
+  },
+  access: {
+    read: canRead,
+    update: canUpdate,
+    delete: canDelete,
+    create: canCreate,
   },
   fields: [
     {

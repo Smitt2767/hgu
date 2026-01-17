@@ -1,3 +1,4 @@
+import { canCreate, canDelete, canUpdateRole, canUpdateUser } from '@/access'
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -7,6 +8,12 @@ export const Users: CollectionConfig = {
     description: 'Manage user accounts and authentication credentials.',
   },
   auth: true,
+  access: {
+    read: canUpdateUser,
+    update: canUpdateUser,
+    delete: canDelete,
+    create: canCreate,
+  },
   fields: [
     {
       name: 'role',
@@ -18,6 +25,18 @@ export const Users: CollectionConfig = {
         { label: 'Editor', value: 'editor' },
         { label: 'User', value: 'user' },
       ],
+      filterOptions({ options, req }) {
+        if (req.user?.role === 'admin') {
+          return options
+        }
+
+        return options.filter((option) =>
+          typeof option === 'string' ? option !== 'admin' : option.value !== 'admin',
+        )
+      },
+      access: {
+        update: canUpdateRole,
+      },
     },
   ],
 }

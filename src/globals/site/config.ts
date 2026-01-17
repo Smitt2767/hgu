@@ -1,3 +1,4 @@
+import { canRead, canUpdate } from '@/access'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -11,7 +12,12 @@ import { revalidateSite } from './hooks'
 export const Site: GlobalConfig = {
   slug: 'site',
   admin: {
-    description: 'Configure global site settings including branding, SEO defaults, and maintenance mode.',
+    description:
+      'Configure global site settings including branding, SEO defaults, and maintenance mode.',
+  },
+  access: {
+    read: canRead,
+    update: canUpdate,
   },
   fields: [
     {

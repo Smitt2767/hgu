@@ -1,3 +1,4 @@
+import { canCreate, canDelete, canUpdate } from '@/access'
 import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
@@ -7,6 +8,9 @@ export const Media: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: canCreate,
+    update: canUpdate,
+    delete: canDelete,
   },
   fields: [
     {

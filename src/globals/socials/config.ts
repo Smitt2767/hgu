@@ -1,9 +1,14 @@
+import { canRead, canUpdate } from '@/access'
 import { GlobalConfig } from 'payload'
 
 export const Socials: GlobalConfig = {
   slug: 'socials',
   admin: {
     description: 'Configure social media links and icons displayed across the site.',
+  },
+  access: {
+    read: canRead,
+    update: canUpdate,
   },
   fields: [
     {
