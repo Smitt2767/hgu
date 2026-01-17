@@ -18,13 +18,6 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     description: 'Create and manage website pages with customizable layouts and SEO settings.',
-    livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({
-          slug: data?.slug,
-          req,
-        }),
-    },
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
