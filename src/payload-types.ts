@@ -172,13 +172,23 @@ export interface Media {
 export interface Link {
   id: number;
   label: string;
-  type?: ('reference' | 'custom') | null;
-  newTab?: boolean | null;
-  reference?: {
-    relationTo: 'pages';
-    value: number | Page;
-  } | null;
+  type?: ('reference' | 'custom' | 'static') | null;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null);
   url?: string | null;
+  staticPage?: ('/videos' | '/articles') | null;
+  newTab?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1188,9 +1198,10 @@ export interface MediaSelect<T extends boolean = true> {
 export interface LinksSelect<T extends boolean = true> {
   label?: T;
   type?: T;
-  newTab?: T;
   reference?: T;
   url?: T;
+  staticPage?: T;
+  newTab?: T;
   updatedAt?: T;
   createdAt?: T;
 }

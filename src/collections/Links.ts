@@ -36,6 +36,10 @@ export const Links: CollectionConfig = {
           label: 'Custom URL',
           value: 'custom',
         },
+        {
+          label: 'Static page',
+          value: 'static',
+        },
       ],
     },
     {
@@ -45,7 +49,7 @@ export const Links: CollectionConfig = {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
       label: 'Document to link to',
-      relationTo: ['pages'],
+      relationTo: ['pages', 'videos', 'articles'],
       required: true,
     },
     {
@@ -57,6 +61,25 @@ export const Links: CollectionConfig = {
       label: 'Custom URL',
       required: true,
       localized: true,
+    },
+    {
+      name: 'staticPage',
+      type: 'select',
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === 'static',
+      },
+      label: 'Static Page',
+      required: true,
+      options: [
+        {
+          label: 'Videos',
+          value: '/videos',
+        },
+        {
+          label: 'Articles',
+          value: '/articles',
+        },
+      ],
     },
     {
       name: 'newTab',
