@@ -37,16 +37,6 @@ export const FeaturedImage: Block = {
       },
     },
     {
-      name: 'altText',
-      type: 'text',
-      localized: true,
-      required: true,
-      label: 'Alt Text',
-      admin: {
-        description: 'Describe the image for accessibility. Screen readers will read this text.',
-      },
-    },
-    {
       name: 'caption',
       type: 'radio',
       label: 'Caption',

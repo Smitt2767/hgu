@@ -430,10 +430,6 @@ export interface Page {
              * The image displayed on mobile screens. Can be cropped differently to focus on key elements for smaller screens.
              */
             mobileImage: number | Media;
-            /**
-             * Describe the image for accessibility. Screen readers will read this text.
-             */
-            altText: string;
             caption?: ('on' | 'off') | null;
             /**
              * Optional text displayed below the image to provide context.
@@ -1371,7 +1367,6 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               desktopImage?: T;
               mobileImage?: T;
-              altText?: T;
               caption?: T;
               captionText?: T;
               desktopAspectRatio?: T;
