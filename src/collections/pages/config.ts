@@ -2,6 +2,7 @@ import { canCreate, canDelete, canRead, canUpdate } from '@/access'
 import { JustText } from './blocks/JustText'
 import { JustTitle } from './blocks/JustTitle'
 import { ParagraphText } from './blocks/ParagraphText'
+import { FeaturedImage } from './blocks/FeaturedImage'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -63,7 +64,7 @@ export const Pages: CollectionConfig = {
               admin: {
                 initCollapsed: true,
               },
-              blocks: [JustText, JustTitle, ParagraphText],
+              blocks: [JustText, JustTitle, ParagraphText, FeaturedImage],
             },
           ],
         },

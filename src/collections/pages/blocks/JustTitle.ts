@@ -15,7 +15,7 @@ export const JustTitle: Block = {
       label: 'Title Text',
       admin: {
         description:
-          'The heading text to display. Supports yellow highlighting by wrapping words in yellow span tags.',
+          'The heading text to display. Supports branded color highlighting via the Branded Words field.',
       },
     },
     {

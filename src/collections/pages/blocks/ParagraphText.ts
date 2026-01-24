@@ -14,8 +14,7 @@ export const ParagraphText: Block = {
       required: true,
       label: 'Content',
       admin: {
-        description:
-          'Rich text content. Uses Merriweather font by default (can be overridden in Payload). Supports yellow highlighting for emphasis.',
+        description: 'Rich text content. Supports branded color highlighting for emphasis.',
       },
     },
     {

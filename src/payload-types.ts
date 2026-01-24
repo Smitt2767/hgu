@@ -267,7 +267,7 @@ export interface Page {
           }
         | {
             /**
-             * The heading text to display. Supports yellow highlighting by wrapping words in yellow span tags.
+             * The heading text to display. Supports branded color highlighting via the Branded Words field.
              */
             titleText: string;
             /**
@@ -293,7 +293,7 @@ export interface Page {
           }
         | {
             /**
-             * Rich text content. Uses Merriweather font by default (can be overridden in Payload). Supports yellow highlighting for emphasis.
+             * Rich text content. Supports branded color highlighting for emphasis.
              */
             content: {
               root: {
@@ -326,6 +326,30 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'paragraphText';
+          }
+        | {
+            /**
+             * The image displayed on desktop/tablet screens. Will scale to full width of the content area.
+             */
+            desktopImage: number | Media;
+            /**
+             * The image displayed on mobile screens. Can be cropped differently to focus on key elements for smaller screens.
+             */
+            mobileImage: number | Media;
+            /**
+             * Describe the image for accessibility. Screen readers will read this text.
+             */
+            altText: string;
+            caption?: ('on' | 'off') | null;
+            /**
+             * Optional text displayed below the image to provide context.
+             */
+            captionText?: string | null;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featuredImage';
           }
       )[]
     | null;
@@ -605,6 +629,19 @@ export interface PagesSelect<T extends boolean = true> {
               textAlignment?: T;
               textColor?: T;
               brandedWords?: T;
+              id?: T;
+              blockName?: T;
+            };
+        featuredImage?:
+          | T
+          | {
+              desktopImage?: T;
+              mobileImage?: T;
+              altText?: T;
+              caption?: T;
+              captionText?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
               id?: T;
               blockName?: T;
             };
