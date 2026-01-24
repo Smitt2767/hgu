@@ -4,7 +4,9 @@ import tinycolor from 'tinycolor2'
 
 export const validateColor: TextFieldValidation = (value) => {
   if (!value) return true
-  return tinycolor(value).isValid() || 'Invalid color value. Use hex (e.g. #FEDA00) or named colors.'
+  return (
+    tinycolor(value).isValid() || 'Invalid color value. Use hex (e.g. #FEDA00) or named colors.'
+  )
 }
 
 function linearize(value: number): number {
@@ -48,31 +50,42 @@ export function getBrandingCssVars(site: Site | null): string {
   if (!site) return ''
 
   const mapping: Record<string, string> = {
-    '--background': site.neutrals!.background,
-    '--foreground': site.textColors!.white,
-    '--card': site.neutrals!.surface,
-    '--card-foreground': site.textColors!.white,
-    '--popover': site.neutrals!.surface,
-    '--popover-foreground': site.textColors!.white,
-    '--primary': site.primaryColors!.primaryGold,
-    '--primary-foreground': site.neutrals!.background,
-    '--secondary': site.boxBackground!.boxBgGray,
-    '--secondary-foreground': site.textColors!.white,
-    '--muted': site.boxBackground!.boxBgGray,
-    '--muted-foreground': site.textColors!.gray,
-    '--accent': site.boxBackground!.boxBgGray,
-    '--accent-foreground': site.textColors!.white,
-    '--border': site.neutrals!.border,
-    '--input': site.neutrals!.border,
-    '--ring': site.primaryColors!.primaryGold,
-    '--sidebar': site.neutrals!.surface,
-    '--sidebar-foreground': site.textColors!.white,
-    '--sidebar-primary': site.primaryColors!.primaryGold,
-    '--sidebar-primary-foreground': site.neutrals!.background,
-    '--sidebar-accent': site.boxBackground!.boxBgGray,
-    '--sidebar-accent-foreground': site.textColors!.white,
-    '--sidebar-border': site.neutrals!.border,
-    '--sidebar-ring': site.primaryColors!.primaryGold,
+    // Neutral BG
+    '--background': site.neutrals.background,
+    // Text White / Neutral White
+    '--foreground': site.textColors.white,
+    // Neutral Surface
+    '--card': site.neutrals.surface,
+    '--card-foreground': site.textColors.white,
+    '--popover': site.neutrals.surface,
+    '--popover-foreground': site.textColors.white,
+    // Primary Gold / Text Gold
+    '--primary': site.primaryColors.primaryGold,
+    '--primary-foreground': site.neutrals.background,
+    // Box BG Gray
+    '--secondary': site.boxBackground.boxBgGray,
+    '--secondary-foreground': site.textColors.white,
+    '--muted': site.boxBackground.boxBgGray,
+    '--muted-foreground': site.textColors.gray,
+    '--accent': site.boxBackground.boxBgGray,
+    '--accent-foreground': site.textColors.white,
+    // Neutral Border
+    '--border': site.neutrals.border,
+    '--input': site.neutrals.border,
+    '--ring': site.primaryColors.primaryGold,
+    '--sidebar': site.neutrals.surface,
+    '--sidebar-foreground': site.textColors.white,
+    '--sidebar-primary': site.primaryColors.primaryGold,
+    '--sidebar-primary-foreground': site.neutrals.background,
+    '--sidebar-accent': site.boxBackground.boxBgGray,
+    '--sidebar-accent-foreground': site.textColors.white,
+    '--sidebar-border': site.neutrals.border,
+    '--sidebar-ring': site.primaryColors.primaryGold,
+
+    // Text Gray
+    '--color-gray-400': site.textColors.gray,
+    // Neutral Gray
+    '--color-gray-100': site.neutrals.gray,
   }
 
   const vars = Object.entries(mapping)
