@@ -59,9 +59,9 @@ export const ParagraphText: Block = {
       },
     },
     {
-      name: 'brandedWords',
+      name: 'highlightedWords',
       type: 'text',
-      label: 'Branded Words',
+      label: 'Highlighted Words',
       admin: {
         description:
           'Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.',

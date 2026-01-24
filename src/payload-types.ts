@@ -277,7 +277,7 @@ export interface Page {
             /**
              * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
              */
-            brandedWords?: string | null;
+            highlightedWords?: string | null;
             /**
              * Show a progress bar for this section.
              */
@@ -307,7 +307,7 @@ export interface Page {
             /**
              * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
              */
-            brandedWords?: string | null;
+            highlightedWords?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'justTitle';
@@ -343,7 +343,7 @@ export interface Page {
             /**
              * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
              */
-            brandedWords?: string | null;
+            highlightedWords?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'paragraphText';
@@ -410,6 +410,41 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
+          }
+        | {
+            /**
+             * The quote text. Words will animate in one by one as user scrolls.
+             */
+            quote: string;
+            /**
+             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
+             */
+            highlightedWords?: string | null;
+            /**
+             * Name of the person being quoted.
+             */
+            author?: string | null;
+            /**
+             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             */
+            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            /**
+             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             */
+            backgroundColor?: string | null;
+            /**
+             * Image behind the CTA section when Background Type is "Image".
+             */
+            backgroundImage?: (number | null) | Media;
+            /**
+             * Looping video behind the CTA section when Background Type is "Video".
+             */
+            backgroundVideo?: (number | null) | Media;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'animatedQuote';
           }
       )[]
     | null;
@@ -681,7 +716,7 @@ export interface PagesSelect<T extends boolean = true> {
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
               textAnimation?: T;
-              brandedWords?: T;
+              highlightedWords?: T;
               progressBar?: T;
               id?: T;
               blockName?: T;
@@ -694,7 +729,7 @@ export interface PagesSelect<T extends boolean = true> {
               fontFamily?: T;
               textAlignment?: T;
               textColor?: T;
-              brandedWords?: T;
+              highlightedWords?: T;
               id?: T;
               blockName?: T;
             };
@@ -705,7 +740,7 @@ export interface PagesSelect<T extends boolean = true> {
               textSize?: T;
               textAlignment?: T;
               textColor?: T;
-              brandedWords?: T;
+              highlightedWords?: T;
               id?: T;
               blockName?: T;
             };
@@ -729,6 +764,21 @@ export interface PagesSelect<T extends boolean = true> {
               message?: T;
               showTitle?: T;
               link?: T;
+              backgroundType?: T;
+              backgroundColor?: T;
+              backgroundImage?: T;
+              backgroundVideo?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        animatedQuote?:
+          | T
+          | {
+              quote?: T;
+              highlightedWords?: T;
+              author?: T;
               backgroundType?: T;
               backgroundColor?: T;
               backgroundImage?: T;
