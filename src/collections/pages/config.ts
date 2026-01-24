@@ -1,8 +1,4 @@
 import { canCreate, canDelete, canRead, canUpdate } from '@/access'
-import { JustText } from './blocks/JustText'
-import { JustTitle } from './blocks/JustTitle'
-import { ParagraphText } from './blocks/ParagraphText'
-import { FeaturedImage } from './blocks/FeaturedImage'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -11,6 +7,11 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
+import { CTA } from './blocks/CTA'
+import { FeaturedImage } from './blocks/FeaturedImage'
+import { JustText } from './blocks/JustText'
+import { JustTitle } from './blocks/JustTitle'
+import { ParagraphText } from './blocks/ParagraphText'
 import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
 
@@ -64,7 +65,7 @@ export const Pages: CollectionConfig = {
               admin: {
                 initCollapsed: true,
               },
-              blocks: [JustText, JustTitle, ParagraphText, FeaturedImage],
+              blocks: [JustText, JustTitle, ParagraphText, FeaturedImage, CTA],
             },
           ],
         },

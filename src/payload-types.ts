@@ -372,6 +372,45 @@ export interface Page {
             blockName?: string | null;
             blockType: 'featuredImage';
           }
+        | {
+            /**
+             * The button text. Keep it short and action-oriented (e.g., "Start Now", "Learn More").
+             */
+            label: string;
+            /**
+             * Optional supporting text above the button to provide context. Can be hidden using Show Title toggle.
+             */
+            message?: string | null;
+            /**
+             * Toggle to show or hide the message text above the button.
+             */
+            showTitle?: ('show' | 'hide') | null;
+            /**
+             * Internal links to pages within the site, or external links to outside URLs.
+             */
+            link?: (number | null) | Link;
+            /**
+             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             */
+            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            /**
+             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             */
+            backgroundColor?: string | null;
+            /**
+             * Image behind the CTA section when Background Type is "Image".
+             */
+            backgroundImage?: (number | null) | Media;
+            /**
+             * Looping video behind the CTA section when Background Type is "Video".
+             */
+            backgroundVideo?: (number | null) | Media;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
       )[]
     | null;
   meta?: {
@@ -678,6 +717,22 @@ export interface PagesSelect<T extends boolean = true> {
               altText?: T;
               caption?: T;
               captionText?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              label?: T;
+              message?: T;
+              showTitle?: T;
+              link?: T;
+              backgroundType?: T;
+              backgroundColor?: T;
+              backgroundImage?: T;
+              backgroundVideo?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
               id?: T;
