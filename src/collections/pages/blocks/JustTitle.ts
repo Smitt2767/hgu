@@ -80,12 +80,12 @@ export const JustTitle: Block = {
       },
     },
     {
-      name: 'yellowWords',
+      name: 'brandedWords',
       type: 'text',
-      label: 'Yellow Words',
+      label: 'Branded Words',
       admin: {
         description:
-          'Words to highlight in yellow (#feda00). Use span tags with color style to emphasize key words.',
+          'Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.',
       },
     },
   ],

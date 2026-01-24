@@ -167,12 +167,12 @@ export const JustText: Block = {
       ],
     },
     {
-      name: 'yellowWords',
+      name: 'brandedWords',
       type: 'text',
-      label: 'Yellow Words',
+      label: 'Branded Words',
       admin: {
         description:
-          'Words to highlight in yellow (#feda00). Enter words separated by commas to emphasize key phrases.',
+          'Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.',
       },
     },
     {

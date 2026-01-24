@@ -254,9 +254,9 @@ export interface Page {
                 )
               | null;
             /**
-             * Words to highlight in yellow (#feda00). Enter words separated by commas to emphasize key phrases.
+             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
              */
-            yellowWords?: string | null;
+            brandedWords?: string | null;
             /**
              * Show a progress bar for this section.
              */
@@ -284,12 +284,48 @@ export interface Page {
              */
             textColor?: string | null;
             /**
-             * Words to highlight in yellow (#feda00). Use span tags with color style to emphasize key words.
+             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
              */
-            yellowWords?: string | null;
+            brandedWords?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'justTitle';
+          }
+        | {
+            /**
+             * Rich text content. Uses Merriweather font by default (can be overridden in Payload). Supports yellow highlighting for emphasis.
+             */
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            /**
+             * Body (larger, default) or Small Text for secondary content.
+             */
+            textSize?: ('body' | 'smallText') | null;
+            textAlignment?: ('left' | 'center' | 'right') | null;
+            /**
+             * Hex color value (e.g. #d1d5db)
+             */
+            textColor?: string | null;
+            /**
+             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
+             */
+            brandedWords?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'paragraphText';
           }
       )[]
     | null;
@@ -544,7 +580,7 @@ export interface PagesSelect<T extends boolean = true> {
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
               textAnimation?: T;
-              yellowWords?: T;
+              brandedWords?: T;
               progressBar?: T;
               id?: T;
               blockName?: T;
@@ -557,7 +593,18 @@ export interface PagesSelect<T extends boolean = true> {
               fontFamily?: T;
               textAlignment?: T;
               textColor?: T;
-              yellowWords?: T;
+              brandedWords?: T;
+              id?: T;
+              blockName?: T;
+            };
+        paragraphText?:
+          | T
+          | {
+              content?: T;
+              textSize?: T;
+              textAlignment?: T;
+              textColor?: T;
+              brandedWords?: T;
               id?: T;
               blockName?: T;
             };
