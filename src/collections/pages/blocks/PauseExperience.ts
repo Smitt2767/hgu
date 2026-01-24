@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const PauseExperience: Block = {
   slug: 'pauseExperience',
+  imageURL: '/images/pause-experience.png',
   labels: {
     singular: 'Pause Experience',
     plural: 'Pause Experience',

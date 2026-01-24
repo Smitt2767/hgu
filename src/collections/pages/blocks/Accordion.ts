@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const Accordion: Block = {
   slug: 'accordion',
+  imageURL: '/images/accordion.png',
   labels: {
     singular: 'Accordion',
     plural: 'Accordion',

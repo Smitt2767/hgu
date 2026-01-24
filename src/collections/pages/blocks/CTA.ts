@@ -3,6 +3,7 @@ import { Block } from 'payload'
 
 export const CTA: Block = {
   slug: 'cta',
+  imageURL: '/images/cta.png',
   labels: {
     singular: 'CTA',
     plural: 'CTA',

@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const SocialShare: Block = {
   slug: 'socialShare',
+  imageURL: '/images/social-share.png',
   labels: {
     singular: 'Social Share',
     plural: 'Social Share',

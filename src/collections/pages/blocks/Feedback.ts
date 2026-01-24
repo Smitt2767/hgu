@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const Feedback: Block = {
   slug: 'feedback',
+  imageURL: '/images/feedback.png',
   labels: {
     singular: 'Feedback',
     plural: 'Feedback',

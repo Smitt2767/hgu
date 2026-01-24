@@ -3,6 +3,7 @@ import { Block } from 'payload'
 
 export const ParagraphText: Block = {
   slug: 'paragraphText',
+  imageURL: '/images/paragraph-text.png',
   labels: {
     singular: 'Paragraph Text',
     plural: 'Paragraph Text',

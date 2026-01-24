@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const TakeOver: Block = {
   slug: 'takeOver',
+  imageURL: '/images/take-over.png',
   labels: {
     singular: 'Take Over',
     plural: 'Take Over',

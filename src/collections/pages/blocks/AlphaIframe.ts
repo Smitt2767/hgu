@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const AlphaIframe: Block = {
   slug: 'alphaIframe',
+  imageURL: '/images/alpha-iframe.png',
   labels: {
     singular: 'Alpha Iframe',
     plural: 'Alpha Iframe',

@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const Alpha: Block = {
   slug: 'alpha',
+  imageURL: '/images/alpha.png',
   labels: {
     singular: 'Alpha',
     plural: 'Alpha',

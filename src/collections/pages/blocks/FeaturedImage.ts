@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const FeaturedImage: Block = {
   slug: 'featuredImage',
+  imageURL: '/images/featured-image.png',
   labels: {
     singular: 'Featured Image',
     plural: 'Featured Image',
