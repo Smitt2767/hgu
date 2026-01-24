@@ -1,6 +1,5 @@
 import { canRead, canUpdate } from '@/access'
 import { GlobalConfig } from 'payload'
-import { link } from '../utils/links'
 
 export const Header: GlobalConfig = {
   slug: 'header',
@@ -15,7 +14,14 @@ export const Header: GlobalConfig = {
     {
       name: 'navItems',
       type: 'array',
-      fields: [link()],
+      fields: [
+        {
+          name: 'link',
+          type: 'relationship',
+          relationTo: 'links',
+          required: true,
+        },
+      ],
       maxRows: 6,
       admin: {
         initCollapsed: true,

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    links: Link;
     pages: Page;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    links: LinksSelect<false> | LinksSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -185,6 +187,25 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * Manage website and external links.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "links".
+ */
+export interface Link {
+  id: number;
+  label: string;
+  type?: ('reference' | 'custom') | null;
+  newTab?: boolean | null;
+  reference?: {
+    relationTo: 'pages';
+    value: number | Page;
+  } | null;
+  url?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Create and manage website pages with customizable layouts and SEO settings.
@@ -490,6 +511,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'links';
+        value: number | Link;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null);
@@ -577,6 +602,19 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "links_select".
+ */
+export interface LinksSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  newTab?: T;
+  reference?: T;
+  url?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -821,14 +859,7 @@ export interface Header {
   id: number;
   navItems?:
     | {
-        label: string;
-        type?: ('reference' | 'custom') | null;
-        newTab?: boolean | null;
-        reference?: {
-          relationTo: 'pages';
-          value: number | Page;
-        } | null;
-        url?: string | null;
+        link: number | Link;
         id?: string | null;
       }[]
     | null;
@@ -846,14 +877,7 @@ export interface Footer {
   copyrightText: string;
   navItems?:
     | {
-        label: string;
-        type?: ('reference' | 'custom') | null;
-        newTab?: boolean | null;
-        reference?: {
-          relationTo: 'pages';
-          value: number | Page;
-        } | null;
-        url?: string | null;
+        link: number | Link;
         id?: string | null;
       }[]
     | null;
@@ -933,11 +957,7 @@ export interface HeaderSelect<T extends boolean = true> {
   navItems?:
     | T
     | {
-        label?: T;
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
+        link?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -953,11 +973,7 @@ export interface FooterSelect<T extends boolean = true> {
   navItems?:
     | T
     | {
-        label?: T;
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
+        link?: T;
         id?: T;
       };
   updatedAt?: T;
