@@ -200,7 +200,7 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
-  layout?: (FAQ | HTML | Quote)[] | null;
+  layout?: unknown[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -212,57 +212,6 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FAQ".
- */
-export interface FAQ {
-  data?:
-    | {
-        question: string;
-        answer: string;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'faq';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "HTML".
- */
-export interface HTML {
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'html';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Quote".
- */
-export interface Quote {
-  quote: string;
-  author: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'quote';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -485,13 +434,7 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   generateSlug?: T;
   slug?: T;
-  layout?:
-    | T
-    | {
-        faq?: T | FAQSelect<T>;
-        html?: T | HTMLSelect<T>;
-        quote?: T | QuoteSelect<T>;
-      };
+  layout?: T | {};
   meta?:
     | T
     | {
@@ -502,40 +445,6 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FAQ_select".
- */
-export interface FAQSelect<T extends boolean = true> {
-  data?:
-    | T
-    | {
-        question?: T;
-        answer?: T;
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "HTML_select".
- */
-export interface HTMLSelect<T extends boolean = true> {
-  content?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Quote_select".
- */
-export interface QuoteSelect<T extends boolean = true> {
-  quote?: T;
-  author?: T;
-  id?: T;
-  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

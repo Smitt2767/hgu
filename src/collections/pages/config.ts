@@ -7,9 +7,6 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
-import { FAQ } from './blocks/FAQ'
-import { HTML } from './blocks/HTML'
-import { Quote } from './blocks/Quote'
 import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
 
@@ -63,7 +60,7 @@ export const Pages: CollectionConfig = {
               admin: {
                 initCollapsed: true,
               },
-              blocks: [FAQ, HTML, Quote],
+              blocks: [],
             },
           ],
         },
