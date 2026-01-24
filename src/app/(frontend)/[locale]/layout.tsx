@@ -1,14 +1,15 @@
-import { Merriweather } from 'next/font/google'
 import AdminBar from '@/components/admin-bar'
 import Maintenance from '@/components/maintenance'
 import { getSiteData } from '@/data/site'
 import { clientEnv } from '@/env/client'
 import { routing } from '@/i18n/routing'
+import { cn } from '@/lib/utils'
 import { getImageUrl } from '@/utils'
 import { getBrandingCssVars } from '@/utils/color'
 import { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
+import { Merriweather, Oswald } from 'next/font/google'
 import { draftMode } from 'next/headers'
 
 import { notFound } from 'next/navigation'
@@ -17,6 +18,12 @@ import React from 'react'
 const merriweather = Merriweather({
   subsets: ['latin'],
   weight: ['300', '400', '700', '900'],
+  variable: '--font-merriweather',
+})
+
+const oswald = Oswald({
+  subsets: ['latin'],
+  variable: '--font-oswald',
 })
 
 export const generateStaticParams = () => {
@@ -96,10 +103,8 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <head>
-        {brandingCss && <style dangerouslySetInnerHTML={{ __html: brandingCss }} />}
-      </head>
-      <body className={merriweather.className}>
+      <head>{brandingCss && <style dangerouslySetInnerHTML={{ __html: brandingCss }} />}</head>
+      <body className={cn(merriweather.className, merriweather.variable, oswald.variable)}>
         <main>
           <NextIntlClientProvider locale={locale}>
             <AdminBar draft={isEnabled} />

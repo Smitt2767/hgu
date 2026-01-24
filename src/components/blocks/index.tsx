@@ -4,6 +4,7 @@ import { ComponentType } from 'react'
 import Accordion from './accordion'
 import Alpha from './alpha'
 import AlphaIFrame from './alpha-iframe'
+import JustTitle from './just-title'
 
 type RenderBlocksProps = {
   data: Page['layout']
@@ -15,6 +16,7 @@ const blockComponents: Partial<{
   accordion: Accordion,
   alpha: Alpha,
   alphaIframe: AlphaIFrame,
+  justTitle: JustTitle,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

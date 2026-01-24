@@ -20,7 +20,7 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
   }
 
   return (
-    <div ref={containerRef} className="py-12 lg:py-20 px-6">
+    <div className="w-full px-6 py-12">
       <div className="max-w-3xl mx-auto">
         {headerText && (
           <h2 className="font-sans text-2xl md:text-3xl font-bold text-foreground text-center mb-8">
