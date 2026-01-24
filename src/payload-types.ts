@@ -225,6 +225,297 @@ export interface Page {
     | (
         | {
             /**
+             * Optional title displayed above the accordion section. Set the context for the items below.
+             */
+            headerText?: string | null;
+            items: {
+              /**
+               * The question displayed in the accordion header. Keep it clear and concise.
+               */
+              questionText: string;
+              /**
+               * Rich text answer revealed when the question is clicked. Can include formatting, links, and lists.
+               */
+              answerText: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              };
+              id?: string | null;
+            }[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'accordion';
+          }
+        | {
+            /**
+             * The main heading displayed above the button.
+             */
+            title?: string | null;
+            /**
+             * The label for the action button that reveals the group finder.
+             */
+            buttonText?: string | null;
+            /**
+             * Toggle to show or hide the "powered by alpha" branding tag.
+             */
+            showPoweredBy?: boolean | null;
+            /**
+             * Supporting text displayed above the Alpha group finder when it is expanded.
+             */
+            iframeHeader?: string | null;
+            /**
+             * The URL for the Alpha group finder experience.
+             */
+            iframeURL: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alpha';
+          }
+        | {
+            /**
+             * The URL for the Alpha group finder experience.
+             */
+            iframeURL: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'alphaIframe';
+          }
+        | {
+            /**
+             * The quote text. Words will animate in one by one as user scrolls.
+             */
+            quote: string;
+            /**
+             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
+             */
+            highlightedWords?: string | null;
+            /**
+             * Name of the person being quoted.
+             */
+            author?: string | null;
+            /**
+             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             */
+            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            /**
+             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             */
+            backgroundColor?: string | null;
+            /**
+             * Image behind the CTA section when Background Type is "Image".
+             */
+            backgroundImage?: (number | null) | Media;
+            /**
+             * Looping video behind the CTA section when Background Type is "Video".
+             */
+            backgroundVideo?: (number | null) | Media;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'animatedQuote';
+          }
+        | {
+            /**
+             * Optional section title displayed above the carousel.
+             */
+            header?: string | null;
+            cards: {
+              /**
+               * Choose between Image or Video for the card media. NOTE: Videos play with NO OVERLAY - content displays raw without any dimming or color treatment.
+               */
+              mediaType: 'image' | 'video';
+              /**
+               * The image for each card. Only used when Media Type is "Image".
+               */
+              cardImage?: (number | null) | Media;
+              /**
+               * The video for each card. Only used when Media Type is "Video". Loops automatically, plays muted. NOTE: No overlay is applied - video displays raw.
+               */
+              cardVideo?: (number | null) | Media;
+              /**
+               * Rich text content shown in the popup when a card is clicked.
+               */
+              modalContent: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              };
+              id?: string | null;
+            }[];
+            horizontalScrollPath?: ('off' | 'on') | null;
+            /**
+             * Aspect ratio for cards on desktop. Choose 16:9 (wide) or 4:3 (standard).
+             */
+            desktopAspectRatio: '4:5' | '9:16';
+            /**
+             * Aspect ratio for cards on mobile. Choose 4:5 (tall) or 9:16 (full tall).
+             */
+            mobileAspectRatio: '4:5' | '9:16';
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cardCarousel';
+          }
+        | {
+            /**
+             * The button text. Keep it short and action-oriented (e.g., "Start Now", "Learn More").
+             */
+            label: string;
+            /**
+             * Optional supporting text above the button to provide context. Can be hidden using Show Title toggle.
+             */
+            message?: string | null;
+            /**
+             * Toggle to show or hide the message text above the button.
+             */
+            showTitle?: ('show' | 'hide') | null;
+            /**
+             * Internal links to pages within the site, or external links to outside URLs.
+             */
+            link?: (number | null) | Link;
+            /**
+             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             */
+            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            /**
+             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             */
+            backgroundColor?: string | null;
+            /**
+             * Image behind the CTA section when Background Type is "Image".
+             */
+            backgroundImage?: (number | null) | Media;
+            /**
+             * Looping video behind the CTA section when Background Type is "Video".
+             */
+            backgroundVideo?: (number | null) | Media;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            /**
+             * The image displayed on desktop/tablet screens. Will scale to full width of the content area.
+             */
+            desktopImage: number | Media;
+            /**
+             * The image displayed on mobile screens. Can be cropped differently to focus on key elements for smaller screens.
+             */
+            mobileImage: number | Media;
+            /**
+             * Describe the image for accessibility. Screen readers will read this text.
+             */
+            altText: string;
+            caption?: ('on' | 'off') | null;
+            /**
+             * Optional text displayed below the image to provide context.
+             */
+            captionText?: string | null;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featuredImage';
+          }
+        | {
+            /**
+             * Initial consent question (e.g., "Did anything here shift how you think about Jesus?").
+             */
+            questionText?: string | null;
+            /**
+             * Text for positive consent button. Default: "Yes".
+             */
+            yesButtonLabel?: string | null;
+            /**
+             * Text for negative consent button. Default: "No".
+             */
+            noButtonLabel?: string | null;
+            /**
+             * Title shown when user clicks Yes (e.g., "We're so glad...").
+             */
+            yesFormTitle?: string | null;
+            /**
+             * Title shown when user clicks No (e.g., "We'd love to hear more...").
+             */
+            noFormTitle?: string | null;
+            /**
+             * First Name (optional), Last Name (optional), Email (required), Message textarea (required). All use floating labels with yellow borders.
+             */
+            formFields?: {
+              /**
+               * Include First Name field (optional).
+               */
+              firstName?: boolean | null;
+              /**
+               * Include Last Name field (optional).
+               */
+              lastName?: boolean | null;
+              /**
+               * Include Email field (required).
+               */
+              email?: boolean | null;
+              /**
+               * Include Message textarea (required).
+               */
+              message?: boolean | null;
+            };
+            /**
+             * Required acknowledgment checkbox with link to privacy policy. Must be checked to submit.
+             */
+            privacyCheckbox: boolean;
+            /**
+             * Optional checkbox allowing user to consent to future contact.
+             */
+            contactCheckbox?: boolean | null;
+            /**
+             * URL to your privacy policy page.
+             */
+            privacyLink?: (number | null) | Link;
+            /**
+             * Returns to consent question. Default: "Back".
+             */
+            backButton?: string | null;
+            /**
+             * Submits the form. Default: "Submit".
+             */
+            submitButton?: string | null;
+            /**
+             * Title displayed after successful form submission. Default: "Thank You".
+             */
+            successTitle?: string | null;
+            /**
+             * Message displayed after successful form submission.
+             */
+            successDescription?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'feedback';
+          }
+        | {
+            /**
              * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
              */
             content: {
@@ -314,6 +605,87 @@ export interface Page {
           }
         | {
             /**
+             * Array of intro lines displayed before the play button. Each line appears on its own row.
+             */
+            introLines?:
+              | {
+                  line?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Secondary instruction (e.g., 'Press play to begin').
+             */
+            subText?: string | null;
+            showSubText?: ('show' | 'hide') | null;
+            /**
+             * Array of scene objects. Each scene has: Title (rich text with yellow highlighting), Quote (italic text), and Body (rich text with line breaks). Use HTML spans for yellow: <span style="color: #feda00">word</span>
+             */
+            scenes: {
+              /**
+               * Rich text title with branded color highlighting. Use HTML spans for yellow: <span style="color: #feda00">word</span>
+               */
+              title?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              /**
+               * Italic text displayed in the scene.
+               */
+              quote?: string | null;
+              /**
+               * Rich text body content with line breaks.
+               */
+              body?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              id?: string | null;
+            }[];
+            /**
+             * Total timer length in seconds. Default is 60 seconds. Time is distributed across all scenes.
+             */
+            duration?: number | null;
+            /**
+             * Controls the pace of word-by-word animation. Default: 1.0. Range: 0.1 (slower) to 3.0 (faster). Higher values make words appear faster.
+             */
+            animationSpeed?: number | null;
+            /**
+             * Ambient background for the experience. Can be image or looping video. Video plays silently.
+             */
+            backgroundType?: ('image' | 'video') | null;
+            backgroundImage?: (number | null) | Media;
+            backgroundVideo?: (number | null) | Media;
+            desktopAspectRatio?: '16:9' | null;
+            mobileAspectRatio?: '9:16' | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'pauseExperience';
+          }
+        | {
+            /**
              * Rich text content. Supports branded color highlighting for emphasis.
              */
             content: {
@@ -350,101 +722,114 @@ export interface Page {
           }
         | {
             /**
-             * The image displayed on desktop/tablet screens. Will scale to full width of the content area.
+             * Motivational text encouraging users to share. Example: "Think about someone right now, who might need this journey, and share it".
              */
-            desktopImage: number | Media;
-            /**
-             * The image displayed on mobile screens. Can be cropped differently to focus on key elements for smaller screens.
-             */
-            mobileImage: number | Media;
-            /**
-             * Describe the image for accessibility. Screen readers will read this text.
-             */
-            altText: string;
-            caption?: ('on' | 'off') | null;
-            /**
-             * Optional text displayed below the image to provide context.
-             */
-            captionText?: string | null;
-            desktopAspectRatio?: ('16:9' | '4:3') | null;
-            mobileAspectRatio?: ('4:5' | '9:16') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'featuredImage';
-          }
-        | {
-            /**
-             * The button text. Keep it short and action-oriented (e.g., "Start Now", "Learn More").
-             */
-            label: string;
-            /**
-             * Optional supporting text above the button to provide context. Can be hidden using Show Title toggle.
-             */
-            message?: string | null;
-            /**
-             * Toggle to show or hide the message text above the button.
-             */
+            title?: string | null;
             showTitle?: ('show' | 'hide') | null;
             /**
-             * Internal links to pages within the site, or external links to outside URLs.
+             * The URL to be shared. Defaults to current page URL if not specified.
              */
-            link?: (number | null) | Link;
+            shareURL?: string | null;
             /**
-             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             * Default message text included when sharing via native share sheet.
              */
-            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            shareText?: string | null;
             /**
-             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             * Single button that opens the native device share sheet (Web Share API). Falls back to copy link on unsupported browsers.
              */
-            backgroundColor?: string | null;
-            /**
-             * Image behind the CTA section when Background Type is "Image".
-             */
-            backgroundImage?: (number | null) | Media;
-            /**
-             * Looping video behind the CTA section when Background Type is "Video".
-             */
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: ('16:9' | '4:3') | null;
-            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            shareButton: string;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'cta';
+            blockType: 'socialShare';
+          }
+        | {
+            media: 'video' | 'image';
+            /**
+             * Full-screen video for the takeover experience. Desktop uses 16:9 (horizontal), Mobile uses 9:16 (vertical).
+             */
+            video?: (number | null) | Media;
+            /**
+             * Background image for the takeover. Desktop uses 16:9 (horizontal), Mobile uses 9:16 (vertical).
+             */
+            image?: (number | null) | Media;
+            /**
+             * Button to replay the video with audio enabled.
+             */
+            replayWithAudio?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'takeOver';
           }
         | {
             /**
-             * The quote text. Words will animate in one by one as user scrolls.
+             * Optional section title displayed above the carousel.
              */
-            quote: string;
+            header?: string | null;
+            slides: {
+              /**
+               * The title for each text slide. Can be hidden per slide using Show Title toggle.
+               */
+              slideTitle?: string | null;
+              /**
+               * Toggle to show or hide the title for this specific slide.
+               */
+              showTitle?: ('on' | 'off') | null;
+              /**
+               * Rich text content for each slide. Supports formatting, links, and lists.
+               */
+              slideBody: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              };
+              /**
+               * Choose "None" for transparent, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background. Each slide can have a different background.
+               */
+              backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+              /**
+               * Hex color for the slide background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+               */
+              backgroundColor?: string | null;
+              /**
+               * Image shown behind slide content when Background Type is "Image".
+               */
+              backgroundImage?: (number | null) | Media;
+              /**
+               * Looping video shown behind slide content when Background Type is "Video".
+               */
+              backgroundVideo?: (number | null) | Media;
+              id?: string | null;
+            }[];
+            horizontalScrollPath?: ('off' | 'on') | null;
             /**
-             * Words to highlight in the primary brand color. Enter words separated by commas to emphasize key phrases.
+             * Hex color for slide titles. Defaults to white (#ffffff).
              */
-            highlightedWords?: string | null;
+            titleColor?: string | null;
             /**
-             * Name of the person being quoted.
+             * Hex color for slide body text. Defaults to gray (#9ca3af).
              */
-            author?: string | null;
+            subtextColor?: string | null;
             /**
-             * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+             * Select 4:5 (tall) or 9:16 (full tall) for the slide aspect ratio on desktop screens.
              */
-            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            desktopAspectRatio?: ('4:5' | '9:16') | null;
             /**
-             * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+             * Select 4:5 (tall) or 9:16 (full tall) for the slide aspect ratio on mobile screens.
              */
-            backgroundColor?: string | null;
-            /**
-             * Image behind the CTA section when Background Type is "Image".
-             */
-            backgroundImage?: (number | null) | Media;
-            /**
-             * Looping video behind the CTA section when Background Type is "Video".
-             */
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: ('16:9' | '4:3') | null;
             mobileAspectRatio?: ('4:5' | '9:16') | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'animatedQuote';
+            blockType: 'textCarousel';
           }
       )[]
     | null;
@@ -701,6 +1086,127 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        accordion?:
+          | T
+          | {
+              headerText?: T;
+              items?:
+                | T
+                | {
+                    questionText?: T;
+                    answerText?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        alpha?:
+          | T
+          | {
+              title?: T;
+              buttonText?: T;
+              showPoweredBy?: T;
+              iframeHeader?: T;
+              iframeURL?: T;
+              id?: T;
+              blockName?: T;
+            };
+        alphaIframe?:
+          | T
+          | {
+              iframeURL?: T;
+              id?: T;
+              blockName?: T;
+            };
+        animatedQuote?:
+          | T
+          | {
+              quote?: T;
+              highlightedWords?: T;
+              author?: T;
+              backgroundType?: T;
+              backgroundColor?: T;
+              backgroundImage?: T;
+              backgroundVideo?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cardCarousel?:
+          | T
+          | {
+              header?: T;
+              cards?:
+                | T
+                | {
+                    mediaType?: T;
+                    cardImage?: T;
+                    cardVideo?: T;
+                    modalContent?: T;
+                    id?: T;
+                  };
+              horizontalScrollPath?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              label?: T;
+              message?: T;
+              showTitle?: T;
+              link?: T;
+              backgroundType?: T;
+              backgroundColor?: T;
+              backgroundImage?: T;
+              backgroundVideo?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        featuredImage?:
+          | T
+          | {
+              desktopImage?: T;
+              mobileImage?: T;
+              altText?: T;
+              caption?: T;
+              captionText?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        feedback?:
+          | T
+          | {
+              questionText?: T;
+              yesButtonLabel?: T;
+              noButtonLabel?: T;
+              yesFormTitle?: T;
+              noFormTitle?: T;
+              formFields?:
+                | T
+                | {
+                    firstName?: T;
+                    lastName?: T;
+                    email?: T;
+                    message?: T;
+                  };
+              privacyCheckbox?: T;
+              contactCheckbox?: T;
+              privacyLink?: T;
+              backButton?: T;
+              submitButton?: T;
+              successTitle?: T;
+              successDescription?: T;
+              id?: T;
+              blockName?: T;
+            };
         justText?:
           | T
           | {
@@ -733,6 +1239,35 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        pauseExperience?:
+          | T
+          | {
+              introLines?:
+                | T
+                | {
+                    line?: T;
+                    id?: T;
+                  };
+              subText?: T;
+              showSubText?: T;
+              scenes?:
+                | T
+                | {
+                    title?: T;
+                    quote?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              duration?: T;
+              animationSpeed?: T;
+              backgroundType?: T;
+              backgroundImage?: T;
+              backgroundVideo?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
         paragraphText?:
           | T
           | {
@@ -744,45 +1279,46 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        featuredImage?:
+        socialShare?:
           | T
           | {
-              desktopImage?: T;
-              mobileImage?: T;
-              altText?: T;
-              caption?: T;
-              captionText?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
-              id?: T;
-              blockName?: T;
-            };
-        cta?:
-          | T
-          | {
-              label?: T;
-              message?: T;
+              title?: T;
               showTitle?: T;
-              link?: T;
-              backgroundType?: T;
-              backgroundColor?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
+              shareURL?: T;
+              shareText?: T;
+              shareButton?: T;
               id?: T;
               blockName?: T;
             };
-        animatedQuote?:
+        takeOver?:
           | T
           | {
-              quote?: T;
-              highlightedWords?: T;
-              author?: T;
-              backgroundType?: T;
-              backgroundColor?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
+              media?: T;
+              video?: T;
+              image?: T;
+              replayWithAudio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textCarousel?:
+          | T
+          | {
+              header?: T;
+              slides?:
+                | T
+                | {
+                    slideTitle?: T;
+                    showTitle?: T;
+                    slideBody?: T;
+                    backgroundType?: T;
+                    backgroundColor?: T;
+                    backgroundImage?: T;
+                    backgroundVideo?: T;
+                    id?: T;
+                  };
+              horizontalScrollPath?: T;
+              titleColor?: T;
+              subtextColor?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
               id?: T;
