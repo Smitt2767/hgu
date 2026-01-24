@@ -9,6 +9,7 @@ import CTA from './cta'
 import FeaturedImage from './featured-image'
 import JustTitle from './just-title'
 import ParagraphText from './paragraph-text'
+import SocialShare from './social-share'
 import TakeOver from './take-over'
 
 type RenderBlocksProps = {
@@ -27,6 +28,7 @@ const blockComponents: Partial<{
   cta: CTA,
   animatedQuote: AnimatedQuote,
   takeOver: TakeOver,
+  socialShare: SocialShare,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

@@ -24,7 +24,9 @@ export default function Alpha({
         )}
 
         <div className="flex justify-center mb-4">
-          <TextLinkButton onClick={() => setShowIframe(!showIframe)}>{buttonText}</TextLinkButton>
+          <TextLinkButton showArrow onClick={() => setShowIframe(!showIframe)}>
+            {buttonText}
+          </TextLinkButton>
         </div>
 
         {showPoweredBy && (

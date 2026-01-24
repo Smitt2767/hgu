@@ -32,7 +32,10 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
             <div key={index} className="accordion-item bg-card rounded-2xl overflow-hidden">
               <button
                 onClick={() => toggleQuestion(index)}
-                className="w-full flex items-center justify-between p-6 text-left group"
+                className={cn(
+                  'w-full flex items-center justify-between p-6 text-left group',
+                  openIndex === index ? 'rounded-t-2xl' : 'rounded-2xl',
+                )}
               >
                 <span className="text-lg font-bold text-foreground group-hover:text-primary transition-colors pr-4">
                   {item.questionText}
