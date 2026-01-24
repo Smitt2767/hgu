@@ -32,9 +32,6 @@ export const Footer: GlobalConfig = {
       maxRows: 6,
       admin: {
         initCollapsed: true,
-        components: {
-          RowLabel: '@/globals/footer/components/RowLabel#RowLabel',
-        },
       },
     },
   ],
