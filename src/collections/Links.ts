@@ -5,6 +5,7 @@ export const Links: CollectionConfig = {
   slug: 'links',
   admin: {
     description: 'Manage website and external links.',
+    useAsTitle: 'label',
   },
   access: {
     read: canRead,

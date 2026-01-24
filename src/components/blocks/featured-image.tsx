@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority'
 import { getImageProps } from 'next/image'
 
 const containerStyles = cva(
-  'block relative w-full [&_img]:object-cover [&_img]:object-center md:rounded-md overflow-hidden',
+  'block relative w-full [&_img]:object-cover [&_img]:object-center md:rounded-2xl overflow-hidden',
   {
     variants: {
       desktopAspectRatio: {

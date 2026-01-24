@@ -4,6 +4,7 @@ import { ComponentType } from 'react'
 import Accordion from './accordion'
 import Alpha from './alpha'
 import AlphaIFrame from './alpha-iframe'
+import CTA from './cta'
 import FeaturedImage from './featured-image'
 import JustTitle from './just-title'
 import ParagraphText from './paragraph-text'
@@ -21,6 +22,7 @@ const blockComponents: Partial<{
   justTitle: JustTitle,
   paragraphText: ParagraphText,
   featuredImage: FeaturedImage,
+  cta: CTA,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {
