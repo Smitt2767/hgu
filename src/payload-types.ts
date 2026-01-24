@@ -201,69 +201,97 @@ export interface Page {
   generateSlug?: boolean | null;
   slug: string;
   layout?:
-    | {
-        /**
-         * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
-         */
-        content: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
+    | (
+        | {
+            /**
+             * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
+             */
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
               [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        };
-        backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
-        /**
-         * Upload a looping video file (MP4 recommended). Only shown when Background is set to 'Video'.
-         */
-        backgroundVideo?: (number | null) | Media;
-        /**
-         * Upload a full background image.
-         */
-        backgroundImage?: (number | null) | Media;
-        /**
-         * Hex color value (e.g. #1A1A1A)
-         */
-        backgroundColor?: string | null;
-        /**
-         * Hex color value (e.g. #B0B0B0)
-         */
-        textColor?: string | null;
-        textAlignment?: ('left' | 'centered') | null;
-        verticalAlignment?: ('top' | 'center') | null;
-        multiLinesOfText?: ('off' | 'on') | null;
-        desktopAspectRatio?: ('16:9' | '4:3') | null;
-        mobileAspectRatio?: ('4:5' | '9:16') | null;
-        textAnimation?:
-          | (
-              | 'flashLineByLine'
-              | 'flashLineByLineNoFade'
-              | 'stackLineOnLine'
-              | 'appearWordByWord'
-              | 'appearParagraphByParagraph'
-              | 'none'
-            )
-          | null;
-        /**
-         * Words to highlight in yellow (#feda00). Enter words separated by commas to emphasize key phrases.
-         */
-        yellowWords?: string | null;
-        /**
-         * Show a progress bar for this section.
-         */
-        progressBar?: boolean | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'justText';
-      }[]
+            };
+            backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+            /**
+             * Upload a looping video file (MP4 recommended). Only shown when Background is set to 'Video'.
+             */
+            backgroundVideo?: (number | null) | Media;
+            /**
+             * Upload a full background image.
+             */
+            backgroundImage?: (number | null) | Media;
+            /**
+             * Hex color value (e.g. #1A1A1A)
+             */
+            backgroundColor?: string | null;
+            /**
+             * Hex color value (e.g. #B0B0B0)
+             */
+            textColor?: string | null;
+            textAlignment?: ('left' | 'centered') | null;
+            verticalAlignment?: ('top' | 'center') | null;
+            multiLinesOfText?: ('off' | 'on') | null;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            textAnimation?:
+              | (
+                  | 'flashLineByLine'
+                  | 'flashLineByLineNoFade'
+                  | 'stackLineOnLine'
+                  | 'appearWordByWord'
+                  | 'appearParagraphByParagraph'
+                  | 'none'
+                )
+              | null;
+            /**
+             * Words to highlight in yellow (#feda00). Enter words separated by commas to emphasize key phrases.
+             */
+            yellowWords?: string | null;
+            /**
+             * Show a progress bar for this section.
+             */
+            progressBar?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'justText';
+          }
+        | {
+            /**
+             * The heading text to display. Supports yellow highlighting by wrapping words in yellow span tags.
+             */
+            titleText: string;
+            /**
+             * Choose H1 through H3 to set the semantic heading level and size. H1 is largest, H3 is smallest.
+             */
+            headingLevel: 'h1' | 'h2' | 'h3';
+            /**
+             * Select Oswald (sans-serif, bold) or Merriweather (serif, elegant) for the title text.
+             */
+            fontFamily: 'oswald' | 'merriweather';
+            textAlignment?: ('left' | 'center' | 'right') | null;
+            /**
+             * Hex color value (e.g. #FFFFFF)
+             */
+            textColor?: string | null;
+            /**
+             * Words to highlight in yellow (#feda00). Use span tags with color style to emphasize key words.
+             */
+            yellowWords?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'justTitle';
+          }
+      )[]
     | null;
   meta?: {
     title?: string | null;
@@ -518,6 +546,18 @@ export interface PagesSelect<T extends boolean = true> {
               textAnimation?: T;
               yellowWords?: T;
               progressBar?: T;
+              id?: T;
+              blockName?: T;
+            };
+        justTitle?:
+          | T
+          | {
+              titleText?: T;
+              headingLevel?: T;
+              fontFamily?: T;
+              textAlignment?: T;
+              textColor?: T;
+              yellowWords?: T;
               id?: T;
               blockName?: T;
             };
