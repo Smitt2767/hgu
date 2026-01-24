@@ -12,6 +12,7 @@ export const AnimatedQuote: Block = {
     {
       name: 'quote',
       type: 'textarea',
+      localized: true,
       required: true,
       label: 'Quote',
       admin: {
@@ -21,6 +22,7 @@ export const AnimatedQuote: Block = {
     {
       name: 'highlightedWords',
       type: 'text',
+      localized: true,
       label: 'Highlighted Words',
       admin: {
         description:
@@ -30,6 +32,7 @@ export const AnimatedQuote: Block = {
     {
       name: 'author',
       type: 'text',
+      localized: true,
       label: 'Author',
       admin: {
         description: 'Name of the person being quoted.',

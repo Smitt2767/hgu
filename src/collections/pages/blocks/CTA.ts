@@ -12,6 +12,7 @@ export const CTA: Block = {
     {
       name: 'label',
       type: 'text',
+      localized: true,
       required: true,
       label: 'Label',
       admin: {
@@ -22,6 +23,7 @@ export const CTA: Block = {
     {
       name: 'message',
       type: 'text',
+      localized: true,
       label: 'Message',
       admin: {
         description:

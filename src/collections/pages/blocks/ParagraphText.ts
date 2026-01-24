@@ -12,6 +12,7 @@ export const ParagraphText: Block = {
     {
       name: 'content',
       type: 'richText',
+      localized: true,
       required: true,
       label: 'Content',
       admin: {
@@ -62,6 +63,7 @@ export const ParagraphText: Block = {
     {
       name: 'highlightedWords',
       type: 'text',
+      localized: true,
       label: 'Highlighted Words',
       admin: {
         description:

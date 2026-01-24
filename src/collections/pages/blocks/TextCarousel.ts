@@ -12,6 +12,7 @@ export const TextCarousel: Block = {
     {
       name: 'header',
       type: 'text',
+      localized: true,
       label: 'Header',
       admin: {
         description: 'Optional section title displayed above the carousel.',
@@ -27,6 +28,7 @@ export const TextCarousel: Block = {
         {
           name: 'slideTitle',
           type: 'text',
+          localized: true,
           label: 'Slide Title',
           admin: {
             description:
@@ -50,6 +52,7 @@ export const TextCarousel: Block = {
         {
           name: 'slideBody',
           type: 'richText',
+          localized: true,
           label: 'Slide Body',
           required: true,
           admin: {

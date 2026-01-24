@@ -11,6 +11,7 @@ export const SocialShare: Block = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       label: 'Title',
       admin: {
         description:
@@ -42,6 +43,7 @@ export const SocialShare: Block = {
     {
       name: 'shareText',
       type: 'text',
+      localized: true,
       label: 'Share Text',
       admin: {
         description: 'Default message text included when sharing via native share sheet.',
@@ -50,6 +52,7 @@ export const SocialShare: Block = {
     {
       name: 'shareButton',
       type: 'text',
+      localized: true,
       label: 'Share Button',
       required: true,
       admin: {

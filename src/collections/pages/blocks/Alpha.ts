@@ -11,6 +11,7 @@ export const Alpha: Block = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       label: 'Title',
       admin: {
         description: 'The main heading displayed above the button.',
@@ -19,6 +20,7 @@ export const Alpha: Block = {
     {
       name: 'buttonText',
       type: 'text',
+      localized: true,
       label: 'Button Text',
       admin: {
         description: 'The label for the action button that reveals the group finder.',
@@ -36,6 +38,7 @@ export const Alpha: Block = {
     {
       name: 'iframeHeader',
       type: 'text',
+      localized: true,
       label: 'Iframe Header',
       admin: {
         description: 'Supporting text displayed above the Alpha group finder when it is expanded.',

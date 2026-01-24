@@ -12,6 +12,7 @@ export const JustText: Block = {
     {
       name: 'content',
       type: 'richText',
+      localized: true,
       required: true,
       label: 'Content',
       admin: {
@@ -170,6 +171,7 @@ export const JustText: Block = {
     {
       name: 'highlightedWords',
       type: 'text',
+      localized: true,
       label: 'Highlighted Words',
       admin: {
         description:

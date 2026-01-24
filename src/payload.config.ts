@@ -8,10 +8,12 @@ import { fileURLToPath } from 'url'
 import { payloadTotp } from '@clocklimited/payload-2fa'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateURL } from '@payloadcms/plugin-seo/types'
+import { Articles } from './collections/Articles'
 import { Links } from './collections/Links'
 import { Media } from './collections/Media'
 import { Pages } from './collections/pages/config'
 import { Users } from './collections/Users'
+import { Videos } from './collections/Videos'
 import { clientEnv } from './env/client'
 import { serverEnv } from './env/server'
 import { Footer } from './globals/footer/config'
@@ -59,7 +61,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Links, Pages],
+  collections: [Media, Links, Articles, Videos, Pages, Users],
   db: postgresAdapter({
     pool: {
       connectionString: serverEnv.DATABASE_URL,

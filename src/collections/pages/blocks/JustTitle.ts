@@ -12,6 +12,7 @@ export const JustTitle: Block = {
     {
       name: 'titleText',
       type: 'text',
+      localized: true,
       required: true,
       label: 'Title Text',
       admin: {
@@ -83,6 +84,7 @@ export const JustTitle: Block = {
     {
       name: 'highlightedWords',
       type: 'text',
+      localized: true,
       label: 'Highlighted Words',
       admin: {
         description:

@@ -16,6 +16,7 @@ export const PauseExperience: Block = {
         {
           name: 'line',
           type: 'text',
+          localized: true,
           label: 'Line',
         },
       ],
@@ -27,6 +28,7 @@ export const PauseExperience: Block = {
     {
       name: 'subText',
       type: 'text',
+      localized: true,
       label: 'Sub Text',
       admin: {
         description: "Secondary instruction (e.g., 'Press play to begin').",
@@ -56,6 +58,7 @@ export const PauseExperience: Block = {
         {
           name: 'title',
           type: 'richText',
+          localized: true,
           label: 'Title',
           admin: {
             description:
@@ -65,6 +68,7 @@ export const PauseExperience: Block = {
         {
           name: 'quote',
           type: 'textarea',
+          localized: true,
           label: 'Quote',
           admin: {
             description: 'Italic text displayed in the scene.',
@@ -73,6 +77,7 @@ export const PauseExperience: Block = {
         {
           name: 'body',
           type: 'richText',
+          localized: true,
           label: 'Body',
           admin: {
             description: 'Rich text body content with line breaks.',

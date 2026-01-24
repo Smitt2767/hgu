@@ -11,6 +11,7 @@ export const CardCarousel: Block = {
     {
       name: 'header',
       type: 'text',
+      localized: true,
       label: 'Header',
       admin: {
         description: 'Optional section title displayed above the carousel.',
@@ -69,6 +70,7 @@ export const CardCarousel: Block = {
         {
           name: 'modalContent',
           type: 'richText',
+          localized: true,
           label: 'Modal Content',
           required: true,
           admin: {

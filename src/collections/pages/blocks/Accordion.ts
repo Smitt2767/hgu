@@ -11,6 +11,7 @@ export const Accordion: Block = {
     {
       name: 'headerText',
       type: 'text',
+      localized: true,
       label: 'Header Text',
       admin: {
         description:
@@ -27,6 +28,7 @@ export const Accordion: Block = {
         {
           name: 'questionText',
           type: 'text',
+          localized: true,
           label: 'Question Text',
           required: true,
           admin: {
@@ -37,6 +39,7 @@ export const Accordion: Block = {
         {
           name: 'answerText',
           type: 'richText',
+          localized: true,
           label: 'Answer Text',
           required: true,
           admin: {

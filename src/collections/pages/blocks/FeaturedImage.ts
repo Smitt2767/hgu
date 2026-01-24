@@ -39,6 +39,7 @@ export const FeaturedImage: Block = {
     {
       name: 'altText',
       type: 'text',
+      localized: true,
       required: true,
       label: 'Alt Text',
       admin: {
@@ -62,6 +63,7 @@ export const FeaturedImage: Block = {
     {
       name: 'captionText',
       type: 'text',
+      localized: true,
       label: 'Caption Text',
       admin: {
         description: 'Optional text displayed below the image to provide context.',

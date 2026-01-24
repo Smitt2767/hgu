@@ -11,6 +11,7 @@ export const Feedback: Block = {
     {
       name: 'questionText',
       type: 'text',
+      localized: true,
       label: 'Question Text',
       admin: {
         description:
@@ -20,6 +21,7 @@ export const Feedback: Block = {
     {
       name: 'yesButtonLabel',
       type: 'text',
+      localized: true,
       label: 'Yes Button Label',
       defaultValue: 'Yes',
       admin: {
@@ -29,6 +31,7 @@ export const Feedback: Block = {
     {
       name: 'noButtonLabel',
       type: 'text',
+      localized: true,
       label: 'No Button Label',
       defaultValue: 'No',
       admin: {
@@ -38,6 +41,7 @@ export const Feedback: Block = {
     {
       name: 'yesFormTitle',
       type: 'text',
+      localized: true,
       label: 'Yes Form Title',
       admin: {
         description: 'Title shown when user clicks Yes (e.g., "We\'re so glad...").',
@@ -46,6 +50,7 @@ export const Feedback: Block = {
     {
       name: 'noFormTitle',
       type: 'text',
+      localized: true,
       label: 'No Form Title',
       admin: {
         description: 'Title shown when user clicks No (e.g., "We\'d love to hear more...").',
@@ -130,6 +135,7 @@ export const Feedback: Block = {
     {
       name: 'backButton',
       type: 'text',
+      localized: true,
       label: 'Back Button',
       defaultValue: 'Back',
       admin: {
@@ -139,6 +145,7 @@ export const Feedback: Block = {
     {
       name: 'submitButton',
       type: 'text',
+      localized: true,
       label: 'Submit Button',
       defaultValue: 'Submit',
       admin: {
@@ -148,6 +155,7 @@ export const Feedback: Block = {
     {
       name: 'successTitle',
       type: 'text',
+      localized: true,
       label: 'Success Title',
       defaultValue: 'Thank You',
       admin: {
@@ -157,6 +165,7 @@ export const Feedback: Block = {
     {
       name: 'successDescription',
       type: 'textarea',
+      localized: true,
       label: 'Success Description',
       admin: {
         description: 'Message displayed after successful form submission.',
