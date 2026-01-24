@@ -42,7 +42,7 @@ export default function CTA({
             image={backgroundImage}
             video={backgroundVideo}
           />
-          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex flex-col items-center gap-8 p-4">
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex flex-col items-center gap-8 p-8">
             {showTitle === 'show' && message && <p className="text-2xl text-center">{message}</p>}
             {linkProps && <TextLinkButton {...linkProps} />}
           </div>
