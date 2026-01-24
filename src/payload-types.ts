@@ -200,7 +200,71 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
-  layout?: unknown[] | null;
+  layout?:
+    | {
+        /**
+         * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
+         */
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+        /**
+         * Upload a looping video file (MP4 recommended). Only shown when Background is set to 'Video'.
+         */
+        backgroundVideo?: (number | null) | Media;
+        /**
+         * Upload a full background image.
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * Hex color value (e.g. #1A1A1A)
+         */
+        backgroundColor?: string | null;
+        /**
+         * Hex color value (e.g. #B0B0B0)
+         */
+        textColor?: string | null;
+        textAlignment?: ('left' | 'centered') | null;
+        verticalAlignment?: ('top' | 'center') | null;
+        multiLinesOfText?: ('off' | 'on') | null;
+        desktopAspectRatio?: ('16:9' | '4:3') | null;
+        mobileAspectRatio?: ('4:5' | '9:16') | null;
+        textAnimation?:
+          | (
+              | 'flashLineByLine'
+              | 'flashLineByLineNoFade'
+              | 'stackLineOnLine'
+              | 'appearWordByWord'
+              | 'appearParagraphByParagraph'
+              | 'none'
+            )
+          | null;
+        /**
+         * Words to highlight in yellow (#feda00). Enter words separated by commas to emphasize key phrases.
+         */
+        yellowWords?: string | null;
+        /**
+         * Show a progress bar for this section.
+         */
+        progressBar?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'justText';
+      }[]
+    | null;
   meta?: {
     title?: string | null;
     /**
@@ -434,7 +498,30 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   generateSlug?: T;
   slug?: T;
-  layout?: T | {};
+  layout?:
+    | T
+    | {
+        justText?:
+          | T
+          | {
+              content?: T;
+              backgroundType?: T;
+              backgroundVideo?: T;
+              backgroundImage?: T;
+              backgroundColor?: T;
+              textColor?: T;
+              textAlignment?: T;
+              verticalAlignment?: T;
+              multiLinesOfText?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              textAnimation?: T;
+              yellowWords?: T;
+              progressBar?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   meta?:
     | T
     | {

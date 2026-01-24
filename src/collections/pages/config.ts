@@ -1,4 +1,5 @@
 import { canCreate, canDelete, canRead, canUpdate } from '@/access'
+import { JustText } from './blocks/JustText'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -60,7 +61,7 @@ export const Pages: CollectionConfig = {
               admin: {
                 initCollapsed: true,
               },
-              blocks: [],
+              blocks: [JustText],
             },
           ],
         },
