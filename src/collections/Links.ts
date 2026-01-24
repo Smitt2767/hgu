@@ -14,69 +14,54 @@ export const Links: CollectionConfig = {
   },
   fields: [
     {
-      type: 'row',
-      fields: [
+      name: 'label',
+      type: 'text',
+      label: 'Label',
+      required: true,
+      localized: true,
+    },
+    {
+      name: 'type',
+      type: 'radio',
+      admin: {
+        layout: 'horizontal',
+      },
+      defaultValue: 'reference',
+      options: [
         {
-          name: 'label',
-          type: 'text',
-          admin: {
-            width: '50%',
-          },
-          label: 'Label',
-          required: true,
-          localized: true,
+          label: 'Internal link',
+          value: 'reference',
         },
         {
-          name: 'type',
-          type: 'radio',
-          admin: {
-            layout: 'horizontal',
-            width: '50%',
-          },
-          defaultValue: 'reference',
-          options: [
-            {
-              label: 'Internal link',
-              value: 'reference',
-            },
-            {
-              label: 'Custom URL',
-              value: 'custom',
-            },
-          ],
-        },
-        {
-          name: 'newTab',
-          type: 'checkbox',
-          admin: {
-            width: '50%',
-            style: { alignSelf: 'center' },
-          },
-          label: 'Open in new tab',
-        },
-        {
-          name: 'reference',
-          type: 'relationship',
-          admin: {
-            condition: (_, siblingData) => siblingData?.type === 'reference',
-            width: '50%',
-          },
-          label: 'Document to link to',
-          relationTo: ['pages'],
-          required: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          admin: {
-            condition: (_, siblingData) => siblingData?.type === 'custom',
-            width: '50%',
-          },
           label: 'Custom URL',
-          required: true,
-          localized: true,
+          value: 'custom',
         },
       ],
+    },
+    {
+      name: 'reference',
+      type: 'relationship',
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === 'reference',
+      },
+      label: 'Document to link to',
+      relationTo: ['pages'],
+      required: true,
+    },
+    {
+      name: 'url',
+      type: 'text',
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === 'custom',
+      },
+      label: 'Custom URL',
+      required: true,
+      localized: true,
+    },
+    {
+      name: 'newTab',
+      type: 'checkbox',
+      label: 'Open in new tab',
     },
   ],
 }
