@@ -3,7 +3,7 @@ import { Block } from 'payload'
 
 export const JustText: Block = {
   slug: 'justText',
-  imageURL: '/images/just-text.png',
+  imageURL: '/images/blocks/just-text.png',
   labels: {
     singular: 'Just Text',
     plural: 'Just Text',

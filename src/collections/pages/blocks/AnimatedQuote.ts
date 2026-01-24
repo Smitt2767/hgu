@@ -3,7 +3,7 @@ import { Block } from 'payload'
 
 export const AnimatedQuote: Block = {
   slug: 'animatedQuote',
-  imageURL: '/images/animated-quote.png',
+  imageURL: '/images/blocks/animated-quote.png',
   labels: {
     singular: 'Animated Quote',
     plural: 'Animated Quote',

@@ -2,6 +2,8 @@ import { Page } from '@/payload-types'
 import { BlockType, GetBlockProps } from '@/types/blocks'
 import { ComponentType } from 'react'
 import Accordion from './accordion'
+import Alpha from './alpha'
+import AlphaIFrame from './alpha-iframe'
 
 type RenderBlocksProps = {
   data: Page['layout']
@@ -11,6 +13,8 @@ const blockComponents: Partial<{
   [K in BlockType]: ComponentType<GetBlockProps<K>>
 }> = {
   accordion: Accordion,
+  alpha: Alpha,
+  alphaIframe: AlphaIFrame,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

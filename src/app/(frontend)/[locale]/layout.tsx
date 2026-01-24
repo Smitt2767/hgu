@@ -1,3 +1,4 @@
+import { Merriweather } from 'next/font/google'
 import AdminBar from '@/components/admin-bar'
 import Maintenance from '@/components/maintenance'
 import { getSiteData } from '@/data/site'
@@ -12,6 +13,11 @@ import { draftMode } from 'next/headers'
 
 import { notFound } from 'next/navigation'
 import React from 'react'
+
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  weight: ['300', '400', '700', '900'],
+})
 
 export const generateStaticParams = () => {
   return routing.locales.map((locale) => ({ locale }))
@@ -93,7 +99,7 @@ export default async function LocaleLayout({
       <head>
         {brandingCss && <style dangerouslySetInnerHTML={{ __html: brandingCss }} />}
       </head>
-      <body>
+      <body className={merriweather.className}>
         <main>
           <NextIntlClientProvider locale={locale}>
             <AdminBar draft={isEnabled} />

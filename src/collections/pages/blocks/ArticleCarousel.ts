@@ -2,7 +2,7 @@ import { Block } from 'payload'
 
 export const ArticleCarousel: Block = {
   slug: 'articleCarousel',
-  imageURL: '/images/article-carousel.png',
+  imageURL: '/images/blocks/article-carousel.png',
   labels: {
     singular: 'Article Carousel',
     plural: 'Article Carousel',

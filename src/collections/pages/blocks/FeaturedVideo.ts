@@ -2,7 +2,7 @@ import { Block } from 'payload'
 
 export const FeaturedVideo: Block = {
   slug: 'featuredVideo',
-  imageURL: '/images/featured-video.png',
+  imageURL: '/images/blocks/featured-video.png',
   labels: {
     singular: 'Featured Video',
     plural: 'Featured Video',

@@ -2,7 +2,7 @@ import { Block } from 'payload'
 
 export const VideoCarousel: Block = {
   slug: 'videoCarousel',
-  imageURL: '/images/video-carousel.png',
+  imageURL: '/images/blocks/video-carousel.png',
   labels: {
     singular: 'Video Carousel',
     plural: 'Video Carousel',
