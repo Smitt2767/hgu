@@ -23,7 +23,7 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
     <div className="w-full px-6 py-12">
       <div className="max-w-3xl mx-auto">
         {headerText && (
-          <h2 className="font-sans text-2xl md:text-3xl font-bold text-foreground text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-8">
             {headerText}
           </h2>
         )}
@@ -34,7 +34,7 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
                 onClick={() => toggleQuestion(index)}
                 className="w-full flex items-center justify-between p-6 text-left group"
               >
-                <span className="font-sans text-lg font-bold text-foreground group-hover:text-primary transition-colors pr-4">
+                <span className="text-lg font-bold text-foreground group-hover:text-primary transition-colors pr-4">
                   {item.questionText}
                 </span>
                 <ChevronDown
@@ -51,7 +51,7 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
                 )}
               >
                 <div
-                  className="px-6 pb-6 font-sans text-gray-400 prose prose-invert prose-sm"
+                  className="px-6 pb-6 text-gray-400 prose prose-invert prose-sm"
                   dangerouslySetInnerHTML={{
                     __html: convertLexicalToHTML({ data: item.answerText }),
                   }}

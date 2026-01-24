@@ -18,7 +18,7 @@ export default function Alpha({
     <div className="w-full px-6 py-12">
       <div className="max-w-3xl mx-auto">
         {title && (
-          <h3 className="font-sans text-lg md:text-xl font-bold text-white text-center mb-6 max-w-md mx-auto leading-relaxed">
+          <h3 className="text-lg md:text-xl font-bold text-white text-center mb-6 max-w-md mx-auto leading-relaxed">
             {title}
           </h3>
         )}
@@ -48,7 +48,7 @@ export default function Alpha({
         {showIframe && (
           <div className="mt-8 animate-in slide-in-from-top-4 duration-300">
             {iframeHeader && (
-              <p className="font-sans text-base md:text-lg text-white/80 text-center mb-4 max-w-lg mx-auto leading-relaxed">
+              <p className="text-base md:text-lg text-white/80 text-center mb-4 max-w-lg mx-auto leading-relaxed">
                 {iframeHeader}
               </p>
             )}
