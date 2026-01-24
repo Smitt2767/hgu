@@ -4,6 +4,7 @@ import { getSiteData } from '@/data/site'
 import { clientEnv } from '@/env/client'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
+import { getBrandingCssVars } from '@/utils/color'
 import { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
@@ -85,8 +86,13 @@ export default async function LocaleLayout({
 
   const showMaintenancePage = Boolean(site?.maintenanceMode)
 
+  const brandingCss = getBrandingCssVars(site)
+
   return (
     <html lang={locale}>
+      <head>
+        {brandingCss && <style dangerouslySetInnerHTML={{ __html: brandingCss }} />}
+      </head>
       <body>
         <main>
           <NextIntlClientProvider locale={locale}>

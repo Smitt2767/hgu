@@ -536,6 +536,66 @@ export interface Site {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * Main brand colors used across the site.
+   */
+  primaryColors: {
+    /**
+     * #FEDA00
+     */
+    primaryGold: string;
+  };
+  /**
+   * Colors used for typography and text elements.
+   */
+  textColors: {
+    /**
+     * #FFFFFF
+     */
+    white: string;
+    /**
+     * #86888A
+     */
+    gray: string;
+    /**
+     * #FEDA00
+     */
+    primaryGold: string;
+  };
+  /**
+   * Background colors for card and box elements.
+   */
+  boxBackground: {
+    /**
+     * #444546
+     */
+    boxBgGray: string;
+  };
+  /**
+   * Neutral palette for backgrounds, surfaces, and borders.
+   */
+  neutrals: {
+    /**
+     * #0A0A0A
+     */
+    background: string;
+    /**
+     * #1A1A1A
+     */
+    surface: string;
+    /**
+     * #252525
+     */
+    border: string;
+    /**
+     * #FFFFFF
+     */
+    white: string;
+    /**
+     * #B0B0B0
+     */
+    gray: string;
+  };
   maintenanceMode?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -622,6 +682,32 @@ export interface SiteSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+      };
+  primaryColors?:
+    | T
+    | {
+        primaryGold?: T;
+      };
+  textColors?:
+    | T
+    | {
+        white?: T;
+        gray?: T;
+        primaryGold?: T;
+      };
+  boxBackground?:
+    | T
+    | {
+        boxBgGray?: T;
+      };
+  neutrals?:
+    | T
+    | {
+        background?: T;
+        surface?: T;
+        border?: T;
+        white?: T;
+        gray?: T;
       };
   maintenanceMode?: T;
   updatedAt?: T;
