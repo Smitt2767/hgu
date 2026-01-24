@@ -53,7 +53,6 @@ export const ParagraphText: Block = {
       name: 'textColor',
       type: 'text',
       label: 'Text Color',
-      defaultValue: '#d1d5db',
       validate: validateColor,
       admin: {
         position: 'sidebar',

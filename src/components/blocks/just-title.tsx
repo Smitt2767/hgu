@@ -3,7 +3,7 @@ import { GetBlockProps } from '@/types/blocks'
 import { cva } from 'class-variance-authority'
 import HighlightedText from '../ui/highlighted-text'
 
-const headingStyles = cva('', {
+const headingStyles = cva('text-foreground', {
   variants: {
     level: {
       h1: 'text-4xl',
@@ -37,11 +37,7 @@ export default function JustTitle({
       <div className="max-w-3xl mx-auto">
         <Heading
           className={headingStyles({ alignment: textAlignment, fontFamily, level: headingLevel })}
-          style={{
-            ...(textColor && {
-              color: textColor,
-            }),
-          }}
+          style={{ ...(textColor && { color: textColor }) }}
         >
           <HighlightedText text={titleText} words={highlightedWords} />
         </Heading>

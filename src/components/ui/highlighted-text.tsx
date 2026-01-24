@@ -21,7 +21,10 @@ export default function HighlightedText({ text, words }: HighlightedTextProps) {
   }
 
   // Create a regex pattern that matches any of the highlighted words (case-insensitive)
-  const pattern = new RegExp(`\\b(${wordsToHighlight.join('|')})\\b`, 'gi')
+  const pattern = new RegExp(
+    `\\b(${wordsToHighlight.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    'gi',
+  )
 
   // Split text by the pattern while keeping the matched words
   const parts = text.split(pattern)
@@ -29,13 +32,15 @@ export default function HighlightedText({ text, words }: HighlightedTextProps) {
   return (
     <>
       {parts.map((part, index) => {
+        if (!part) return null
+
         // Check if this part matches any highlighted word (case-insensitive)
         const isHighlighted = wordsToHighlight.some(
           (word) => word.toLowerCase() === part.toLowerCase(),
         )
 
         return isHighlighted ? (
-          <span key={index} className="text-primary font-semibold">
+          <span key={index} className="text-primary">
             {part}
           </span>
         ) : (
