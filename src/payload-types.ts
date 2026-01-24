@@ -302,6 +302,17 @@ export interface Page {
             blockType: 'animatedQuote';
           }
         | {
+            header?: string | null;
+            articles: (number | Article)[];
+            horizontalScrollPath?: boolean | null;
+            showHeader?: boolean | null;
+            showTitle?: boolean | null;
+            showDescription?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'articleCarousel';
+          }
+        | {
             /**
              * Optional section title displayed above the carousel.
              */
@@ -392,6 +403,15 @@ export interface Page {
             blockType: 'cta';
           }
         | {
+            article: number | Article;
+            showTitle?: boolean | null;
+            showDescription?: boolean | null;
+            showReadMore?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featuredArticle';
+          }
+        | {
             /**
              * The image displayed on desktop/tablet screens. Will scale to full width of the content area.
              */
@@ -414,6 +434,15 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'featuredImage';
+          }
+        | {
+            video: number | Video;
+            desktopAspectRatio?: ('16:9' | '4:3') | null;
+            mobileAspectRatio?: ('4:5' | '9:16') | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featuredVideo';
           }
         | {
             /**
@@ -805,6 +834,18 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'textCarousel';
+          }
+        | {
+            header?: string | null;
+            videos: (number | Video)[];
+            desktopAspectRatio?: ('9:16' | '16:9') | null;
+            mobileAspectRatio?: ('9:16' | '16:9') | null;
+            horizontalScrollPath?: boolean | null;
+            showHeader?: boolean | null;
+            showVideoTitles?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'videoCarousel';
           }
       )[]
     | null;
@@ -1257,6 +1298,18 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        articleCarousel?:
+          | T
+          | {
+              header?: T;
+              articles?: T;
+              horizontalScrollPath?: T;
+              showHeader?: T;
+              showTitle?: T;
+              showDescription?: T;
+              id?: T;
+              blockName?: T;
+            };
         cardCarousel?:
           | T
           | {
@@ -1292,6 +1345,16 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        featuredArticle?:
+          | T
+          | {
+              article?: T;
+              showTitle?: T;
+              showDescription?: T;
+              showReadMore?: T;
+              id?: T;
+              blockName?: T;
+            };
         featuredImage?:
           | T
           | {
@@ -1302,6 +1365,16 @@ export interface PagesSelect<T extends boolean = true> {
               captionText?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        featuredVideo?:
+          | T
+          | {
+              video?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              caption?: T;
               id?: T;
               blockName?: T;
             };
@@ -1445,6 +1518,19 @@ export interface PagesSelect<T extends boolean = true> {
               subtextColor?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
+              id?: T;
+              blockName?: T;
+            };
+        videoCarousel?:
+          | T
+          | {
+              header?: T;
+              videos?: T;
+              desktopAspectRatio?: T;
+              mobileAspectRatio?: T;
+              horizontalScrollPath?: T;
+              showHeader?: T;
+              showVideoTitles?: T;
               id?: T;
               blockName?: T;
             };

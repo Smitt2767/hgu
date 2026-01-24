@@ -11,9 +11,12 @@ import { Accordion } from './blocks/Accordion'
 import { Alpha } from './blocks/Alpha'
 import { AlphaIframe } from './blocks/AlphaIframe'
 import { AnimatedQuote } from './blocks/AnimatedQuote'
+import { ArticleCarousel } from './blocks/ArticleCarousel'
 import { CardCarousel } from './blocks/CardCarousel'
 import { CTA } from './blocks/CTA'
+import { FeaturedArticle } from './blocks/FeaturedArticle'
 import { FeaturedImage } from './blocks/FeaturedImage'
+import { FeaturedVideo } from './blocks/FeaturedVideo'
 import { Feedback } from './blocks/Feedback'
 import { JustText } from './blocks/JustText'
 import { JustTitle } from './blocks/JustTitle'
@@ -22,6 +25,7 @@ import { PauseExperience } from './blocks/PauseExperience'
 import { SocialShare } from './blocks/SocialShare'
 import { TakeOver } from './blocks/TakeOver'
 import { TextCarousel } from './blocks/TextCarousel'
+import { VideoCarousel } from './blocks/VideoCarousel'
 import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
 
@@ -80,9 +84,12 @@ export const Pages: CollectionConfig = {
                 Alpha,
                 AlphaIframe,
                 AnimatedQuote,
+                ArticleCarousel,
                 CardCarousel,
                 CTA,
+                FeaturedArticle,
                 FeaturedImage,
+                FeaturedVideo,
                 Feedback,
                 JustText,
                 JustTitle,
@@ -91,6 +98,7 @@ export const Pages: CollectionConfig = {
                 SocialShare,
                 TakeOver,
                 TextCarousel,
+                VideoCarousel,
               ],
             },
           ],
