@@ -11,7 +11,8 @@ import { GenerateURL } from '@payloadcms/plugin-seo/types'
 import { Articles } from './collections/Articles'
 import { Links } from './collections/Links'
 import { Media } from './collections/Media'
-import { Pages } from './collections/pages/config'
+import { Pages } from './collections/Pages'
+import { Templates } from './collections/Templates'
 import { Users } from './collections/Users'
 import { Videos } from './collections/Videos'
 import { clientEnv } from './env/client'
@@ -61,7 +62,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Media, Links, Articles, Videos, Pages, Users],
+  collections: [Media, Links, Articles, Videos, Templates, Pages, Users],
   db: postgresAdapter({
     pool: {
       connectionString: serverEnv.DATABASE_URL,

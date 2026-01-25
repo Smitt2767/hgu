@@ -1,5 +1,7 @@
+import RenderBlocks from '@/components/blocks'
+import VideoDetails from '@/components/content-details/video-details'
 import LivePreviewListener from '@/components/live-preview-listener'
-import { getVideo, getVideosSlugs } from '@/data/video'
+import { getVideosSlugs, getVideoWithTemplate } from '@/data/video'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { getDBSlug } from '@/utils/slug'
@@ -22,7 +24,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params
   const { isEnabled: draft } = await draftMode()
 
-  const video = await getVideo(getDBSlug(slug), locale, draft)
+  const video = await getVideoWithTemplate(getDBSlug(slug), locale, draft)
 
   const title = video?.meta?.title || video?.title
   const description = video?.meta?.description
@@ -40,13 +42,17 @@ export default async function VideoPage({
   const { locale, slug } = await params
   setRequestLocale(locale)
 
-  const video = await getVideo(getDBSlug(slug), locale, draft)
+  const video = await getVideoWithTemplate(getDBSlug(slug), locale, draft)
   if (!video) notFound()
+
+  // Determine which layout to use: custom layout or template layout
+  const layout = video.useCustomLayout ? video.layout : video.resolvedTemplate?.layout
 
   return (
     <>
       {draft && <LivePreviewListener />}
-      <div>video details goes here.</div>
+      <VideoDetails video={video} />
+      <RenderBlocks data={layout} />
     </>
   )
 }

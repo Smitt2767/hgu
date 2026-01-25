@@ -1,3 +1,4 @@
+import { DEFAULT_SLUG } from '@/constants'
 import { getTypedLocale } from '@/utils/i18n'
 import { getSiteSlug } from '@/utils/slug'
 import config from '@payload-config'
@@ -16,9 +17,10 @@ export const getPagesSlugs = cache(async () => {
       limit: 10,
     })
 
-    return data.docs.map((doc) => getSiteSlug(doc.slug))
+    const slugs = data.docs.map((doc) => getSiteSlug(doc.slug))
+    return slugs.length > 0 ? slugs : [DEFAULT_SLUG]
   } catch {
-    return []
+    return [DEFAULT_SLUG]
   }
 })
 

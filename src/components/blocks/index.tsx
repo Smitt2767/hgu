@@ -1,4 +1,4 @@
-import { Page } from '@/payload-types'
+import { Article, Page, Template, Video } from '@/payload-types'
 import { BlockType, GetBlockProps } from '@/types/blocks'
 import { ComponentType } from 'react'
 import Accordion from './accordion'
@@ -13,8 +13,11 @@ import ParagraphText from './paragraph-text'
 import SocialShare from './social-share'
 import TakeOver from './take-over'
 
+// Union of all layout types from different collections
+type LayoutData = Page['layout'] | Template['layout'] | Video['layout'] | Article['layout']
+
 type RenderBlocksProps = {
-  data: Page['layout']
+  data: LayoutData
 }
 
 const blockComponents: Partial<{

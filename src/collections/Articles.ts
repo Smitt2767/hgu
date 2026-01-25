@@ -9,6 +9,7 @@ import {
 import { CollectionConfig, slugField } from 'payload'
 import { generatePreviewPath } from './helpers'
 import { revalidateArticle } from './hooks'
+import { createTemplateFields } from './shared/template-fields'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
@@ -99,6 +100,10 @@ export const Articles: CollectionConfig = {
               hasGenerateFn: true,
             }),
           ],
+        },
+        {
+          label: 'Template',
+          fields: createTemplateFields('articles'),
         },
       ],
     },

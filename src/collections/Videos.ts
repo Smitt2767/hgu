@@ -9,6 +9,7 @@ import {
 import { CollectionConfig, slugField } from 'payload'
 import { generatePreviewPath } from './helpers'
 import { revalidateVideo } from './hooks'
+import { createTemplateFields } from './shared/template-fields'
 
 export const Videos: CollectionConfig = {
   slug: 'videos',
@@ -177,6 +178,10 @@ export const Videos: CollectionConfig = {
               hasGenerateFn: true,
             }),
           ],
+        },
+        {
+          label: 'Template',
+          fields: createTemplateFields('videos'),
         },
       ],
     },
