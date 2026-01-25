@@ -4,11 +4,10 @@ import { cn } from '@/lib/utils'
 import { GetBlockProps } from '@/types/blocks'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import { ChevronDown } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 // TODO: handle gsap animations
 export default function Accordion({ headerText, items }: GetBlockProps<'accordion'>) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const toggleQuestion = (index: number) => {
