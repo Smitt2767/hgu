@@ -1,3 +1,55 @@
 {
-  "title": "He Gets Us"
+  "common": {
+    "title": "He Gets Us",
+    "loading": "Loading...",
+    "dashboard": "Dashboard",
+    "maintenance": "Maintenance"
+  },
+  "pages": {
+    "articles": {
+      "title": "Articles"
+    },
+    "videos": {
+      "title": "Videos"
+    }
+  },
+  "blocks": {
+    "takeOver": {
+      "enableAudio": "Enable Audio",
+      "audioOn": "Audio On"
+    },
+    "socialShare": {
+      "copyLink": "Copy Link",
+      "copied": "Copied!"
+    },
+    "alpha": {
+      "poweredBy": "powered by alpha",
+      "iframeTitle": "Alpha Content"
+    },
+    "articleCarousel": {
+      "defaultAriaLabel": "Article Carousel"
+    }
+  },
+  "components": {
+    "article": {
+      "readMore": "Read More",
+      "readArticleAriaLabel": "Read article: {title}"
+    },
+    "mockContentHeader": {
+      "video": "Video",
+      "article": "Article",
+      "detailsPlaceholder": "{label} details goes here"
+    }
+  },
+  "ui": {
+    "carousel": {
+      "previousSlide": "Previous slide",
+      "nextSlide": "Next slide",
+      "goToSlide": "Go to slide {index} of {count}",
+      "slideIndicator": "Slide {current} of {count}"
+    }
+  },
+  "accessibility": {
+    "carouselPagination": "Carousel pagination"
+  }
 }

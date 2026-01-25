@@ -5,6 +5,7 @@ import { useShare } from '@/hooks/use-share'
 import { cn } from '@/lib/utils'
 import { GetBlockProps } from '@/types/blocks'
 import { CheckIcon, CopyIcon, Share2Icon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { TextLinkButton } from '../ui/text-link-button'
 
 export default function SocialShare({
@@ -16,6 +17,7 @@ export default function SocialShare({
 }: GetBlockProps<'socialShare'>) {
   const { copy, isCopied } = useCopyToClipboard()
   const { share, isCopied: isShareCopied } = useShare()
+  const t = useTranslations('blocks.socialShare')
 
   const handleCopyText = () => {
     if (isCopied) return
@@ -48,7 +50,7 @@ export default function SocialShare({
               )}
               onClick={handleCopyText}
             >
-              {isCopied ? <CheckIcon /> : <CopyIcon />} {isCopied ? 'Copied!' : 'Copy Link'}
+              {isCopied ? <CheckIcon /> : <CopyIcon />} {isCopied ? t('copied') : t('copyLink')}
             </TextLinkButton>
             <TextLinkButton
               className={cn(
@@ -59,7 +61,7 @@ export default function SocialShare({
               onClick={handleShare}
             >
               {isShareCopied ? <CheckIcon /> : <Share2Icon />}
-              <span className="sr-only">{isShareCopied ? 'Copied' : shareButton}</span>
+              <span className="sr-only">{isShareCopied ? t('copied') : shareButton}</span>
             </TextLinkButton>
           </div>
         </div>

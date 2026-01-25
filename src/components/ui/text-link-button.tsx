@@ -74,7 +74,7 @@ export function TextLinkButton({
   showArrow = false,
 }: TextLinkButtonProps) {
   const baseStyles = cn(
-    'group inline-flex items-center gap-3 font-display text-base lg:text-lg font-bold uppercase tracking-wider px-6 py-3 rounded-full border border-gray-700 text-white transition-all duration-200 hover:border-white',
+    'group cursor-pointer inline-flex items-center gap-3 font-display text-base lg:text-lg font-bold uppercase tracking-wider px-6 py-3 rounded-full border border-gray-700 text-white transition-all duration-200 hover:border-white',
     disabled && 'opacity-50 cursor-not-allowed',
     className,
   )

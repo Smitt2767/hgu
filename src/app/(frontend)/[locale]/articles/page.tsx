@@ -1,3 +1,3 @@
-export default function ArticlesPage() {
-  return <div>ArticlesPage</div>
+export default async function ArticlesPage() {
+  return <div></div>
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { GetBlockProps } from '@/types/blocks'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useState } from 'react'
 import { TextLinkButton } from '../ui/text-link-button'
@@ -13,6 +14,7 @@ export default function Alpha({
   showPoweredBy,
 }: GetBlockProps<'alpha'>) {
   const [showIframe, setShowIframe] = useState(false)
+  const t = useTranslations('blocks.alpha')
 
   return (
     <div className="w-full px-6 py-12">
@@ -41,7 +43,7 @@ export default function Alpha({
                 className="w-4 h-4"
               />
               <span className="text-[10px] font-heading font-medium text-black uppercase tracking-wider">
-                powered by alpha
+                {t('poweredBy')}
               </span>
             </div>
           </div>
@@ -57,7 +59,7 @@ export default function Alpha({
             <div className="w-full rounded-lg overflow-hidden border border-white/10 bg-white">
               <iframe
                 src={iframeURL}
-                title="Alpha Content"
+                title={t('iframeTitle')}
                 className="w-full h-[500px] md:h-[600px]"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; geolocation; gyroscope; picture-in-picture"
                 allowFullScreen

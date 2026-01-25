@@ -1,6 +1,7 @@
 import RenderBlocks from '@/components/blocks'
 import MockContentHeader from '@/components/content-details/mock-content-header'
 import LivePreviewListener from '@/components/live-preview-listener'
+import TemplateLoading from '@/components/ui/template-loading'
 import { DEFAULT_SLUG } from '@/constants'
 import { getTemplateById } from '@/data/template'
 import { routing } from '@/i18n/routing'
@@ -15,15 +16,6 @@ import { Suspense } from 'react'
 // Routes will be generated on-demand at request time
 export const generateStaticParams = async () =>
   routing.locales.map((locale) => ({ locale, id: DEFAULT_SLUG }))
-
-function TemplatePreviewLoading() {
-  return (
-    <div className="w-full h-[50vh] flex flex-col items-center justify-center gap-4">
-      <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      <p className="text-primary text-lg">Loading...</p>
-    </div>
-  )
-}
 
 async function TemplatePreviewContent({ id, locale }: { id: string; locale: string }) {
   const { isEnabled: draft } = await draftMode()
@@ -68,7 +60,7 @@ export default function TemplatePreviewPage({
   params: Promise<{ locale: string; id: string }>
 }) {
   return (
-    <Suspense fallback={<TemplatePreviewLoading />}>
+    <Suspense fallback={<TemplateLoading />}>
       <TemplatePreviewContentWrapper params={params} />
     </Suspense>
   )

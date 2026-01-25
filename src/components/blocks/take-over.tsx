@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { Media } from '@/payload-types'
 import { GetBlockProps } from '@/types/blocks'
 import { Volume2Icon, VolumeXIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -12,6 +13,7 @@ export default function TakeOver({ media, replayWithAudio, ...rest }: GetBlockPr
   const video = rest.video as Media | null
   const videoRef = useRef<HTMLVideoElement>(null)
   const [muted, setMuted] = useState(true)
+  const t = useTranslations('blocks.takeOver')
 
   const toggleMute = useCallback(() => {
     if (videoRef.current) {
@@ -64,7 +66,7 @@ export default function TakeOver({ media, replayWithAudio, ...rest }: GetBlockPr
               onClick={toggleMute}
             >
               {muted ? <Volume2Icon /> : <VolumeXIcon />}
-              {muted ? <span>Enable Audio</span> : <span>Audio On</span>}
+              {muted ? <span>{t('enableAudio')}</span> : <span>{t('audioOn')}</span>}
             </button>
           </>
         )}

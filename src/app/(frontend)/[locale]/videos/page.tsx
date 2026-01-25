@@ -1,3 +1,3 @@
-export default function VideosPage() {
-  return <div>VideosPage</div>
+export default async function VideosPage() {
+  return <div></div>
 }

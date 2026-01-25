@@ -6,6 +6,7 @@ import { Article } from '@/payload-types'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import { MoonIcon, SunIcon, XIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { ComponentProps, useState } from 'react'
 import { Button } from '../ui/button'
@@ -18,6 +19,7 @@ type ArticleDrawerProps = { article: Article; showReadMore?: boolean | null } & 
 
 function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDrawerProps) {
   const [dark, setDark] = useState(true)
+  const t = useTranslations('components.article')
 
   const linkButtonProps = getTextLinkButtonProps({ link: article.referenceLink })
 
@@ -65,7 +67,7 @@ function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDra
                 className="bg-primary border-primary text-primary-foreground hover:border-primary px-5 y-1 text-sm!"
                 {...linkButtonProps}
               >
-                Read More
+                {t('readMore')}
               </TextLinkButton>
             </>
           )}
@@ -89,6 +91,7 @@ export default function ArticleCard({
   className?: string
 }) {
   const modal = useModal()
+  const t = useTranslations('components.article')
 
   if (!article || typeof article !== 'object') return null
 
@@ -114,7 +117,7 @@ export default function ArticleCard({
             handleArticleRead()
           }
         }}
-        aria-label={`Read article: ${article.title}`}
+        aria-label={t('readArticleAriaLabel', { title: article.title })}
         className={cn(
           'relative rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer group bg-card focus-visible:bg-border hover:bg-border',
           className,

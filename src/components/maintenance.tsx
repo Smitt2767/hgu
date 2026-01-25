@@ -1,3 +1,8 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
+
 export default function Maintenance() {
-  return <div>Maintenance</div>
+  const t = useTranslations('common')
+  return <div>{t('maintenance')}</div>
 }

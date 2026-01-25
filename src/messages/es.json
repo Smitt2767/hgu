@@ -1,3 +1,55 @@
 {
-  "title": "Él nos atrapa"
+  "common": {
+    "title": "Él nos entiende",
+    "loading": "Cargando...",
+    "dashboard": "Panel de control",
+    "maintenance": "Mantenimiento"
+  },
+  "pages": {
+    "articles": {
+      "title": "Artículos"
+    },
+    "videos": {
+      "title": "Videos"
+    }
+  },
+  "blocks": {
+    "takeOver": {
+      "enableAudio": "Activar audio",
+      "audioOn": "Audio activado"
+    },
+    "socialShare": {
+      "copyLink": "Copiar enlace",
+      "copied": "¡Copiado!"
+    },
+    "alpha": {
+      "poweredBy": "impulsado por alpha",
+      "iframeTitle": "Contenido de Alpha"
+    },
+    "articleCarousel": {
+      "defaultAriaLabel": "Carrusel de artículos"
+    }
+  },
+  "components": {
+    "article": {
+      "readMore": "Leer más",
+      "readArticleAriaLabel": "Leer artículo: {title}"
+    },
+    "mockContentHeader": {
+      "video": "Video",
+      "article": "Artículo",
+      "detailsPlaceholder": "Los detalles de {label} van aquí"
+    }
+  },
+  "ui": {
+    "carousel": {
+      "previousSlide": "Diapositiva anterior",
+      "nextSlide": "Siguiente diapositiva",
+      "goToSlide": "Ir a la diapositiva {index} de {count}",
+      "slideIndicator": "Diapositiva {current} de {count}"
+    }
+  },
+  "accessibility": {
+    "carouselPagination": "Paginación del carrusel"
+  }
 }

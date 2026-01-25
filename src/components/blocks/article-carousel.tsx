@@ -3,6 +3,7 @@
 import { cn, loop } from '@/lib/utils'
 import { GetBlockProps } from '@/types/blocks'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import ArticleCard from '../article/card'
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
@@ -18,6 +19,9 @@ export default function ArticleCarousel({
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
+  const t = useTranslations('blocks.articleCarousel')
+  const tUI = useTranslations('ui.carousel')
+  const tA11y = useTranslations('accessibility')
 
   useEffect(() => {
     if (!api) {
@@ -50,7 +54,7 @@ export default function ArticleCarousel({
             }}
             setApi={setApi}
             className="w-full"
-            aria-label={header || 'Article Carousel'}
+            aria-label={header || t('defaultAriaLabel')}
           >
             <CarouselContent className="py-1">
               {articles.map((article, index) => {
@@ -76,18 +80,18 @@ export default function ArticleCarousel({
               disabled={!api?.canScrollPrev()}
               onClick={() => api?.scrollPrev()}
               className="p-3"
-              aria-label="Previous slide"
+              aria-label={tUI('previousSlide')}
             >
               <ChevronLeftIcon aria-hidden="true" />
-              <span className="sr-only">Previous slide</span>
+              <span className="sr-only">{tUI('previousSlide')}</span>
             </TextLinkButton>
-            <div className="flex gap-2" role="tablist" aria-label="Carousel pagination">
+            <div className="flex gap-2" role="tablist" aria-label={tA11y('carouselPagination')}>
               {loop(count).map((key, index) => (
                 <button
                   key={key}
                   role="tab"
                   aria-selected={index + 1 === current}
-                  aria-label={`Go to slide ${index + 1} of ${count}`}
+                  aria-label={tUI('goToSlide', { index: index + 1, count })}
                   onClick={() => api?.scrollTo(index)}
                   className={cn(
                     'h-2 rounded-full transition-all cursor-pointer bg-foreground/30 w-2',
@@ -100,14 +104,14 @@ export default function ArticleCarousel({
               disabled={!api?.canScrollNext()}
               onClick={() => api?.scrollNext()}
               className="p-3 hover:border-primary"
-              aria-label="Next slide"
+              aria-label={tUI('nextSlide')}
             >
               <ChevronRightIcon aria-hidden="true" />
-              <span className="sr-only">Next slide</span>
+              <span className="sr-only">{tUI('nextSlide')}</span>
             </TextLinkButton>
           </div>
           <div aria-live="polite" aria-atomic="true" className="sr-only">
-            Slide {current} of {count}
+            {tUI('slideIndicator', { current, count })}
           </div>
         </div>
       </div>
