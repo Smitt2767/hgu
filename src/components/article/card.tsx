@@ -107,7 +107,7 @@ export default function ArticleCard({
         open={modal.isOpen}
         onOpenChange={(open) => (open ? modal.open() : modal.close())}
       />
-      <article
+      <div
         role="button"
         tabIndex={0}
         onClick={handleArticleRead}
@@ -140,7 +140,7 @@ export default function ArticleCard({
             </p>
           )}
         </div>
-      </article>
+      </div>
     </>
   )
 }
