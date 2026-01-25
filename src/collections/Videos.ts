@@ -109,6 +109,31 @@ export const Videos: CollectionConfig = {
               label: 'Content',
               localized: true,
             },
+            {
+              name: 'generatedUrl',
+              type: 'text',
+              label: 'Generated URL',
+              virtual: true,
+              admin: {
+                readOnly: true,
+                description: 'Auto-generated video URL based on platform and video ID.',
+              },
+              hooks: {
+                afterRead: [
+                  ({ siblingData }) => {
+                    const { platform, videoId } = siblingData || {}
+                    if (!videoId) return null
+
+                    switch (platform) {
+                      case 'youtube':
+                        return `https://www.youtube.com/embed/${videoId}`
+                      default:
+                        return null
+                    }
+                  },
+                ],
+              },
+            },
           ],
         },
         {

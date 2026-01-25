@@ -947,6 +947,10 @@ export interface Video {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Auto-generated video URL based on platform and video ID.
+   */
+  generatedUrl?: string | null;
   meta?: {
     title?: string | null;
     /**
@@ -1237,6 +1241,7 @@ export interface VideosSelect<T extends boolean = true> {
   thumbnail?: T;
   videoThumbnail?: T;
   content?: T;
+  generatedUrl?: T;
   meta?:
     | T
     | {
