@@ -7,12 +7,28 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
+import { generatePreviewPath } from './helpers'
+import { revalidateArticle } from './hooks'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
   admin: {
     useAsTitle: 'title',
     description: 'Manage articles with content, images, and reference links.',
+    livePreview: {
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          prefixPath: '/articles',
+          slug: data?.slug,
+          req,
+        }),
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        prefixPath: '/articles',
+        slug: data?.slug as string,
+        req,
+      }),
   },
   access: {
     read: canRead,
@@ -87,4 +103,14 @@ export const Articles: CollectionConfig = {
       ],
     },
   ],
+  versions: {
+    drafts: {
+      schedulePublish: true,
+    },
+    maxPerDoc: 50,
+  },
+  hooks: {
+    afterChange: [revalidateArticle],
+    afterDelete: [revalidateArticle],
+  },
 }

@@ -7,12 +7,28 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { CollectionConfig, slugField } from 'payload'
+import { generatePreviewPath } from './helpers'
+import { revalidateVideo } from './hooks'
 
 export const Videos: CollectionConfig = {
   slug: 'videos',
   admin: {
     useAsTitle: 'title',
     description: 'Manage video embeds with thumbnails and metadata.',
+    livePreview: {
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          prefixPath: '/videos',
+          slug: data?.slug,
+          req,
+        }),
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        prefixPath: '/videos',
+        slug: data?.slug as string,
+        req,
+      }),
   },
   access: {
     read: canRead,
@@ -165,4 +181,14 @@ export const Videos: CollectionConfig = {
       ],
     },
   ],
+  versions: {
+    drafts: {
+      schedulePublish: true,
+    },
+    maxPerDoc: 50,
+  },
+  hooks: {
+    afterChange: [revalidateVideo],
+    afterDelete: [revalidateVideo],
+  },
 }

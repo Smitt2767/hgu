@@ -26,8 +26,8 @@ import { SocialShare } from './blocks/SocialShare'
 import { TakeOver } from './blocks/TakeOver'
 import { TextCarousel } from './blocks/TextCarousel'
 import { VideoCarousel } from './blocks/VideoCarousel'
-import { generatePreviewPath } from './helpers'
-import { revalidatePage } from './hooks'
+import { generatePreviewPath } from '../helpers'
+import { revalidatePage } from '../hooks'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',

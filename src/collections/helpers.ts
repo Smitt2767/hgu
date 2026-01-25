@@ -3,11 +3,12 @@ import { getSiteSlug } from '@/utils/slug'
 import { PayloadRequest } from 'payload'
 
 type Props = {
+  prefixPath?: '/videos' | '/articles'
   slug: string
   req: PayloadRequest
 }
 
-export const generatePreviewPath = ({ slug }: Props) => {
+export const generatePreviewPath = ({ slug, prefixPath }: Props) => {
   if (slug === undefined || slug === null) {
     return null
   }
@@ -15,7 +16,7 @@ export const generatePreviewPath = ({ slug }: Props) => {
   const encodedSlug = encodeURIComponent(slug)
 
   const encodedParams = new URLSearchParams({
-    path: `/${getSiteSlug(encodedSlug)}`,
+    path: `${prefixPath ?? ''}/${getSiteSlug(encodedSlug)}`,
     previewSecret: serverEnv.PREVIEW_SECRET,
   })
 
