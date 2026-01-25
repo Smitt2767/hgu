@@ -35,6 +35,9 @@
       "readMore": "Read More",
       "readArticleAriaLabel": "Read article: {title}"
     },
+    "video": {
+      "playVideo": "Play video: {title}"
+    },
     "mockContentHeader": {
       "video": "Video",
       "article": "Article",

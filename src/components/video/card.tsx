@@ -1,7 +1,10 @@
+'use client'
+
 import { mobileAndDesktopRatioStyleVariants } from '@/constants'
 import { Video } from '@/payload-types'
 import { cva } from 'class-variance-authority'
 import { PlayIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { ComponentProps } from 'react'
 
@@ -25,6 +28,8 @@ export default function VideoCard({
   mobileAspectRatio?: '9:16' | '4:5' | null
   onClick?: () => void
 }) {
+  const t = useTranslations('components.video')
+
   if (!video || typeof video !== 'object') return null
 
   const imageProps =
@@ -71,7 +76,8 @@ export default function VideoCard({
             onClick={onClick}
             className="absolute cursor-pointer top-1/2 left-1/2 -translate-1/2 w-20 h-20 rounded-full border-2 border-white/50 flex items-center justify-center bg-black/50 group-hover:border-white group-hover:scale-110 transition-all duration-300"
           >
-            <PlayIcon fill="currentColor" strokeWidth={0} />
+            <PlayIcon fill="currentColor" strokeWidth={0} aria-hidden="true" />
+            <span className="sr-only">{t('playVideo', { title: video.title || '' })}</span>
           </button>
           <div className="absolute -z-9 inset-0 bg-black/40 group-hover:bg-black/30 transition-colors rounded-2xl" />
         </>
