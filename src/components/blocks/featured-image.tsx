@@ -1,3 +1,4 @@
+import { mobileAndDesktopRatioStyleVariants } from '@/constants'
 import { Media } from '@/payload-types'
 import { GetBlockProps } from '@/types/blocks'
 import { cva } from 'class-variance-authority'
@@ -6,16 +7,7 @@ import { getImageProps } from 'next/image'
 const containerStyles = cva(
   'block relative w-full [&_img]:object-cover [&_img]:object-center md:rounded-2xl overflow-hidden',
   {
-    variants: {
-      desktopAspectRatio: {
-        '16:9': 'md:aspect-video',
-        '4:3': 'md:aspect-4/3',
-      },
-      mobileAspectRatio: {
-        '9:16': 'aspect-9/16',
-        '4:5': 'aspect-4/5',
-      },
-    },
+    variants: mobileAndDesktopRatioStyleVariants,
   },
 )
 
