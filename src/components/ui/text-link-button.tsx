@@ -1,9 +1,9 @@
 'use client'
 
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { Article, Link as LinkType, Page, Video } from '@/payload-types'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import * as React from 'react'
 
 interface TextLinkButtonProps {
