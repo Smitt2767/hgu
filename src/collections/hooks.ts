@@ -15,6 +15,7 @@ export function createRevalidateHook<T extends RevalidatableCollection>(tag: str
   return function revalidate({ doc, context }: AfterChangeArgs<T> | AfterDeleteArgs<T>): T {
     if (!context.disableRevalidate && doc._status === 'published') {
       revalidateTag(`${tag}:${doc.slug}`, 'max')
+      revalidateTag('sitemap', 'max')
     }
     return doc
   }
