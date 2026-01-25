@@ -40,7 +40,7 @@ export const generateMetadata = async ({
   const site = await getSiteData(locale)
 
   const title = site?.meta?.title || site?.title || ''
-  const description = site?.meta?.description || ''
+  const description = site?.meta?.description
   const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL
 
   const ogImage = getImageUrl(site?.meta?.image)

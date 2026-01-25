@@ -53,7 +53,7 @@ export default function ArticleCarousel({
               containScroll: false,
             }}
             setApi={setApi}
-            className="w-full"
+            className={cn('w-full transition-opacity duration-300', api ? 'opacity-100' : 'opacity-0')}
             aria-label={header || t('defaultAriaLabel')}
           >
             <CarouselContent className="py-1">
