@@ -3,7 +3,7 @@ import { getSiteSlug } from '@/utils/slug'
 import { PayloadRequest } from 'payload'
 
 type Props = {
-  prefixPath?: '/videos' | '/articles'
+  prefixPath?: '/videos' | '/articles' | '/templates'
   slug: string
   req: PayloadRequest
 }

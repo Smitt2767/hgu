@@ -2165,6 +2165,7 @@ export interface Template {
     | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Manage video embeds with thumbnails and metadata.
@@ -3873,6 +3874,7 @@ export interface TemplatesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -4522,6 +4524,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'videos';
           value: number | Video;
+        } | null)
+      | ({
+          relationTo: 'templates';
+          value: number | Template;
         } | null)
       | ({
           relationTo: 'pages';

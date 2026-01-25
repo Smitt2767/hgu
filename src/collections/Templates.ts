@@ -1,11 +1,12 @@
 import { canCreate, canRead, canUpdate } from '@/access'
 import { CollectionConfig } from 'payload'
+import { generatePreviewPath } from './helpers'
 import { templateBlocks } from './shared/template-blocks'
 import {
-  preventDefaultTemplateDeletion,
-  ensureSingleSystemDefault,
-  revalidateTemplate,
   canDeleteTemplate,
+  ensureSingleSystemDefault,
+  preventDefaultTemplateDeletion,
+  revalidateTemplate,
 } from './templates/hooks'
 
 export const Templates: CollectionConfig = {
@@ -14,6 +15,20 @@ export const Templates: CollectionConfig = {
     useAsTitle: 'name',
     description: 'Create and manage reusable templates for content pages (Videos, Articles, etc.).',
     defaultColumns: ['name', 'contentType', 'isDefault', 'isSystemDefault'],
+    livePreview: {
+      url: ({ data, req }) =>
+        generatePreviewPath({
+          prefixPath: '/templates',
+          slug: data?.id?.toString(),
+          req,
+        }),
+    },
+    preview: (data, { req }) =>
+      generatePreviewPath({
+        prefixPath: '/templates',
+        slug: data?.id?.toString() as string,
+        req,
+      }),
   },
   access: {
     read: canRead,
@@ -91,6 +106,12 @@ export const Templates: CollectionConfig = {
       ],
     },
   ],
+  versions: {
+    drafts: {
+      schedulePublish: true,
+    },
+    maxPerDoc: 50,
+  },
   hooks: {
     beforeChange: [ensureSingleSystemDefault],
     beforeDelete: [preventDefaultTemplateDeletion],

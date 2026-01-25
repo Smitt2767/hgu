@@ -83,3 +83,25 @@ export const getTemplatesByContentType = cache(async (contentType: ContentType, 
     return []
   }
 })
+
+/**
+ * Fetches a template by ID with draft mode support.
+ * Used for template preview pages.
+ */
+export const getTemplateById = async (id: string, locale: string, draft = false) => {
+  try {
+    const payload = await getPayload({ config })
+
+    const template = await payload.findByID({
+      collection: 'templates',
+      id,
+      locale: getTypedLocale(locale),
+      depth: 2,
+      draft,
+    })
+
+    return template ?? null
+  } catch {
+    return null
+  }
+}
