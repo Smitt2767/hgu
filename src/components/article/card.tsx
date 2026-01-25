@@ -62,7 +62,7 @@ function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDra
             <>
               <div className="border-b h-px mb-6" />
               <TextLinkButton
-                className="bg-primary border-primary text-primary-foreground hover:border-primary px-5 y-1 text-sm"
+                className="bg-primary border-primary text-primary-foreground hover:border-primary px-5 y-1 text-sm!"
                 {...linkButtonProps}
               >
                 Read More
