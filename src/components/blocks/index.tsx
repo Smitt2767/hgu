@@ -6,6 +6,7 @@ import Alpha from './alpha'
 import AlphaIFrame from './alpha-iframe'
 import AnimatedQuote from './animated-quote'
 import CTA from './cta'
+import FeaturedArticle from './featured-article'
 import FeaturedImage from './featured-image'
 import FeaturedVideo from './featured-video'
 import JustTitle from './just-title'
@@ -34,6 +35,7 @@ const blockComponents: Partial<{
   takeOver: TakeOver,
   socialShare: SocialShare,
   featuredVideo: FeaturedVideo,
+  featuredArticle: FeaturedArticle,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

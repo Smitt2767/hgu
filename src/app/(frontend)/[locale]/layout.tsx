@@ -102,7 +102,7 @@ export default async function LocaleLayout({
   const brandingCss = getBrandingCssVars(site)
 
   return (
-    <html lang={locale}>
+    <html className="dark" lang={locale}>
       <head>{brandingCss && <style dangerouslySetInnerHTML={{ __html: brandingCss }} />}</head>
       <body className={cn(merriweather.className, merriweather.variable, oswald.variable)}>
         <main>

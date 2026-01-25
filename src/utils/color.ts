@@ -92,5 +92,5 @@ export function getBrandingCssVars(site: Site | null): string {
     .map(([key, value]) => `${key}: ${hexToOklch(value)};`)
     .join(' ')
 
-  return `:root { ${vars} }`
+  return `.dark { ${vars} }`
 }
