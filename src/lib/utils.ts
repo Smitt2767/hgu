@@ -25,3 +25,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false
   }
 }
+
+export function loop(times: number) {
+  return Array.from({ length: times }, (_, i) => i)
+}

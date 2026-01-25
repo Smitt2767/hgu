@@ -5,6 +5,7 @@ import Accordion from './accordion'
 import Alpha from './alpha'
 import AlphaIFrame from './alpha-iframe'
 import AnimatedQuote from './animated-quote'
+import ArticleCarousel from './article-carousel'
 import CTA from './cta'
 import FeaturedArticle from './featured-article'
 import FeaturedImage from './featured-image'
@@ -27,15 +28,16 @@ const blockComponents: Partial<{
   accordion: Accordion,
   alpha: Alpha,
   alphaIframe: AlphaIFrame,
+  animatedQuote: AnimatedQuote,
+  articleCarousel: ArticleCarousel,
+  cta: CTA,
+  featuredArticle: FeaturedArticle,
+  featuredImage: FeaturedImage,
+  featuredVideo: FeaturedVideo,
   justTitle: JustTitle,
   paragraphText: ParagraphText,
-  featuredImage: FeaturedImage,
-  cta: CTA,
-  animatedQuote: AnimatedQuote,
-  takeOver: TakeOver,
   socialShare: SocialShare,
-  featuredVideo: FeaturedVideo,
-  featuredArticle: FeaturedArticle,
+  takeOver: TakeOver,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

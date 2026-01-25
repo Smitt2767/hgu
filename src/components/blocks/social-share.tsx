@@ -52,8 +52,9 @@ export default function SocialShare({
             </TextLinkButton>
             <TextLinkButton
               className={cn(
+                'p-3',
                 isShareCopied &&
-                  'bg-primary text-primary-foreground border-primary hover:border-primary ',
+                  'bg-primary text-primary-foreground border-primary hover:border-primary',
               )}
               onClick={handleShare}
             >

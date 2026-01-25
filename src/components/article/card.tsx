@@ -80,11 +80,13 @@ export default function ArticleCard({
   showTitle,
   showDescription,
   showReadMore,
+  className,
 }: {
   showTitle?: boolean | null
   showDescription?: boolean | null
   showReadMore?: boolean | null
   article?: Article | number | null
+  className?: string
 }) {
   const modal = useModal()
 
@@ -113,7 +115,10 @@ export default function ArticleCard({
           }
         }}
         aria-label={`Read article: ${article.title}`}
-        className="relative rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer group bg-card focus-visible:bg-border hover:bg-border"
+        className={cn(
+          'relative rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer group bg-card focus-visible:bg-border hover:bg-border',
+          className,
+        )}
       >
         <div className="relative overflow-hidden aspect-video">
           {article.image && typeof article.image === 'object' && (
