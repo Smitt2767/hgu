@@ -6,6 +6,7 @@ import Alpha from './alpha'
 import AlphaIFrame from './alpha-iframe'
 import AnimatedQuote from './animated-quote'
 import ArticleCarousel from './article-carousel'
+import CardCarousel from './card-carousel'
 import CTA from './cta'
 import FeaturedArticle from './featured-article'
 import FeaturedImage from './featured-image'
@@ -31,6 +32,7 @@ const blockComponents: Partial<{
   alphaIframe: AlphaIFrame,
   animatedQuote: AnimatedQuote,
   articleCarousel: ArticleCarousel,
+  cardCarousel: CardCarousel,
   cta: CTA,
   featuredArticle: FeaturedArticle,
   featuredImage: FeaturedImage,

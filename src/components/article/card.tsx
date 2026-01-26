@@ -33,7 +33,10 @@ function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDra
           <h2 className="font-sans text-2xl font-bold text-foreground mb-8">{article.title}</h2>
           {article.content && (
             <div
-              className={cn('prose prose-sm mb-6', isDark ? 'prose-invert' : 'prose-neutral')}
+              className={cn(
+                'prose prose-sm max-w-full mb-6',
+                isDark ? 'prose-invert' : 'prose-neutral',
+              )}
               dangerouslySetInnerHTML={{
                 __html: convertLexicalToHTML({ data: article.content }),
               }}
