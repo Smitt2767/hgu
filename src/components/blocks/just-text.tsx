@@ -36,7 +36,7 @@ export default function JustText({
 }: GetBlockProps<'justText'>) {
   console.log({ verticalAlignment })
   return (
-    <div className="w-full px-6 py-12">
+    <div className="w-full py-12">
       <div className="max-w-3xl mx-auto">
         <div
           style={{ ...(backgroundType === 'color' && backgroundColor && { backgroundColor }) }}
