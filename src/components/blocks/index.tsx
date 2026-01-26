@@ -15,6 +15,7 @@ import JustTitle from './just-title'
 import ParagraphText from './paragraph-text'
 import SocialShare from './social-share'
 import TakeOver from './take-over'
+import TextCarousel from './text-carousel'
 import VideoCarousel from './video-carousel'
 
 // Union of all layout types from different collections
@@ -41,6 +42,7 @@ const blockComponents: Partial<{
   paragraphText: ParagraphText,
   socialShare: SocialShare,
   takeOver: TakeOver,
+  textCarousel: TextCarousel,
   videoCarousel: VideoCarousel,
 }
 

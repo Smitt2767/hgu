@@ -36,6 +36,11 @@
       "defaultAriaLabel": "Tarjetas destacadas",
       "drawerTitle": "Detalles",
       "readCardAriaLabel": "Ver detalles"
+    },
+    "textCarousel": {
+      "defaultAriaLabel": "Carrusel de texto",
+      "drawerTitle": "Detalles",
+      "readSlideAriaLabel": "Ver detalles de la diapositiva"
     }
   },
   "components": {

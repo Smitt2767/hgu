@@ -36,6 +36,11 @@
       "defaultAriaLabel": "Featured Cards",
       "drawerTitle": "Details",
       "readCardAriaLabel": "View details"
+    },
+    "textCarousel": {
+      "defaultAriaLabel": "Text Carousel",
+      "drawerTitle": "Details",
+      "readSlideAriaLabel": "View slide details"
     }
   },
   "components": {
