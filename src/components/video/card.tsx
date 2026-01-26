@@ -17,16 +17,20 @@ const containerStyles = cva(
 
 export default function VideoCard({
   video,
+  className,
   showVideo,
+  showOverlay,
   desktopAspectRatio,
   mobileAspectRatio,
   onClick,
 }: {
   video?: number | Video | null
   showVideo?: boolean
-  desktopAspectRatio?: '16:9' | '4:3' | null
-  mobileAspectRatio?: '9:16' | '4:5' | null
+  desktopAspectRatio?: '9:16' | '16:9' | '4:3' | null
+  mobileAspectRatio?: '9:16' | '16:9' | '4:5' | null
   onClick?: () => void
+  className?: string
+  showOverlay?: boolean
 }) {
   const t = useTranslations('components.video')
 
@@ -60,7 +64,7 @@ export default function VideoCard({
       : null
 
   return (
-    <div className={containerStyles({ desktopAspectRatio, mobileAspectRatio })}>
+    <div className={containerStyles({ desktopAspectRatio, mobileAspectRatio, className })}>
       {showVideo ? (
         <iframe
           title={video.title!}
@@ -79,7 +83,9 @@ export default function VideoCard({
             <PlayIcon fill="currentColor" strokeWidth={0} aria-hidden="true" />
             <span className="sr-only">{t('playVideo', { title: video.title || '' })}</span>
           </button>
-          <div className="absolute -z-9 inset-0 bg-black/40 group-hover:bg-black/30 transition-colors rounded-2xl" />
+          {showOverlay && (
+            <div className="absolute -z-9 inset-0 bg-black/40 group-hover:bg-black/30 transition-colors rounded-2xl" />
+          )}
         </>
       )}
     </div>

@@ -28,6 +28,9 @@
     },
     "articleCarousel": {
       "defaultAriaLabel": "Carrusel de artículos"
+    },
+    "videoCarousel": {
+      "defaultAriaLabel": "Carrusel de videos"
     }
   },
   "components": {

@@ -14,6 +14,7 @@ import JustTitle from './just-title'
 import ParagraphText from './paragraph-text'
 import SocialShare from './social-share'
 import TakeOver from './take-over'
+import VideoCarousel from './video-carousel'
 
 // Union of all layout types from different collections
 type LayoutData = Page['layout'] | Template['layout'] | Video['layout'] | Article['layout']
@@ -38,6 +39,7 @@ const blockComponents: Partial<{
   paragraphText: ParagraphText,
   socialShare: SocialShare,
   takeOver: TakeOver,
+  videoCarousel: VideoCarousel,
 }
 
 export default function RenderBlocks({ data }: RenderBlocksProps) {

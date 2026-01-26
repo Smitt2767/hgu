@@ -18,7 +18,13 @@ export default function FeaturedVideo({ caption, video, ...rest }: GetBlockProps
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col gap-4">
           <h3 className="text-foreground text-xl font-semibold text-center">{video.title}</h3>
-          <VideoCard {...rest} showVideo={showVideo} video={video} onClick={handleShowVideo} />
+          <VideoCard
+            showOverlay
+            {...rest}
+            showVideo={showVideo}
+            video={video}
+            onClick={handleShowVideo}
+          />
           {caption && <p className="text-center text-gray-400 text-sm">{caption}</p>}
         </div>
       </div>

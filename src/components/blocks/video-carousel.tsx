@@ -1,20 +1,18 @@
-'use client'
-
 import { GetBlockProps } from '@/types/blocks'
 import { useTranslations } from 'next-intl'
-import ArticleCard from '../article/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNavigation } from '../ui/carousel'
+import VideoCard from '../video/card'
 
-export default function ArticleCarousel({
-  articles,
+export default function VideoCarousel({
   header,
-  showTitle,
   showHeader,
-  showDescription,
-}: GetBlockProps<'articleCarousel'>) {
-  const t = useTranslations('blocks.articleCarousel')
-
-  if (articles.length === 0) return null
+  showVideoTitles,
+  desktopAspectRatio,
+  mobileAspectRatio,
+  videos,
+  horizontalScrollPath,
+}: GetBlockProps<'videoCarousel'>) {
+  const t = useTranslations('blocks.videoCarousel')
 
   return (
     <div className="w-full py-12">
@@ -31,18 +29,21 @@ export default function ArticleCarousel({
             aria-label={header || t('defaultAriaLabel')}
           >
             <CarouselContent className="py-1">
-              {articles.map((article) => {
-                if (!article || typeof article !== 'object') return null
+              {videos.map((video) => {
+                if (!video || typeof video !== 'object') return null
 
                 return (
-                  <CarouselItem className="basis-[80%] md:basis-[48%]" key={article.id}>
-                    <ArticleCard
-                      showReadMore
-                      article={article}
-                      showTitle={showTitle}
-                      showDescription={showDescription}
-                      className="h-full"
+                  <CarouselItem className="basis-[80%] md:basis-[48%]" key={video.id}>
+                    <VideoCard
+                      desktopAspectRatio={desktopAspectRatio}
+                      mobileAspectRatio={mobileAspectRatio}
+                      video={video}
                     />
+                    {showVideoTitles && (
+                      <p className="text-white text-sm font-medium mt-3 text-center">
+                        {video.title}
+                      </p>
+                    )}
                   </CarouselItem>
                 )
               })}
