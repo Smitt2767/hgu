@@ -22,7 +22,7 @@ export function ThemedDrawer({
   const [dark, setDark] = useState(true)
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer autoFocus open={open} onOpenChange={onOpenChange}>
       <DrawerContent className={cn('max-w-3xl mx-auto', !dark && 'light', className)}>
         <DrawerTitle className="sr-only">{title}</DrawerTitle>
         <DrawerHeader className="flex flex-row items-center justify-between border-b pt-0">
