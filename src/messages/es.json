@@ -31,6 +31,11 @@
     },
     "videoCarousel": {
       "defaultAriaLabel": "Carrusel de videos"
+    },
+    "cardCarousel": {
+      "defaultAriaLabel": "Tarjetas destacadas",
+      "drawerTitle": "Detalles",
+      "readCardAriaLabel": "Ver detalles"
     }
   },
   "components": {

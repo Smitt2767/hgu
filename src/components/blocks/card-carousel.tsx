@@ -52,6 +52,7 @@ function CardDrawer({
 
 function Card({ card, desktopAspectRatio, mobileAspectRatio }: CardProps) {
   const modal = useModal()
+  const t = useTranslations('blocks.cardCarousel')
 
   const handleRead = () => {
     modal.open()
@@ -62,7 +63,7 @@ function Card({ card, desktopAspectRatio, mobileAspectRatio }: CardProps) {
       <CardDrawer
         open={modal.isOpen}
         onOpenChange={(value) => (value ? modal.open() : modal.close())}
-        title="Card content"
+        title={t('drawerTitle')}
         content={card.modalContent}
       />
       <div
@@ -75,7 +76,7 @@ function Card({ card, desktopAspectRatio, mobileAspectRatio }: CardProps) {
             handleRead()
           }
         }}
-        aria-label="Read card content"
+        aria-label={t('readCardAriaLabel')}
         className={containerStyles({ desktopAspectRatio, mobileAspectRatio })}
       >
         {card.mediaType === 'image' && card.cardImage && typeof card.cardImage === 'object' && (
@@ -110,7 +111,7 @@ export default function CardCarousel({
   mobileAspectRatio,
   header,
 }: CardCarouselProps) {
-  const t = useTranslations('blocks.videoCarousel')
+  const t = useTranslations('blocks.cardCarousel')
 
   return (
     <div className="w-full py-12">
