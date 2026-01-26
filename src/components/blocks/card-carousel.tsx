@@ -2,7 +2,6 @@
 
 import { mobileAndDesktopRatioStyleVariants } from '@/constants'
 import useModal from '@/hooks/use-modal'
-import { cn } from '@/lib/utils'
 import { GetBlockProps } from '@/types/blocks'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import { cva } from 'class-variance-authority'
@@ -34,18 +33,15 @@ function CardDrawer({
 }: { content: Card['modalContent'] } & Omit<ComponentProps<typeof ThemedDrawer>, 'children'>) {
   return (
     <ThemedDrawer {...props}>
-      {(isDark) => (
-        <div className="p-4 overflow-y-auto">
-          {content && (
-            <div
-              className={cn('prose prose-sm max-w-full', isDark ? 'prose-invert' : 'prose-neutral')}
-              dangerouslySetInnerHTML={{
-                __html: convertLexicalToHTML({ data: content }),
-              }}
-            />
-          )}
-        </div>
-      )}
+      <div className="p-4 overflow-y-auto">
+        {content && (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: convertLexicalToHTML({ data: content }),
+            }}
+          />
+        )}
+      </div>
     </ThemedDrawer>
   )
 }

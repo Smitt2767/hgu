@@ -53,7 +53,7 @@ export default function Accordion({ headerText, items }: GetBlockProps<'accordio
                 )}
               >
                 <div
-                  className="px-6 pb-6 text-gray-400 max-w-full prose prose-invert prose-sm"
+                  className="px-6 pb-6 text-gray-400"
                   dangerouslySetInnerHTML={{
                     __html: convertLexicalToHTML({ data: item.answerText }),
                   }}

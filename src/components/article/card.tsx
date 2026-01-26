@@ -23,38 +23,33 @@ function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDra
 
   return (
     <ThemedDrawer open={open} onOpenChange={onOpenChange} title={article.title}>
-      {(isDark) => (
-        <div className="p-4 overflow-y-auto">
-          <div className="relative overflow-hidden aspect-video rounded-2xl mb-4">
-            {article.image && typeof article.image === 'object' && (
-              <Image alt={article.image.alt} src={article.image.url!} fill sizes="100vw" priority />
-            )}
-          </div>
-          <h2 className="font-sans text-2xl font-bold text-foreground mb-8">{article.title}</h2>
-          {article.content && (
-            <div
-              className={cn(
-                'prose prose-sm max-w-full mb-6',
-                isDark ? 'prose-invert' : 'prose-neutral',
-              )}
-              dangerouslySetInnerHTML={{
-                __html: convertLexicalToHTML({ data: article.content }),
-              }}
-            />
-          )}
-          {showReadMore && (
-            <>
-              <div className="border-b h-px mb-6" />
-              <TextLinkButton
-                className="bg-primary border-primary text-primary-foreground hover:border-primary px-5 y-1 text-sm!"
-                {...linkButtonProps}
-              >
-                {t('readMore')}
-              </TextLinkButton>
-            </>
+      <div className="p-4 overflow-y-auto">
+        <div className="relative overflow-hidden aspect-video rounded-2xl mb-4">
+          {article.image && typeof article.image === 'object' && (
+            <Image alt={article.image.alt} src={article.image.url!} fill sizes="100vw" priority />
           )}
         </div>
-      )}
+        <h2 className="font-sans text-2xl font-bold text-foreground mb-8">{article.title}</h2>
+        {article.content && (
+          <div
+            className="mb-6"
+            dangerouslySetInnerHTML={{
+              __html: convertLexicalToHTML({ data: article.content }),
+            }}
+          />
+        )}
+        {showReadMore && (
+          <>
+            <div className="border-b h-px mb-6" />
+            <TextLinkButton
+              className="bg-primary border-primary text-primary-foreground hover:border-primary px-5 y-1 text-sm!"
+              {...linkButtonProps}
+            >
+              {t('readMore')}
+            </TextLinkButton>
+          </>
+        )}
+      </div>
     </ThemedDrawer>
   )
 }

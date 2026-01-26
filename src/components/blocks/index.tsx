@@ -11,6 +11,7 @@ import CTA from './cta'
 import FeaturedArticle from './featured-article'
 import FeaturedImage from './featured-image'
 import FeaturedVideo from './featured-video'
+import JustText from './just-text'
 import JustTitle from './just-title'
 import ParagraphText from './paragraph-text'
 import SocialShare from './social-share'
@@ -38,6 +39,7 @@ const blockComponents: Partial<{
   featuredArticle: FeaturedArticle,
   featuredImage: FeaturedImage,
   featuredVideo: FeaturedVideo,
+  justText: JustText,
   justTitle: JustTitle,
   paragraphText: ParagraphText,
   socialShare: SocialShare,

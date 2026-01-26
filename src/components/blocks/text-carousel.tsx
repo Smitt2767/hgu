@@ -22,20 +22,17 @@ type SlideCardProps = {
   subtextColor?: string | null
 } & Pick<TextCarouselProps, 'desktopAspectRatio' | 'mobileAspectRatio'>
 
-const containerStyles = cva(
-  'bg-black p-6 relative w-full rounded-2xl overflow-hidden cursor-pointer',
-  {
-    variants: {
-      ...mobileAndDesktopRatioStyleVariants,
-      backgroundType: {
-        none: 'border border-border bg-transparent',
-        color: 'bg-card',
-        image: '',
-        video: '',
-      },
+const containerStyles = cva('relative w-full rounded-2xl overflow-hidden cursor-pointer', {
+  variants: {
+    ...mobileAndDesktopRatioStyleVariants,
+    backgroundType: {
+      none: 'border border-border bg-transparent',
+      color: 'bg-card',
+      image: 'bg-black',
+      video: 'bg-black',
     },
   },
-)
+})
 
 function SlideDrawer({
   content,
@@ -112,7 +109,7 @@ function SlideCard({
                 fill
                 priority
                 sizes="100vw"
-                alt={slide.backgroundImage.alt || ''}
+                alt={slide.backgroundImage.alt}
                 src={slide.backgroundImage.url!}
                 className="object-cover object-center z-0 opacity-40 pointer-events-none"
               />
@@ -137,7 +134,7 @@ function SlideCard({
           )}
 
         {/* Text Content */}
-        <div className="relative z-10 pointer-events-none">
+        <div className="pointer-events-none absolute inset-0 p-6">
           {slide.showTitle === 'on' && slide.slideTitle && (
             <h3
               className="text-xl font-semibold mb-2 line-clamp-2 text-foreground"
