@@ -1,7 +1,38 @@
+'use client'
+
+import { Video } from '@/payload-types'
 import { GetBlockProps } from '@/types/blocks'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import { Carousel, CarouselContent, CarouselItem, CarouselNavigation } from '../ui/carousel'
 import VideoCard from '../video/card'
+
+function Card({
+  video,
+  showVideoTitles,
+  desktopAspectRatio,
+  mobileAspectRatio,
+}: { video: Video } & Pick<
+  GetBlockProps<'videoCarousel'>,
+  'desktopAspectRatio' | 'mobileAspectRatio' | 'showVideoTitles'
+>) {
+  const [showVideo, setShowVideo] = useState(false)
+
+  return (
+    <>
+      <VideoCard
+        showVideo={showVideo}
+        desktopAspectRatio={desktopAspectRatio}
+        mobileAspectRatio={mobileAspectRatio}
+        video={video}
+        onClick={() => setShowVideo(true)}
+      />
+      {showVideoTitles && (
+        <p className="text-white text-sm font-medium mt-3 text-center">{video.title}</p>
+      )}
+    </>
+  )
+}
 
 export default function VideoCarousel({
   header,
@@ -34,16 +65,12 @@ export default function VideoCarousel({
 
                 return (
                   <CarouselItem className="basis-[80%] md:basis-[48%]" key={video.id}>
-                    <VideoCard
+                    <Card
+                      video={video}
                       desktopAspectRatio={desktopAspectRatio}
                       mobileAspectRatio={mobileAspectRatio}
-                      video={video}
+                      showVideoTitles={showVideoTitles}
                     />
-                    {showVideoTitles && (
-                      <p className="text-white text-sm font-medium mt-3 text-center">
-                        {video.title}
-                      </p>
-                    )}
                   </CarouselItem>
                 )
               })}
