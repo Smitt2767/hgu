@@ -9,6 +9,7 @@ import { payloadTotp } from '@clocklimited/payload-2fa'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateURL } from '@payloadcms/plugin-seo/types'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { Articles } from './collections/Articles'
 import { Links } from './collections/Links'
 import { Media } from './collections/Media'
@@ -92,6 +93,38 @@ export default buildConfig({
   plugins: [
     seoPlugin({
       generateURL,
+    }),
+    // Vercel's filesystem is ephemeral and read-only outside /tmp, so `upload: true`
+    // on Media cannot persist anything there. Blob replaces the disk in deployed
+    // environments; with no token (i.e. local dev) the adapter turns itself off and
+    // uploads go to ./media as before.
+    vercelBlobStorage({
+      collections: {
+        media: {
+          // Serve media straight from Blob's CDN instead of proxying it through
+          // this app. Left at the default, `url` stays `/api/media/file/<name>`
+          // and every image costs a function invocation plus egress while
+          // bypassing the CDN entirely — the bytes still come from Blob either
+          // way. Media.access.read is already `() => true` and the store is
+          // public, so routing through Payload's access control protects nothing.
+          //
+          // Revisit this if any media ever needs to be non-public: the flag is
+          // what enforces that, and `url` is recomputed on read (see the
+          // afterRead hook in plugin-cloud-storage), so flipping it back applies
+          // to existing documents with no migration.
+          disablePayloadAccessControl: true,
+        },
+      },
+      token: serverEnv.BLOB_READ_WRITE_TOKEN,
+      // Intended to keep the adapter's `prefix` field in the schema even when the
+      // adapter is off. It does not actually do that in 3.71.1 (the wrapper returns
+      // before honouring it), which is why Media declares `prefix` itself — see the
+      // comment there. Kept because it becomes the default in Payload v4.
+      alwaysInsertFields: true,
+      // Admin uploads normally POST the file through a serverless function, which
+      // caps request bodies at 4.5 MB. This uploads from the browser straight to
+      // Blob instead, so large media does not hit that ceiling.
+      clientUploads: true,
     }),
     payloadTotp({
       collection: 'users',

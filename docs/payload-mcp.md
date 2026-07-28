@@ -498,7 +498,156 @@ real MCP write. Documents left as drafts stay invisible by design (§6.5).
 Issue **one API key per environment per agent**. Enable MCP on staging before production, and never
 point a key at an admin-privileged user (§3).
 
-## 8. Practical recommendations
+## 8. Hosting on Vercel
+
+This is how **this** repo is deployed. Unlike Cloudflare Workers (§7), Vercel runs Next.js route
+handlers on a Node runtime, so both of the §7 blockers disappear: `new Function` is permitted and the
+TypeScript compiler can be bundled. The MCP endpoint works on Vercel with no code changes to the
+plugin — but several things around it do need configuring.
+
+### The transport is already serverless-shaped
+
+`mcp-handler` builds a **fresh `McpServer` and transport per POST** and defaults `sessionIdGenerator`
+to undefined, i.e. stateless. Nothing is held between requests, so a new lambda instance per call is
+fine and **no Redis is needed**. `mcp-handler` does depend on `redis`, and its `REDIS_URL` is only
+consulted on the legacy SSE path — which this plugin never registers (§3). Ignore it.
+
+### `typescript` must be a runtime dependency
+
+`convertCollectionSchemaToZod` does `import * as ts from 'typescript'` on every request, but
+`@payloadcms/plugin-mcp` does **not** declare `typescript` in its own dependencies — it borrows the
+host project's copy. If it sits in `devDependencies`, any install that skips dev dependencies
+produces a lambda that throws `Cannot find module 'typescript'` on the first MCP call while the rest
+of the site works perfectly.
+
+It is in `dependencies` in this repo for that reason. Verified in the build output: the
+`/api/[...slug]` function traces 25 `typescript/lib` files, and the whole function is ~64 MB against
+Vercel's 250 MB uncompressed limit (`sharp` is the larger half at ~35 MB).
+
+### Media must move off the filesystem
+
+Vercel's filesystem is read-only apart from `/tmp`, and `/tmp` does not survive the invocation, so
+`upload: true` on its own cannot persist anything. `@payloadcms/storage-vercel-blob` replaces the disk:
+
+```ts
+vercelBlobStorage({
+  collections: { media: true },
+  token: serverEnv.BLOB_READ_WRITE_TOKEN,   // undefined ⇒ adapter disables itself
+  alwaysInsertFields: true,
+  clientUploads: true,
+})
+```
+
+Three things worth knowing:
+
+- **The Blob store must be created with _public_ access.** The adapter's `access` option accepts the
+  single value `'public'`, it defaults to that, the client upload handler hardcodes it, and the
+  public URL is built as `https://<store>.public.blob.vercel-storage.com`. Point it at a **private**
+  store and uploads fail with `Vercel Blob: Cannot use public access on a private store`. Still true
+  in the latest 3.86.0, so upgrading is not a workaround — the store has to be public.
+
+  This fails in a misleading way: `/api/vercel-blob-client-upload-route` returns **200** because
+  `handleUpload` only mints a client token and never checks the store's access mode. The rejection
+  lands on the browser's subsequent PUT to the Blob host, which `@vercel/blob` then retries ~4×. In
+  the network tab you see one healthy token request followed by four zero-byte failures on the
+  filename, and nothing in your server logs. Reproduce it away from the browser with a server-side
+  `put()` using the same token — the error message is explicit there.
+- **The token doubles as the on/off switch.** With `BLOB_READ_WRITE_TOKEN` unset the adapter returns
+  the config untouched and uploads go to `./media`, which is what you want locally. A malformed token
+  (not `vercel_blob_rw_<store>_<random>`) throws at config build time instead of degrading.
+- **`clientUploads: true` matters.** Without it the file is POSTed through a serverless function,
+  which caps request bodies at 4.5 MB. With it the browser uploads straight to Blob and the ceiling
+  is Blob's, not the function's.
+- **`next/image` needs the Blob host allowlisted.** Deployed media is served from
+  `https://<store>.public.blob.vercel-storage.com`, so `images.remotePatterns` in `next.config.mjs`
+  must include it. Locally URLs stay relative and no entry is needed — which is exactly why this
+  breaks only after deploying.
+
+`alwaysInsertFields` is documented to keep the adapter's `prefix` field in the schema even when the
+adapter is off, so that migrations generated locally match production. **In 3.71.1 it does not do
+that**: the Vercel Blob wrapper returns early on a missing token, before `cloudStoragePlugin` is ever
+called with the option. Left alone, the column exists on Vercel but not on a dev machine, and the
+next `payload migrate:create` run locally emits `DROP COLUMN prefix` against production. `Media`
+therefore declares `prefix` itself; `getFields` detects the existing field and merges into it rather
+than duplicating it. Confirmed token-independent by diffing `payload generate:db-schema` with and
+without a dummy token — byte-identical.
+
+Agent-driven uploads still do not work remotely, for the §7 reason: `filePath` resolves on the
+server's filesystem. Treat media as a human task and have agents reference existing media IDs.
+
+### Migrations are mandatory
+
+`@payloadcms/db-postgres` only runs `push` when `NODE_ENV !== 'production'`
+(`db-postgres/dist/connect.js`). On Vercel that check fails, nothing is pushed, and an empty
+`src/migrations/` means the deploy comes up against a schema-less database. Payload's own
+`payload_mcp_api_keys` table is part of this — without it, every MCP call 401s because the key lookup
+hits a missing table.
+
+So the build command is `pnpm run ci` (`payload migrate && next build`), wired in `vercel.json`.
+Migrations run against the production database during the build, before the app is promoted.
+
+Generate one whenever the config changes shape:
+
+```bash
+pnpm migrate:create <name>    # writes src/migrations/<timestamp>_<name>.ts
+pnpm migrate:status
+```
+
+Because a dev database built by `push` already has the tables, `payload migrate` there will conflict.
+Validate a migration against a **fresh** database instead — the initial migration in this repo was
+verified that way, applying 360 tables in ~1.9 s with `NODE_ENV=production`.
+
+### Environment variables
+
+`src/env/server.ts` validates with `@t3-oss/env-nextjs` at **build** time, so a missing variable
+fails the Vercel build rather than the first request. Set all of these in the project settings:
+
+| Variable | Notes |
+|---|---|
+| `DATABASE_URL` | Use the **pooled** connection string. Each lambda instance opens its own `pg` pool, so an unpooled endpoint exhausts connections under concurrency — put PgBouncer/Neon's pooler in front. |
+| `PAYLOAD_SECRET` | Must be stable. Rotating it invalidates every MCP API key, since keys are matched by `HMAC-SHA256(secret, key)` (§3). |
+| `NEXT_PUBLIC_SITE_URL` | The deployed origin. Feeds `generateURL` for SEO and previews. |
+| `PREVIEW_SECRET` | Draft preview. |
+| `BLOB_READ_WRITE_TOKEN` | Added automatically when you link a Blob store; do not set it by hand. |
+
+`PAYLOAD_MCP_API_KEY` and `PAYLOAD_MCP_URL` are **not** app variables — they are read by the MCP
+client on your machine to resolve `.mcp.json`. They do not belong in Vercel.
+
+### Timeouts
+
+The plugin's handler budget defaults to 60 s (`mcp.handlerOptions.maxDuration`), and the function
+ceiling is declared as `export const maxDuration = 60` in the catch-all route. Keep the two in step —
+a function ceiling below the handler budget truncates long writes — and raise both together if
+`afterChange` hooks are heavy. Note your plan caps this regardless of what you ask for.
+
+It is declared in the route rather than through `vercel.json`'s `functions` key because those globs
+would have to match `src/app/(payload)/api/[...slug]/route.ts`, and the route group's parentheses
+collide with glob syntax. The route-segment export has no such ambiguity.
+
+### Pointing an agent at the deployment
+
+`.mcp.json` resolves its URL from the environment, defaulting to localhost:
+
+```bash
+export PAYLOAD_MCP_URL=https://<your-app>.vercel.app/api/mcp
+export PAYLOAD_MCP_API_KEY=<key created in that environment's admin>
+```
+
+Keys live in the database, so a production key must be created in the **production** admin — a local
+key will not authenticate against it. Reconnect with `/mcp` after changing either variable.
+
+Smoke test the deployment before wiring an agent to it:
+
+```bash
+# 401 with a JSON body ⇒ endpoint mounted, auth live
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://<your-app>.vercel.app/api/mcp
+```
+
+A 404 instead means the request never reached Payload's catch-all. Note that `src/proxy.ts`
+(Next 16's renamed middleware) excludes `/api` in its matcher — widening that matcher to cover
+`/api` would let the next-intl middleware redirect MCP traffic and break the endpoint.
+
+## 9. Practical recommendations
 
 1. **One key per agent per environment**, each tied to a purpose-built user. Never reuse an admin
    account's key.
@@ -517,14 +666,15 @@ point a key at an admin-privileged user (§3).
     plus Cloudflare Access service tokens in front of it rather than relying on the bearer key alone
     (§7).
 
-## 9. Quick reference
+## 10. Quick reference
 
 | Item | Value |
 |---|---|
 | Package | `@payloadcms/plugin-mcp` (version-match your `payload` version exactly) |
 | Endpoint | `POST /api/mcp` (GET returns "Method not allowed" by design) |
 | Transport | Streamable HTTP (JSON-RPC), via `@vercel/mcp-adapter` (library only — no Vercel dependency) |
-| Runtime | **Node required.** Cloudflare Workers / Pages Functions cannot run it — see §7 |
+| Runtime | **Node required.** Works on Vercel serverless (§8). Cloudflare Workers / Pages Functions cannot run it — see §7 |
+| Runtime dep | `typescript` must be in `dependencies`, not `devDependencies` — the plugin imports it per request but does not declare it (§8) |
 | Behind Cloudflare | Works when proxying a Node origin; needs a WAF skip rule on `/api/mcp`, and Access service tokens if Zero Trust is enabled |
 | Auth | `Authorization: Bearer <api-key>`, matched by HMAC-SHA256 against `payload-mcp-api-keys` |
 | Identity | The user linked to the key; ops run `overrideAccess: false` |

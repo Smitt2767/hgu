@@ -30,6 +30,7 @@ import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { TOTPField as TOTPField_3eb2cc20d1a2569c2ccbafcee15bd128 } from '@clocklimited/payload-2fa/rsc'
 import { RowLabel as RowLabel_4fbb7ae9b93451efd73dd382f85e6b9c } from '@/globals/socials/components/RowLabel'
+import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 import { TOTPProvider as TOTPProvider_3eb2cc20d1a2569c2ccbafcee15bd128 } from '@clocklimited/payload-2fa/rsc'
 import { TOTPSetup as TOTPSetup_3eb2cc20d1a2569c2ccbafcee15bd128 } from '@clocklimited/payload-2fa/rsc'
 import { TOTPVerify as TOTPVerify_3eb2cc20d1a2569c2ccbafcee15bd128 } from '@clocklimited/payload-2fa/rsc'
@@ -68,6 +69,7 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@clocklimited/payload-2fa/rsc#TOTPField": TOTPField_3eb2cc20d1a2569c2ccbafcee15bd128,
   "@/globals/socials/components/RowLabel#RowLabel": RowLabel_4fbb7ae9b93451efd73dd382f85e6b9c,
+  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e,
   "@clocklimited/payload-2fa/rsc#TOTPProvider": TOTPProvider_3eb2cc20d1a2569c2ccbafcee15bd128,
   "@clocklimited/payload-2fa/rsc#TOTPSetup": TOTPSetup_3eb2cc20d1a2569c2ccbafcee15bd128,
   "@clocklimited/payload-2fa/rsc#TOTPVerify": TOTPVerify_3eb2cc20d1a2569c2ccbafcee15bd128,

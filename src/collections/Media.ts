@@ -18,6 +18,25 @@ export const Media: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    // Owned by @payloadcms/storage-vercel-blob, declared here on purpose.
+    //
+    // That adapter normally injects this field itself, and its `alwaysInsertFields`
+    // option is documented to inject it even when the adapter is disabled — but in
+    // 3.71.1 the Vercel Blob wrapper returns the config early when no
+    // BLOB_READ_WRITE_TOKEN is set, before the option is ever honoured. So the field
+    // would exist in the schema on Vercel and not locally, and a migration generated
+    // on a dev machine would emit `DROP COLUMN prefix` against production.
+    //
+    // Declaring it ourselves makes the schema token-independent. The adapter detects
+    // the existing field and merges into it rather than duplicating it.
+    {
+      name: 'prefix',
+      type: 'text',
+      admin: {
+        hidden: true,
+        readOnly: true,
+      },
+    },
   ],
   upload: true,
 }
