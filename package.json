@@ -23,6 +23,7 @@
     "@payloadcms/db-postgres": "3.71.1",
     "@payloadcms/live-preview-react": "3.71.1",
     "@payloadcms/next": "3.71.1",
+    "@payloadcms/plugin-mcp": "3.71.1",
     "@payloadcms/plugin-seo": "3.71.1",
     "@payloadcms/richtext-lexical": "3.71.1",
     "@payloadcms/translations": "3.71.1",
@@ -81,6 +82,9 @@
       "sharp",
       "esbuild",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "@modelcontextprotocol/sdk": "1.26.0"
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { asUser } from '@/access'
 import { Template } from '@/payload-types'
 import { revalidateTag } from 'next/cache'
 import {
@@ -97,7 +98,7 @@ export const revalidateTemplate: CollectionAfterChangeHook<Template> &
  */
 export const canDeleteTemplate: Access<Template> = async ({ req: { user, payload }, id }) => {
   // Only admins can delete templates
-  if (user?.role !== 'admin') return false
+  if (asUser(user)?.role !== 'admin') return false
 
   // Check if attempting to delete a default template
   if (id) {

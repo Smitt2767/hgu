@@ -2,7 +2,11 @@
   "mcpServers": {
     "payload-hgu": {
       "type": "http",
+<<<<<<< HEAD
       "url": "http://localhost:3000/api/mcp",
+=======
+      "url": "https://localhost:3000/api/mcp",
+>>>>>>> 6f78043fb4ffa4c87119c22ef4c3d29768959dfb
       "headers": {
         "Authorization": "Bearer ${PAYLOAD_MCP_API_KEY}"
       }

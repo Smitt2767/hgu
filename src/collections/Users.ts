@@ -1,4 +1,4 @@
-import { admin, canCreate, canDelete, canUpdateRole, canUpdateUser } from '@/access'
+import { admin, asUser, canCreate, canDelete, canUpdateRole, canUpdateUser } from '@/access'
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -27,7 +27,7 @@ export const Users: CollectionConfig = {
         { label: 'User', value: 'user' },
       ],
       filterOptions({ options, req }) {
-        if (req.user?.role === 'admin') {
+        if (asUser(req.user)?.role === 'admin') {
           return options
         }
 
