@@ -35,6 +35,21 @@ const generateURL: GenerateURL<Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${getSiteSlug(doc.slug)}` : url
 }
 
+// Only ever let dev mode push schema changes to a database on this machine.
+//
+// `push` alters the schema directly, no migration involved. Pointed at a shared or
+// production database that silently rewrites the real schema, and it also records a
+// `dev` row with batch -1 in payload_migrations. That row makes `payload migrate`
+// prompt "you've run Payload in dev mode … data loss will occur. Proceed?" — which
+// hangs a CI build until the build timeout, because `adapter.migrate()` is invoked
+// with no arguments and never receives forceAcceptWarning (only migrate:create and
+// migrate:fresh accept it, so --force-accept-warning cannot help here).
+//
+// Against a remote database this forces the correct workflow instead: generate a
+// migration with `pnpm migrate:create` and apply it with `pnpm migrate`.
+const dbHostname = new URL(serverEnv.DATABASE_URL).hostname
+const isLocalDatabase = dbHostname === 'localhost' || dbHostname === '127.0.0.1'
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -69,6 +84,7 @@ export default buildConfig({
     pool: {
       connectionString: serverEnv.DATABASE_URL,
     },
+    push: isLocalDatabase,
   }),
   editor: lexicalEditor({
     features({ defaultFeatures }) {
