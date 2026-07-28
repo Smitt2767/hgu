@@ -29,12 +29,27 @@ export const Media: CollectionConfig = {
     //
     // Declaring it ourselves makes the schema token-independent. The adapter detects
     // the existing field and merges into it rather than duplicating it.
+    // It must never be null. The adapter reads it back with `prefix = ''` and
+    // `{ prefix = '' }` defaults, which only cover `undefined` — a null reaches
+    // `path.posix.join(null, filename)` and throws `The "path" argument must be of
+    // type string`. That breaks `generateURL` (so the admin list view 500s) and
+    // `handleDelete`. Only `handleUpload` is null-safe, via `data.prefix || prefix`,
+    // which is why a null row uploads fine and then fails on read.
+    //
+    // defaultValue alone is not enough: it applies only when the incoming value is
+    // undefined, and the admin submits this hidden field as null. The hook is what
+    // actually guarantees a string. Both survive the adapter's field merge, which
+    // overrides defaultValue but spreads the rest of this definition through.
     {
       name: 'prefix',
       type: 'text',
+      defaultValue: '',
       admin: {
         hidden: true,
         readOnly: true,
+      },
+      hooks: {
+        beforeChange: [({ value }) => value ?? ''],
       },
     },
   ],
