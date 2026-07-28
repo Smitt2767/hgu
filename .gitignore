@@ -42,6 +42,9 @@ next-env.d.ts
 
 /media
 
+# claude code local overrides (contains secrets)
+.claude/settings.local.json
+
 # Playwright
 node_modules/
 /test-results/

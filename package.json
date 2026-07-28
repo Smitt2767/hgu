@@ -5,16 +5,16 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --experimental-https",
-    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
-    "db:studio": "drizzle-kit studio",
-    "generate:db-schema": "cross-env NODE_OPTIONS=--no-deprecation payload generate:db-schema",
-    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
-    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
-    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000 --network-family-autoselection-attempt-timeout=3000\" next build",
+    "dev": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next dev",
+    "db:studio": "cross-env NODE_OPTIONS=\"--network-family-autoselection-attempt-timeout=3000\" drizzle-kit studio",
+    "generate:db-schema": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:db-schema",
+    "generate:importmap": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:types",
+    "lint": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next lint",
+    "payload": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload",
+    "start": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next start"
   },
   "dependencies": {
     "@clocklimited/payload-2fa": "3.0.0-beta.1",
