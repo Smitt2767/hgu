@@ -1,4 +1,4 @@
-import { canCreate, canDelete, canRead, canUpdate } from '@/access'
+import { canCreate, canDelete, canReadStaged, canUpdate, stageBaseFilter } from '@/access'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -9,6 +9,7 @@ import {
 import { CollectionConfig, slugField } from 'payload'
 import { generatePreviewPath } from './helpers'
 import { revalidateVideo } from './hooks'
+import { resetStageOnPublish, stageField } from './shared/stage'
 import { createTemplateFields } from './shared/template-fields'
 
 export const Videos: CollectionConfig = {
@@ -16,6 +17,7 @@ export const Videos: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     description: 'Manage video embeds with thumbnails and metadata.',
+    baseFilter: stageBaseFilter,
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -32,12 +34,13 @@ export const Videos: CollectionConfig = {
       }),
   },
   access: {
-    read: canRead,
+    read: canReadStaged,
     create: canCreate,
     update: canUpdate,
     delete: canDelete,
   },
   fields: [
+    stageField(),
     {
       type: 'tabs',
       tabs: [
@@ -193,6 +196,7 @@ export const Videos: CollectionConfig = {
     maxPerDoc: 50,
   },
   hooks: {
+    beforeChange: [resetStageOnPublish],
     afterChange: [revalidateVideo],
     afterDelete: [revalidateVideo],
   },

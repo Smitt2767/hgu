@@ -73,6 +73,11 @@ const getAllPagesSlugs = cache(async (): Promise<SitemapEntry[]> => {
     const data = await payload.find({
       collection: 'pages',
       select: { slug: true, updatedAt: true },
+      // The sitemap is public, so it must never advertise a URL that is still in
+      // internal, alpha or beta. Unpublished documents keep a main-table row and the
+      // Local API defaults to `overrideAccess: true`, so nothing excludes them here
+      // but this filter.
+      where: { _status: { equals: 'published' } },
       limit: 0, // No limit
       pagination: false,
     })
@@ -96,6 +101,7 @@ const getAllArticlesSlugs = cache(async (): Promise<SitemapEntry[]> => {
     const data = await payload.find({
       collection: 'articles',
       select: { slug: true, updatedAt: true },
+      where: { _status: { equals: 'published' } },
       limit: 0,
       pagination: false,
     })
@@ -119,6 +125,7 @@ const getAllVideosSlugs = cache(async (): Promise<SitemapEntry[]> => {
     const data = await payload.find({
       collection: 'videos',
       select: { slug: true, updatedAt: true },
+      where: { _status: { equals: 'published' } },
       limit: 0,
       pagination: false,
     })

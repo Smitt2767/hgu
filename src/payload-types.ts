@@ -228,6 +228,10 @@ export interface Link {
  */
 export interface Page {
   id: number;
+  /**
+   * Who may preview this document while it is unpublished. Publishing resets this to Internal, because a published document is public regardless of stage.
+   */
+  stage?: ('internal' | 'alpha' | 'beta') | null;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -903,6 +907,10 @@ export interface Page {
  */
 export interface Article {
   id: number;
+  /**
+   * Who may preview this document while it is unpublished. Publishing resets this to Internal, because a published document is public regardless of stage.
+   */
+  stage?: ('internal' | 'alpha' | 'beta') | null;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -2201,6 +2209,10 @@ export interface Template {
  */
 export interface Video {
   id: number;
+  /**
+   * Who may preview this document while it is unpublished. Publishing resets this to Internal, because a published document is public regardless of stage.
+   */
+  stage?: ('internal' | 'alpha' | 'beta') | null;
   title?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -2875,6 +2887,10 @@ export interface Video {
 export interface User {
   id: number;
   role: 'admin' | 'editor' | 'user';
+  /**
+   * Makes unpublished content at these stages visible to this account, both in the admin lists and in draft-mode previews. Editors and admins already see every stage, so this is only meaningful for the User role.
+   */
+  previewStages?: ('alpha' | 'beta')[] | null;
   totpSecret?: string | null;
   hasTotp?: boolean | null;
   updatedAt: string;
@@ -3283,6 +3299,7 @@ export interface LinksSelect<T extends boolean = true> {
  * via the `definition` "articles_select".
  */
 export interface ArticlesSelect<T extends boolean = true> {
+  stage?: T;
   title?: T;
   generateSlug?: T;
   slug?: T;
@@ -3548,6 +3565,7 @@ export interface ArticlesSelect<T extends boolean = true> {
  * via the `definition` "videos_select".
  */
 export interface VideosSelect<T extends boolean = true> {
+  stage?: T;
   title?: T;
   generateSlug?: T;
   slug?: T;
@@ -4072,6 +4090,7 @@ export interface TemplatesSelect<T extends boolean = true> {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  stage?: T;
   title?: T;
   generateSlug?: T;
   slug?: T;
@@ -4378,6 +4397,7 @@ export interface PagesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  previewStages?: T;
   totpSecret?: T;
   hasTotp?: T;
   updatedAt?: T;

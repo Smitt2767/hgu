@@ -12,8 +12,15 @@ type AfterDeleteArgs<T extends RevalidatableCollection> = Parameters<
 >[0]
 
 export function createRevalidateHook<T extends RevalidatableCollection>(tag: string) {
-  return function revalidate({ doc, context }: AfterChangeArgs<T> | AfterDeleteArgs<T>): T {
-    if (!context.disableRevalidate && doc._status === 'published') {
+  return function revalidate(args: AfterChangeArgs<T> | AfterDeleteArgs<T>): T {
+    const { doc, context } = args
+
+    // Unpublishing — including pulling a live document back to a pre-release stage —
+    // flips `_status` to `draft`, so keying only off the new status would leave the
+    // last published HTML in the cache indefinitely.
+    const wasPublished = 'previousDoc' in args && args.previousDoc?._status === 'published'
+
+    if (!context.disableRevalidate && (doc._status === 'published' || wasPublished)) {
       revalidateTag(`${tag}:${doc.slug}`, 'max')
       revalidateTag('sitemap', 'max')
     }

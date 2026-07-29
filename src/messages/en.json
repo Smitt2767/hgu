@@ -5,6 +5,11 @@
     "dashboard": "Dashboard",
     "maintenance": "Maintenance"
   },
+  "stage": {
+    "internalPreview": "Internal preview — not visible to testers",
+    "alphaPreview": "Alpha preview",
+    "betaPreview": "Beta preview"
+  },
   "pages": {
     "articles": {
       "title": "Articles"

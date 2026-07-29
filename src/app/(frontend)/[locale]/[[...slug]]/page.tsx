@@ -1,6 +1,7 @@
 import RenderBlocks from '@/components/blocks'
 import LivePreviewListener from '@/components/live-preview-listener'
-import { getPage, getPagesSlugs } from '@/data/page'
+import StageBanner from '@/components/stage-banner'
+import { getPage, getPagesSlugs, getPreviewPage } from '@/data/page'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
 import { getDBSlug } from '@/utils/slug'
@@ -17,17 +18,38 @@ export const generateStaticParams = async () => {
   return slugs
 }
 
+/**
+ * Resolves the page for this request, and only ever touches request-scoped data
+ * behind the draft-mode check.
+ *
+ * `draftMode().isEnabled` is free to read during a prerender — Next only tracks
+ * dynamic usage for `enable()`/`disable()`, and hands a prerender a null provider
+ * whose `isEnabled` is always `false` (see
+ * `next/dist/server/request/draft-mode.js`). So this resolves to the cached,
+ * published page at build time and the route stays fully prerendered. Only
+ * requests carrying the `__prerender_bypass` cookie fall into the preview branch,
+ * which reads the auth cookie to decide what that account is allowed to see.
+ *
+ * That ordering is the whole trick: pull identity out before checking draft mode
+ * and every anonymous visitor would go dynamic too.
+ */
+const resolvePage = async (pageSlug: string, locale: string) => {
+  const { isEnabled: draft } = await draftMode()
+  const slug = getDBSlug(pageSlug)
+
+  const page = draft ? await getPreviewPage(slug, locale) : await getPage(slug, locale)
+
+  return { draft, page }
+}
+
 export const generateMetadata = async ({
   params,
 }: {
   params: Promise<{ locale: string; slug?: string[] }>
 }): Promise<Metadata> => {
   const { locale, slug } = await params
-  const { isEnabled: draft } = await draftMode()
 
-  const pageSlug = slug?.[0] ?? ''
-
-  const page = await getPage(getDBSlug(pageSlug), locale, draft)
+  const { page } = await resolvePage(slug?.[0] ?? '', locale)
 
   const title = page?.meta?.title || page?.title
   const description = page?.meta?.description
@@ -41,18 +63,25 @@ export default async function Page({
 }: {
   params: Promise<{ locale: string; slug?: string[] }>
 }) {
-  const { isEnabled: draft } = await draftMode()
   const { locale, slug } = await params
   setRequestLocale(locale)
 
-  const pageSlug = slug?.[0] ?? ''
+  const { draft, page } = await resolvePage(slug?.[0] ?? '', locale)
 
-  const page = await getPage(getDBSlug(pageSlug), locale, draft)
+  // In the preview branch this also covers the stage gate: a tester requesting a
+  // page above their granted stages gets no document back from `canReadStaged` and
+  // no published version to fall back on, so they get a 404 rather than a 403
+  // confirming it exists.
   if (!page) notFound()
 
   return (
     <>
-      {draft && <LivePreviewListener />}
+      {draft && (
+        <>
+          <LivePreviewListener />
+          <StageBanner stage={page.stage} status={page._status} />
+        </>
+      )}
       <RenderBlocks data={page.layout} />
     </>
   )

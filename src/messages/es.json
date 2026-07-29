@@ -5,6 +5,11 @@
     "dashboard": "Panel de control",
     "maintenance": "Mantenimiento"
   },
+  "stage": {
+    "internalPreview": "Vista previa interna — no visible para los evaluadores",
+    "alphaPreview": "Vista previa alfa",
+    "betaPreview": "Vista previa beta"
+  },
   "pages": {
     "articles": {
       "title": "Artículos"

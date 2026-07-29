@@ -1,4 +1,4 @@
-import { canCreate, canDelete, canRead, canUpdate } from '@/access'
+import { canCreate, canDelete, canReadStaged, canUpdate, stageBaseFilter } from '@/access'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -9,6 +9,7 @@ import {
 import { CollectionConfig, slugField } from 'payload'
 import { generatePreviewPath } from './helpers'
 import { revalidateArticle } from './hooks'
+import { resetStageOnPublish, stageField } from './shared/stage'
 import { createTemplateFields } from './shared/template-fields'
 
 export const Articles: CollectionConfig = {
@@ -16,6 +17,7 @@ export const Articles: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     description: 'Manage articles with content, images, and reference links.',
+    baseFilter: stageBaseFilter,
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -32,12 +34,13 @@ export const Articles: CollectionConfig = {
       }),
   },
   access: {
-    read: canRead,
+    read: canReadStaged,
     create: canCreate,
     update: canUpdate,
     delete: canDelete,
   },
   fields: [
+    stageField(),
     {
       type: 'tabs',
       tabs: [
@@ -115,6 +118,7 @@ export const Articles: CollectionConfig = {
     maxPerDoc: 50,
   },
   hooks: {
+    beforeChange: [resetStageOnPublish],
     afterChange: [revalidateArticle],
     afterDelete: [revalidateArticle],
   },

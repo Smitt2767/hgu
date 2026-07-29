@@ -1,4 +1,4 @@
-import { canCreate, canDelete, canRead, canUpdate } from '@/access'
+import { canCreate, canDelete, canReadStaged, canUpdate, stageBaseFilter } from '@/access'
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -28,12 +28,14 @@ import { TextCarousel } from './blocks/TextCarousel'
 import { VideoCarousel } from './blocks/VideoCarousel'
 import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
+import { resetStageOnPublish, stageField } from './shared/stage'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
     description: 'Create and manage website pages with customizable layouts and SEO settings.',
+    baseFilter: stageBaseFilter,
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -48,12 +50,13 @@ export const Pages: CollectionConfig = {
       }),
   },
   access: {
-    read: canRead,
+    read: canReadStaged,
     update: canUpdate,
     delete: canDelete,
     create: canCreate,
   },
   fields: [
+    stageField(),
     {
       type: 'tabs',
       tabs: [
@@ -139,6 +142,7 @@ export const Pages: CollectionConfig = {
     maxPerDoc: 50,
   },
   hooks: {
+    beforeChange: [resetStageOnPublish],
     afterChange: [revalidatePage],
     afterDelete: [revalidatePage],
   },
