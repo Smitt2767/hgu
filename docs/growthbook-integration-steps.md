@@ -31,22 +31,56 @@ This is what you configure in GrowthBook, and it is the part to get right first 
 every targeting rule keys on these names, and a typo produces a rule that silently
 never matches.
 
-Four already exist in code (`src/flags/attributes.ts`); four need adding.
+Seven attributes. Enum options go in comma-separated, exactly as written.
 
-| Attribute | Type in GrowthBook | Source | Notes |
-| --- | --- | --- | --- |
-| `id` | **Identifier** — `string` | `hgu_vid` cookie, minted in proxy | The bucketing key. Every experiment splits on this. HttpOnly, one year. |
-| `country` | `string` | `x-vercel-ip-country` header | ISO-2. **Empty on localhost** — Vercel sets it at the edge, so country rules cannot be tested on a dev machine. |
-| `deviceType` | `enum` — `mobile, tablet, desktop` | user-agent | Coarse on purpose. |
-| `locale` | `enum` — `en, es` | `NEXT_LOCALE` cookie | |
-| `audience` | `enum` — `us, in, gb, row, …` | **to add** — derived in proxy | The one that makes prerendering work. See below. |
-| `utmSource` | `string` | **to add** — landing query → cookie, in proxy | |
-| `utmMedium` | `string` | **to add** — same | |
-| `utmCampaign` | `string` | **to add** — same | Unbounded. Never target it in a flag you want prerendered. |
+| Attribute | Data type | Values | Identifier | Sent by the app? |
+| --- | --- | --- | --- | --- |
+| `id` | String | UUID from the `hgu_vid` cookie, or `anonymous` | **yes** | now |
+| `deviceType` | Enum | `mobile, tablet, desktop` | no | now |
+| `locale` | Enum | `en, es` | no | now |
+| `audience` | Enum | `us, in, gb, row` | no | **not yet** — needs proxy derivation |
+| `utmSource` | String | `google`, `newsletter`, … | no | **not yet** — needs proxy capture |
+| `utmMedium` | String | `cpc`, `email`, … | no | **not yet** |
+| `utmCampaign` | String | `summer-drop`, … | no | **not yet** |
 
-Set the `id` attribute's type to **Identifier**, not String — GrowthBook uses
-identifier attributes for experiment assignment and it will not offer `id` as a split
-key otherwise.
+**Tick Identifier on `id`, and only `id`.** Without it GrowthBook will not offer `id`
+as an experiment split key, so step 6b cannot be created at all.
+
+**The bottom four are dormant.** Declare them now so rules do not need rewriting
+later, but until the proxy work lands they are never sent, and a rule targeting one
+simply never matches. That silence is the single most likely thing to read as
+"GrowthBook is broken".
+
+### Do not add `country`
+
+The app *sends* `country` (from `x-vercel-ip-country`) and should keep doing so —
+`/api/flags/debug` is how you confirm geo resolution actually works on a deployment.
+But do not declare it in GrowthBook.
+
+Declaring it is an invitation to write a geo rule on the wrong attribute, which
+silently forces that flag out of the prerender. Every geo rule here targets `audience`
+instead; if Germany later needs its own treatment, adding `de` to the `audience` enum
+costs one prerendered page and is the better move anyway. A constraint in the tooling
+beats a warning in a document.
+
+Undeclared attributes are simply ignored by rules, so sending one GrowthBook does not
+know about breaks nothing.
+
+### Delete GrowthBook's default `browser` attribute
+
+It ships enabled and nothing in this app populates it, so any rule using it never
+matches — the same silent failure as above, with no hint that the attribute is empty.
+
+### `anonymous` and `unknown` are real values
+
+`id` falls back to the literal string `anonymous` when the cookie is missing, and
+`country` to `unknown` when the header is absent — which is **every local request**,
+since Vercel sets that header at the edge. So a rule phrased "country is not US"
+matches every dev request. Verified against the live endpoint:
+
+```json
+"attributes": {"id":"anonymous","country":"unknown","deviceType":"desktop","locale":"en"}
+```
 
 ### `audience` is not "country"
 
@@ -60,8 +94,8 @@ audience = f(country, utm_campaign, …) → one of ~4–8 values
 per distinct answer, so either one targeted directly makes the page set unbounded,
 while `audience` keeps it at a handful.
 
-Add `audience` now even though precompute comes last (step 8). Rules written against
-`country` today have to be rewritten later; rules written against `audience` do not.
+Add `audience` now even though precompute comes last (step 8). This is also why
+`country` is deliberately not a declared attribute — see above.
 
 ### Where UTMs fit
 
@@ -116,7 +150,7 @@ different numbers and the difference is invisible until someone reconciles dashb
 
 **The rule that follows from this:** a flag meant to be prerendered may only target
 attributes that proxy encodes into the URL — today that means `audience` and `locale`.
-Targeting `country`, `deviceType` or `id` forces that flag out of the prerender and
+Targeting `deviceType`, any `utm*` or `id` forces that flag out of the prerender and
 into a streamed or private region. That is not a bug, it is the cost, and step 8
 explains how to tell which is which.
 
@@ -126,7 +160,7 @@ Until step 8 everything is streamed, so **any attribute works in steps 1–7.**
 
 ## Step 1 — GrowthBook: attributes and SDK connection
 
-**In GrowthBook.** Settings → Attributes, add all eight above. Then SDK Configuration →
+**In GrowthBook.** Settings → Attributes, add the seven above and delete `browser`. Then SDK Configuration →
 SDK Connections → your existing connection; you already have the client key in `.env`.
 
 **Verify.** `pnpm dev`, then:
