@@ -1,6 +1,7 @@
 import { VISITOR_COOKIE } from '@/flags/constants'
 import type { Identify } from 'flags'
 import { dedupe } from 'flags/next'
+import { getLocale } from 'next-intl/server'
 import { cookies, headers } from 'next/headers'
 
 export { VISITOR_COOKIE }
@@ -21,6 +22,22 @@ export type Attributes = {
 type HeaderReader = { get(name: string): string | null | undefined }
 type CookieReader = { get(name: string): { value: string } | undefined }
 
+type Source = {
+  headers: HeaderReader
+  cookies: CookieReader
+  /**
+   * The locale actually being rendered, where the caller knows it.
+   *
+   * Pass it whenever you can. The fallback below reads next-intl's `NEXT_LOCALE`
+   * cookie, and that cookie is set on the *response* while a flag is evaluated
+   * against the *request* — so it is always one navigation behind. A visitor's first
+   * ever request to `/es/...` carries no cookie at all and would evaluate as `en`,
+   * serving the English treatment on a Spanish page. Invisible until a rule targets
+   * `locale`, and silent even then.
+   */
+  locale?: string
+}
+
 /**
  * Attribute resolution as a pure function over (headers, cookies).
  *
@@ -29,7 +46,7 @@ type CookieReader = { get(name: string): { value: string } | undefined }
  * Flags SDK hands `identify` sealed stores instead. Retrofitting this shape later
  * means touching every call site.
  */
-export function resolveAttributes(r: { headers: HeaderReader; cookies: CookieReader }): Attributes {
+export function resolveAttributes(r: Source): Attributes {
   const ua = r.headers.get('user-agent') ?? ''
 
   return {
@@ -41,7 +58,7 @@ export function resolveAttributes(r: { headers: HeaderReader; cookies: CookieRea
     // country cannot be verified on a dev machine.
     country: r.headers.get('x-vercel-ip-country') ?? 'unknown',
     deviceType: classifyDevice(ua),
-    locale: r.cookies.get('NEXT_LOCALE')?.value ?? 'en',
+    locale: r.locale ?? r.cookies.get('NEXT_LOCALE')?.value ?? 'en',
   }
 }
 
@@ -57,10 +74,29 @@ function classifyDevice(ua: string): Attributes['deviceType'] {
   return 'desktop'
 }
 
-/** The `next/headers` wrapper, for Server Components and Route Handlers. */
+/**
+ * The `next/headers` wrapper, for Server Components and Route Handlers.
+ *
+ * Takes locale from the render rather than from a cookie, so a flag can never
+ * disagree with the page it is deciding for — see `Source.locale`.
+ */
 export async function readAttributes(): Promise<Attributes> {
-  const [h, c] = await Promise.all([headers(), cookies()])
-  return resolveAttributes({ headers: h, cookies: c })
+  const [h, c, locale] = await Promise.all([headers(), cookies(), renderedLocale()])
+  return resolveAttributes({ headers: h, cookies: c, locale })
+}
+
+/**
+ * The locale next-intl resolved for this request, or `undefined` where there is no
+ * request locale to resolve — a Route Handler under `/api` sits outside the
+ * `[locale]` segment, and asking there is a question with no answer rather than an
+ * error worth propagating.
+ */
+async function renderedLocale(): Promise<string | undefined> {
+  try {
+    return await getLocale()
+  } catch {
+    return undefined
+  }
 }
 
 /**
@@ -71,6 +107,13 @@ export async function readAttributes(): Promise<Attributes> {
  * one visitor's attributes while claiming to be a build-time read.
  *
  * `dedupe` makes it run once per request no matter how many flags ask.
+ *
+ * Left on the cookie fallback for locale, unlike `readAttributes`. Asking next-intl
+ * for the rendered locale is a request-scoped read, and this same function runs under
+ * `readStatic`'s synthetic request during a prerender — where such a read is exactly
+ * what that escape hatch exists to avoid. No flag is declared through the SDK yet, so
+ * nothing depends on this today; a flag that does target `locale` must be resolved
+ * through `readAttributes` instead.
  */
 export const identify = dedupe((({ headers, cookies }) =>
   resolveAttributes({ headers, cookies })) satisfies Identify<Attributes>)
