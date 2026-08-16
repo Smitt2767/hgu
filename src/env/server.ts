@@ -10,6 +10,20 @@ export const serverEnv = createEnv({
     // Optional on purpose: when it is absent the storage adapter disables itself and
     // uploads fall back to the local filesystem, which is what we want in dev.
     BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
+    // GrowthBook SDK client key, from the SDK Connection in the dashboard. Optional
+    // so the app still builds and renders without it — every flag falls back to its
+    // declared default. Local and production share one connection, so this is the
+    // same value in .env and in Vercel.
+    GROWTHBOOK_CLIENT_KEY: z.string().min(1).optional(),
+    GROWTHBOOK_API_HOST: z.url().default('https://cdn.growthbook.io'),
+    // Shared secret for the GrowthBook SDK Webhook that expires the cached
+    // ruleset. Read it from SDK Configuration → SDK Connections; used as the raw
+    // HMAC key, not base64-decoded.
+    GROWTHBOOK_WEBHOOK_SECRET: z.string().min(1).optional(),
+    // Signs precomputed URL segments. 32 random bytes, base64url. Only required
+    // once a flag moves to the precompute tier — `generatePermutations` throws at
+    // build time without it.
+    FLAGS_SECRET: z.string().min(1).optional(),
   },
   experimental__runtimeEnv: process.env,
   emptyStringAsUndefined: true,
