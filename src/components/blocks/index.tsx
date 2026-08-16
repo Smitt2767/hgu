@@ -1,9 +1,10 @@
 import { readAttributes } from '@/flags/attributes'
-import { buildCatalog } from '@/flags/catalog'
+import { buildCatalog, isUrlDetermined } from '@/flags/catalog'
 import { evaluateValueWith } from '@/flags/evaluate'
 import { applyFlag, flagOf, type FlagConfig } from '@/flags/modules'
 import { getRuleset } from '@/flags/ruleset'
 import { Article, Page, Template, Video } from '@/payload-types'
+import { getLocale } from 'next-intl/server'
 import { BlockType, GetBlockProps } from '@/types/blocks'
 import { ComponentType, Suspense } from 'react'
 import Accordion from './accordion'
@@ -68,23 +69,38 @@ type LayoutBlock = NonNullable<LayoutData>[number]
  *
  * - **No flag** — rendered exactly as before, and no ruleset is fetched at all, so
  *   pages with no flagged module gain no new dependency and no new cache entry.
- * - **A flag with no targeting** — the same answer for every visitor on Earth, so it
- *   is decided right here from the cached ruleset, with no request data touched. The
- *   page stays fully prerendered; a kill switch costs nothing.
- * - **A flag that targets anything** — needs the visitor's attributes, so it moves
- *   behind `<Suspense>` and streams. The rest of the page still prerenders.
+ * - **A flag the URL already answers** — either it targets nothing, so everyone gets
+ *   the same value, or it targets only what the routing encodes. Decided right here,
+ *   with no request data read at all: the module ships in the first HTML response
+ *   and the page stays fully prerendered.
+ * - **A flag that targets the visitor** — needs attributes the URL does not carry, so
+ *   it moves behind `<Suspense>` and streams. The rest of the page still prerenders.
  *
- * The tier comes from the ruleset itself, so adding a targeting rule in GrowthBook
- * moves a module from the shell into a streamed region with no code change and no
- * deploy — the same derivation `/api/flags/catalog` reports to the admin.
+ * Both halves come from the ruleset itself, so a rule added in GrowthBook moves a
+ * module between them with no code change and no deploy — the same derivation
+ * `/api/flags/catalog` reports to the admin.
+ *
+ * Note the asymmetry that makes the second bullet worth stating carefully: a flag
+ * targeting `audience` is *classified* prerenderable, but nothing in the URL answers
+ * it until proxy encodes it, so it streams today. `isUrlDetermined` is what keeps
+ * those two ideas apart.
  */
 export default async function RenderBlocks({ data }: RenderBlocksProps) {
   const hasBlocks = data && Array.isArray(data) && data.length > 0
 
   if (!hasBlocks) return null
 
-  // Only pay for the ruleset when something on this page actually uses it.
-  const ruleset = data.some((block) => flagOf(block)) ? await getRuleset() : null
+  // Only pay for either of these when something on this page actually uses them.
+  const flagged = data.some((block) => flagOf(block))
+
+  // `getLocale` is safe to read while prerendering *because* every page calls
+  // `setRequestLocale` first — next-intl then returns that cached value and never
+  // touches `headers()`. Drop that call from a page and this silently becomes a
+  // dynamic read, taking the whole route out of its prerender.
+  const [ruleset, locale] = flagged
+    ? await Promise.all([getRuleset(), getLocale()])
+    : [null, undefined]
+
   const catalog = buildCatalog(ruleset)
 
   return data.map((block) => {
@@ -92,13 +108,15 @@ export default async function RenderBlocks({ data }: RenderBlocksProps) {
 
     if (!flag) return renderBlock(block, block.id)
 
-    // An unknown flag is treated as untargeted rather than streamed. It resolves to
-    // no value and therefore to the base module, and doing that in the shell means a
-    // GrowthBook outage cannot drag every flagged page out of its prerender.
-    const tier = catalog.find((entry) => entry.key === flag.key)?.tier ?? 'static'
+    const entry = catalog.find((candidate) => candidate.key === flag.key)
 
-    if (tier === 'static') {
-      const value = evaluateValueWith(ruleset, flag.key, {})
+    // An unknown flag is decided here rather than streamed. It resolves to no value
+    // and therefore to the base module, and doing that in the shell means a
+    // GrowthBook outage cannot drag every flagged page out of its prerender.
+    if (!entry || isUrlDetermined(entry)) {
+      // Only what the URL already carries. Handing the evaluator anything else would
+      // put a per-visitor answer into a response that everyone shares.
+      const value = evaluateValueWith(ruleset, flag.key, { locale })
       return renderBlock(applyFlag(block, flag, value), block.id)
     }
 
