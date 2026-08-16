@@ -17,6 +17,30 @@ export function evaluateWith<V>(
 ): V {
   if (!ruleset) return fallback
 
+  const value = evaluateValueWith(ruleset, key, attributes)
+
+  // Check the type rather than trusting it. A flag can be switched from boolean to
+  // string in the GrowthBook dashboard without this code hearing about it, and the
+  // declared default is a better answer than a type error at the render site.
+  return value !== null && typeof value === typeof fallback ? (value as V) : fallback
+}
+
+/**
+ * The same evaluation, without a declared type.
+ *
+ * For callers whose expected type lives in the CMS rather than in code — a flag
+ * attached to a block is matched against rows an editor sees, so there is no
+ * TypeScript type to check against and nothing sensible to fall back to. `undefined`
+ * says "no answer", and the caller decides what that means; for a module it means
+ * rendering the base content.
+ */
+export function evaluateValueWith(
+  ruleset: FeatureApiResponse | null,
+  key: string,
+  attributes: Partial<Attributes>,
+): unknown {
+  if (!ruleset) return undefined
+
   // Built per call and thrown away. A GrowthBookClient holds timers and is not
   // serialisable, so it could never be returned from a `use cache` scope anyway;
   // constructing one around an already-fetched payload is just an assignment.
@@ -25,12 +49,7 @@ export function evaluateWith<V>(
   const result = client.evalFeature(key, { attributes })
   client.destroy()
 
-  // Check the type rather than trusting it. A flag can be switched from boolean to
-  // string in the GrowthBook dashboard without this code hearing about it, and the
-  // declared default is a better answer than a type error at the render site.
-  return result.value !== null && typeof result.value === typeof fallback
-    ? (result.value as V)
-    : fallback
+  return result.value ?? undefined
 }
 
 /** The form every `decide` uses: read the cached ruleset, then evaluate. */
