@@ -586,16 +586,47 @@ hits a missing table.
 So the build command is `pnpm run ci` (`payload migrate && next build`), wired in `vercel.json`.
 Migrations run against the production database during the build, before the app is promoted.
 
-Generate one whenever the config changes shape:
+**`push` is off in every environment** (`push: false` in `payload.config.ts`), dev included. Left on,
+a config change lands on the dev database the moment `pnpm dev` reloads, nothing records what
+changed, and the gap between that database and `src/migrations/` only shows up as a broken deploy.
+Off, dev and production apply the same files in the same order, and a migration is exercised locally
+before it ever runs against production. The cost is one explicit step per schema change.
+
+#### The loop after any schema change
+
+Anything that changes the shape of the config — a new field, collection, global, or an option that
+adds a column such as `versions`/`drafts` or a new `localization` locale — needs a migration:
 
 ```bash
-pnpm migrate:create <name>    # writes src/migrations/<timestamp>_<name>.ts
-pnpm migrate:status
+pnpm migrate:create <name>    # writes src/migrations/<timestamp>_<name>.{ts,json}
+pnpm migrate                  # applies pending migrations to DATABASE_URL
+pnpm generate:types           # refresh src/payload-types.ts
+pnpm migrate:status           # confirm
 ```
 
-Because a dev database built by `push` already has the tables, `payload migrate` there will conflict.
-Validate a migration against a **fresh** database instead — the initial migration in this repo was
-verified that way, applying 360 tables in ~1.9 s with `NODE_ENV=production`.
+`migrate:create` diffs the config against the `.json` snapshot beside the previous migration, **not**
+against a live database, so it works exactly the same with push disabled. Commit the `.ts`, the
+`.json`, and the regenerated `src/migrations/index.ts` together — the snapshot is what the next
+migration diffs against, and dropping it makes the following `migrate:create` re-emit the whole
+schema.
+
+Until you run `pnpm migrate`, the dev database has the old schema while the config has the new one.
+Payload will error on the missing columns rather than silently adapting — that is the intended
+signal, not a bug.
+
+#### Resetting a dev database that push already built
+
+A database built by `push` has all the tables and a `dev` row with batch `-1` in `payload_migrations`,
+so `pnpm migrate` there conflicts on the initial migration. Drop and rebuild it from the migration
+files instead — **this destroys all local data**:
+
+```bash
+pnpm migrate:fresh --force-accept-warning
+```
+
+Do this once when switching a machine off push. Afterwards `migrate:status` shows every migration in
+batch order and the plain `pnpm migrate` loop works. Never point `migrate:fresh` at anything but a
+local database.
 
 ### Environment variables
 

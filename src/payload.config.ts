@@ -35,21 +35,6 @@ const generateURL: GenerateURL<Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${getSiteSlug(doc.slug)}` : url
 }
 
-// Only ever let dev mode push schema changes to a database on this machine.
-//
-// `push` alters the schema directly, no migration involved. Pointed at a shared or
-// production database that silently rewrites the real schema, and it also records a
-// `dev` row with batch -1 in payload_migrations. That row makes `payload migrate`
-// prompt "you've run Payload in dev mode … data loss will occur. Proceed?" — which
-// hangs a CI build until the build timeout, because `adapter.migrate()` is invoked
-// with no arguments and never receives forceAcceptWarning (only migrate:create and
-// migrate:fresh accept it, so --force-accept-warning cannot help here).
-//
-// Against a remote database this forces the correct workflow instead: generate a
-// migration with `pnpm migrate:create` and apply it with `pnpm migrate`.
-const dbHostname = new URL(serverEnv.DATABASE_URL).hostname
-const isLocalDatabase = dbHostname === 'localhost' || dbHostname === '127.0.0.1'
-
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -84,7 +69,26 @@ export default buildConfig({
     pool: {
       connectionString: serverEnv.DATABASE_URL,
     },
-    push: isLocalDatabase,
+    // Never push. Every schema change goes through a migration, in every environment.
+    //
+    // `push` alters the schema directly, no migration involved, so a config change is
+    // live on the dev database the moment `pnpm dev` reloads and nothing records what
+    // changed. Production only ever sees `src/migrations/`, so anything push applied
+    // and no migration captured is a schema drift that surfaces on deploy. Off, dev
+    // and production go through the same files, and `pnpm migrate:create` diffs the
+    // config against the snapshot in `src/migrations/` — never against a database —
+    // so it still produces a correct migration with push disabled.
+    //
+    // It also keeps `payload_migrations` clean: push writes a `dev` row with batch -1,
+    // and that row makes `payload migrate` prompt "you've run Payload in dev mode …
+    // data loss will occur. Proceed?" — which hangs a CI build until the build
+    // timeout, because `adapter.migrate()` is invoked with no arguments and never
+    // receives forceAcceptWarning (only migrate:create and migrate:fresh accept it,
+    // so --force-accept-warning cannot help here).
+    //
+    // After changing a collection, global, or field: `pnpm migrate:create <name>`,
+    // then `pnpm migrate`. See docs/payload-mcp.md § Migrations are mandatory.
+    push: false,
   }),
   editor: lexicalEditor({
     features({ defaultFeatures }) {

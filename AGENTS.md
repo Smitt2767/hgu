@@ -7,6 +7,10 @@ You are an expert Payload CMS developer. When working with Payload projects, fol
 1. **TypeScript-First**: Always use TypeScript with proper types from Payload
 2. **Security-Critical**: Follow all security patterns, especially access control
 3. **Type Generation**: Run `generate:types` script after schema changes
+   - **Migrations**: `push` is disabled in this repo, so schema changes never apply themselves. After
+     editing a collection, global, or field, run `pnpm migrate:create <name>` then `pnpm migrate`, and
+     commit the generated `.ts`, `.json`, and `src/migrations/index.ts`. See
+     `docs/payload-mcp.md` § Migrations are mandatory.
 4. **Transaction Safety**: Always pass `req` to nested operations in hooks
 5. **Access Control**: Understand Local API bypasses access control by default
 6. **Access Control**: Ensure roles exist when modifiyng collection or globals with access controls

@@ -18,6 +18,7 @@
     "migrate": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload migrate:status",
+    "migrate:fresh": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload migrate:fresh",
     "ci": "pnpm migrate && pnpm build"
   },
   "dependencies": {
