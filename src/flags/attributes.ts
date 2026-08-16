@@ -1,3 +1,4 @@
+import { audienceOf, type Audience } from '@/flags/audience'
 import { VISITOR_COOKIE } from '@/flags/constants'
 import type { Identify } from 'flags'
 import { dedupe } from 'flags/next'
@@ -9,7 +10,14 @@ export { VISITOR_COOKIE }
 export type Attributes = {
   /** Stable bucketing key. Every experiment hashes on this. */
   id: string
+  /**
+   * Sent, but deliberately not declared in GrowthBook — target `audience` instead.
+   * It is here so `/api/flags/debug` can confirm geo resolution actually works on a
+   * deployment, which is otherwise impossible to tell apart from a broken rule.
+   */
   country: string
+  /** The bounded bucket geo rules target. See `./audience`. */
+  audience: Audience
   deviceType: 'mobile' | 'tablet' | 'desktop'
   locale: string
 }
@@ -48,15 +56,21 @@ type Source = {
  */
 export function resolveAttributes(r: Source): Attributes {
   const ua = r.headers.get('user-agent') ?? ''
+  // Vercel resolves this at the edge. Absent locally, which is why geo targeting
+  // cannot be verified on a dev machine — every local request buckets as `row`.
+  const country = r.headers.get('x-vercel-ip-country') ?? 'unknown'
 
   return {
     // Falls back to a constant rather than a random value: a random id per request
     // would put the same visitor in a different bucket on every page load, which
     // reads as an experiment with no effect rather than as a missing cookie.
     id: r.cookies.get(VISITOR_COOKIE)?.value ?? 'anonymous',
-    // Vercel resolves this at the edge. Absent locally, which is why targeting by
-    // country cannot be verified on a dev machine.
-    country: r.headers.get('x-vercel-ip-country') ?? 'unknown',
+    country,
+    // Derived rather than carried, because it is a pure function of data already
+    // read. The day a campaign can also decide the bucket, that input has to come
+    // from proxy — it lives in the landing request's query string and nowhere else —
+    // and this becomes `r.audience ?? audienceOf(country)`.
+    audience: audienceOf(country),
     deviceType: classifyDevice(ua),
     locale: r.locale ?? r.cookies.get('NEXT_LOCALE')?.value ?? 'en',
   }

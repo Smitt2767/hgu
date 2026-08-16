@@ -8,6 +8,7 @@
  */
 
 export type { Attributes } from '@/flags/attributes'
+export { AUDIENCES, DEFAULT_AUDIENCE, audienceOf, isAudience, type Audience } from '@/flags/audience'
 export { VISITOR_COOKIE, identify, readAttributes, resolveAttributes } from '@/flags/attributes'
 export { evaluate, evaluateWith } from '@/flags/evaluate'
 export { RULESET_TAG, getRuleset } from '@/flags/ruleset'
