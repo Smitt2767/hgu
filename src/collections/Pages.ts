@@ -17,11 +17,9 @@ import { CTA } from './blocks/CTA'
 import { FeaturedArticle } from './blocks/FeaturedArticle'
 import { FeaturedImage } from './blocks/FeaturedImage'
 import { FeaturedVideo } from './blocks/FeaturedVideo'
-import { Feedback } from './blocks/Feedback'
 import { JustText } from './blocks/JustText'
 import { JustTitle } from './blocks/JustTitle'
 import { ParagraphText } from './blocks/ParagraphText'
-import { PauseExperience } from './blocks/PauseExperience'
 import { SocialShare } from './blocks/SocialShare'
 import { TakeOver } from './blocks/TakeOver'
 import { TextCarousel } from './blocks/TextCarousel'
@@ -93,10 +91,8 @@ export const Pages: CollectionConfig = {
                 FeaturedArticle,
                 FeaturedImage,
                 FeaturedVideo,
-                Feedback,
                 JustText,
                 JustTitle,
-                PauseExperience,
                 ParagraphText,
                 SocialShare,
                 TakeOver,
