@@ -440,6 +440,68 @@ export interface Page {
             backgroundVideo?: (number | null) | Media;
             desktopAspectRatio?: ('16:9' | '4:3') | null;
             mobileAspectRatio?: ('4:5' | '9:16') | null;
+            /**
+             * Optional. Serve a different version of this module — or none at all — depending on a GrowthBook flag. Leave the flag empty and the module renders for everyone, exactly as it does today.
+             */
+            flag?: {
+              key?: string | null;
+              /**
+               * One row per value the flag can serve, filled in from GrowthBook. Leave a field blank to inherit it from the module above.
+               */
+              rows?:
+                | {
+                    /**
+                     * Derived from GrowthBook. Stored as JSON so the string "true" and the boolean true stay distinguishable.
+                     */
+                    whenValue: string;
+                    /**
+                     * Off means the module is skipped entirely for this value — no markup ships for it.
+                     */
+                    render?: boolean | null;
+                    /**
+                     * GrowthBook no longer serves this value. The row is kept so the copy written into it is not lost; delete it once you are sure.
+                     */
+                    orphaned?: boolean | null;
+                    overrides?: {
+                      /**
+                       * The button text. Keep it short and action-oriented (e.g., "Start Now", "Learn More").
+                       */
+                      label?: string | null;
+                      /**
+                       * Optional supporting text above the button to provide context. Can be hidden using Show Title toggle.
+                       */
+                      message?: string | null;
+                      /**
+                       * Toggle to show or hide the message text above the button.
+                       */
+                      showTitle?: ('show' | 'hide') | null;
+                      /**
+                       * Internal links to pages within the site, or external links to outside URLs.
+                       */
+                      link?: (number | null) | Link;
+                      /**
+                       * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+                       */
+                      backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+                      /**
+                       * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+                       */
+                      backgroundColor?: string | null;
+                      /**
+                       * Image behind the CTA section when Background Type is "Image".
+                       */
+                      backgroundImage?: (number | null) | Media;
+                      /**
+                       * Looping video behind the CTA section when Background Type is "Video".
+                       */
+                      backgroundVideo?: (number | null) | Media;
+                      desktopAspectRatio?: ('16:9' | '4:3') | null;
+                      mobileAspectRatio?: ('4:5' | '9:16') | null;
+                    };
+                    id?: string | null;
+                  }[]
+                | null;
+            };
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
@@ -3403,6 +3465,33 @@ export interface PagesSelect<T extends boolean = true> {
               backgroundVideo?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
+              flag?:
+                | T
+                | {
+                    key?: T;
+                    rows?:
+                      | T
+                      | {
+                          whenValue?: T;
+                          render?: T;
+                          orphaned?: T;
+                          overrides?:
+                            | T
+                            | {
+                                label?: T;
+                                message?: T;
+                                showTitle?: T;
+                                link?: T;
+                                backgroundType?: T;
+                                backgroundColor?: T;
+                                backgroundImage?: T;
+                                backgroundVideo?: T;
+                                desktopAspectRatio?: T;
+                                mobileAspectRatio?: T;
+                              };
+                          id?: T;
+                        };
+                  };
               id?: T;
               blockName?: T;
             };

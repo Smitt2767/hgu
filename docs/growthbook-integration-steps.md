@@ -236,6 +236,49 @@ Attaching a boolean auto-creates two rows, with `false` → `render` off. So a k
 switch is zero extra clicks, and "change the content instead" is ticking that row and
 filling fields.
 
+### Rows are derived twice, on purpose
+
+The picker writes the rows **in the browser**, the moment a flag is chosen. Nothing
+to save first, no empty box to stare at.
+
+`syncRows` (a field `beforeValidate` on the `flag` group) derives exactly the same
+rows on the server, and it is the authority. It has to be: the Local API, a seed
+script and the MCP plugin all write documents the picker never sees, and GrowthBook
+gains and loses values while a page sits untouched. Both ends read `catalog`, so they
+cannot disagree.
+
+`beforeValidate` rather than `beforeChange` because rows must be settled *before*
+anything judges them. Otherwise a stray row fails the required check on `whenValue` —
+a field the editor is not allowed to type into.
+
+Two behaviours are worth naming, because both are the difference between this being
+safe and being a way to lose work:
+
+- **A value GrowthBook stopped serving keeps its row**, marked `orphaned`. Dropping
+  it would silently discard copy someone wrote.
+- **An unreachable GrowthBook changes nothing and blocks nothing.** A provider
+  outage must not rewrite documents, and must never stop an editor saving. The same
+  guard covers being called with no Next runtime at all — `getRuleset` is a
+  `use cache` function, and `cacheTag` throws outside a request.
+
+A key that is not in the ruleset is rejected on save by a `validate` on `flag.key`,
+so a typo fails in the admin instead of silently hiding a module in production. Note
+this only fires on **publish** — Payload skips validation for drafts.
+
+### Postgres identifier limits force one naming decision
+
+Payload names an enum after the full path to it, and Postgres caps identifiers at 63
+characters. `enum__pages_v_blocks_cta_flag_rows_overrides_desktop_aspect_ratio` is 65
+and fails outright — the migration cannot even be generated.
+
+The path is not information an enum needs: an override enum is identified by its
+block and its field. `toOverridable` names them `enum_flag_<block>_<field>` instead,
+which fits for every block, reads better, and has the main and versions tables share
+one enum type rather than defining the same one twice under two names.
+
+Worth knowing before `withFlags.all(...)`: without this, the rollout stops at the
+first block with a longish slug and a longish select field.
+
 **This needs a migration.** Push is disabled, so:
 
 ```bash
@@ -244,11 +287,14 @@ pnpm migrate
 pnpm generate:types
 ```
 
-Review the SQL before applying. One block means roughly two new tables (rows + its
-locales), not the 60-odd a full rollout would produce.
+Review the SQL before applying. For CTA it is **four tables** — rows and its locales,
+each mirrored for versions — plus four enum types and a nullable `flag_key` column on
+`pages_blocks_cta` and `_pages_v_blocks_cta`. Additive throughout; nothing existing is
+altered, and `down` reverses all of it.
 
 **Verify.** Open a page in Payload, expand a CTA block, pick `cta-visibility` from the
-dropdown. Leave the second CTA unflagged — that contrast is the demo.
+dropdown. Two rows appear immediately — `true → shown` and `false → hidden`. Leave the
+second CTA unflagged; that contrast is the demo.
 
 ---
 

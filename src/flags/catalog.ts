@@ -36,6 +36,22 @@ export type CatalogEntry = {
 }
 
 /**
+ * Whether a freshly created row for `value` renders the module.
+ *
+ * `false` on a boolean means off, whichever way round the flag's default sits — so
+ * attaching a boolean produces a working kill switch with no further clicks, and
+ * "change the content instead" is ticking that row back on and filling fields.
+ * Every other value renders; turning one off is the editor saying something
+ * deliberate.
+ *
+ * Lives here because both ends need the same answer: the picker creates the rows in
+ * the browser, and the save hook re-derives them on the server.
+ */
+export function rendersByDefault(type: FlagValueType, value: unknown): boolean {
+  return type === 'boolean' ? value !== false : true
+}
+
+/**
  * Turns the cached ruleset into the list the Payload flag picker renders.
  *
  * Everything is derived from the payload GrowthBook already serves — there is no

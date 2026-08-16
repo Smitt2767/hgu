@@ -1,0 +1,15 @@
+/**
+ * Flag value rows are derived from GrowthBook, never authored.
+ *
+ * `whenValue` is read-only, so a row added by hand can never be filled in, and
+ * `syncRows` discards it on the next save. Payload's array field has no option to
+ * turn the add button off, so it goes here rather than being left to offer an action
+ * that cannot succeed.
+ *
+ * Scoped by the `flag-rows` class set on the array in `collections/shared/flags.ts`.
+ * Every other array in the admin keeps its button. Deleting a row stays available:
+ * clearing an orphaned value is something the admin actively tells editors to do.
+ */
+.flag-rows .array-field__add-row {
+  display: none;
+}
