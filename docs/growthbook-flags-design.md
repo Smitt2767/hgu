@@ -222,8 +222,13 @@ An editor entering `"urgancy"` would silently never match anything.
 
 - **A value with no row renders the base module.** Never blank. Add a fourth
   variation in GrowthBook and the site keeps working.
-- **Blank field means inherit, not empty.** Payload distinguishes unset from empty
-  string, so this works — but it has to be deliberate.
+- **Blank field means inherit, not empty.** Payload stores a cleared text field as
+  `''` rather than `null`, so the two are distinguishable in the database — but
+  nothing in the admin distinguishes them for the person typing. Clearing a field is
+  the only gesture available and plainly means "this variant does not change this",
+  so `''`, `[]` and unset all have to resolve to inherit. `false` and `0` are real
+  values and must survive. A variant that genuinely needs a field blank wants a
+  control that says so, not an empty string.
 - **A removed variation keeps its row, marked orphaned.** Deleting it silently throws
   away copy someone wrote.
 

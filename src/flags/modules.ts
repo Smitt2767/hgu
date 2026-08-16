@@ -54,10 +54,8 @@ export function flagOf(block: unknown): FlagConfig | undefined {
  *   `undefined`.
  * - **`render: false` skips the module.** Not hidden with CSS: nothing is rendered,
  *   so nothing ships in the markup.
- * - **An unset override inherits.** Only `null`/`undefined` mean "inherit", so an
- *   editor who deliberately clears a field to empty gets an empty field. Payload
- *   distinguishes the two, which is the only reason "make this blank for the
- *   variant" is expressible at all.
+ * - **An empty override inherits.** Blank, cleared, never touched — all the same
+ *   thing. See `definedOverrides` for why they have to be.
  */
 export function applyFlag<T extends object>(block: T, flag: FlagConfig, value: unknown): T | null {
   const row = rowFor(flag.rows, value)
@@ -83,10 +81,33 @@ function rowFor(rows: FlagRow[] | null | undefined, value: unknown): FlagRow | u
   return rows.find((row) => row.whenValue === whenValue)
 }
 
+/**
+ * The overrides an editor actually set, dropping the ones they left empty.
+ *
+ * Empty has to mean inherit, not "override with nothing". Payload does store a
+ * cleared text field as `''` rather than `null`, so the two *are* distinguishable —
+ * but nothing in the admin distinguishes them for the person typing. Clearing a field
+ * is the only gesture available, and it plainly means "this variant does not change
+ * this". Honouring `''` as an override turns that gesture into a CTA with no label,
+ * which is exactly what happened the first time someone tried it.
+ *
+ * `false` and `0` are real values and must survive — hence the explicit emptiness
+ * test rather than a truthiness check, which would silently drop every unticked
+ * checkbox override.
+ *
+ * A variant that genuinely needs a field blank is asking for a different thing:
+ * a control that says so, like CTA's own "Show Title" toggle.
+ */
 function definedOverrides(overrides: Record<string, unknown> | null | undefined) {
   if (!overrides) return {}
 
-  return Object.fromEntries(
-    Object.entries(overrides).filter(([, value]) => value !== null && value !== undefined),
-  )
+  return Object.fromEntries(Object.entries(overrides).filter(([, value]) => !isEmpty(value)))
+}
+
+function isEmpty(value: unknown): boolean {
+  if (value === null || value === undefined || value === '') return true
+
+  // A cleared `hasMany` relationship arrives as `[]`. No block uses one as an
+  // override yet, but the reasoning above applies to it identically.
+  return Array.isArray(value) && value.length === 0
 }
