@@ -91,7 +91,7 @@ async function addPrecomputedSegment(request: NextRequest, response: Response) {
   if (!isLocale(locale)) return
   if (rest[0] && RESERVED_SECTIONS.has(rest[0])) return
 
-  const code = await decideCode(request, secret)
+  const code = await decideCode(request, secret, locale)
   if (!code) return
 
   internal.pathname = `/${[locale, code, ...rest].filter(Boolean).join('/')}`
@@ -114,15 +114,30 @@ async function addPrecomputedSegment(request: NextRequest, response: Response) {
  * list maintained in code. When they do disagree — a flag added since the last build
  * — the failure is soft: the code misses the prebuilt set and the page renders on
  * demand, then caches.
+ *
+ * `locale` is passed in from the path rather than left to `resolveAttributes`, whose
+ * fallback reads next-intl's `NEXT_LOCALE` cookie. That cookie is written on the
+ * *response* and so lags the request by one navigation, and here the answer is
+ * authoritative: it is baked into the code, and the page never re-evaluates. A
+ * visitor's first request to `/es/...` would otherwise be decided as `en` and served
+ * the English variant from a page they then keep hitting.
  */
-async function decideCode(request: NextRequest, secret: string): Promise<string | null> {
+async function decideCode(
+  request: NextRequest,
+  secret: string,
+  locale: string,
+): Promise<string | null> {
   const ruleset = await readRulesetForProxy()
   if (!ruleset) return null
 
   const { flags } = precomputable(ruleset)
   if (!flags.length) return null
 
-  const attributes = resolveAttributes(request)
+  const attributes = resolveAttributes({
+    headers: request.headers,
+    cookies: request.cookies,
+    locale,
+  })
 
   const decisions = Object.fromEntries(
     flags.map((entry) => [entry.key, evaluateValueWith(ruleset, entry.key, attributes)]),
