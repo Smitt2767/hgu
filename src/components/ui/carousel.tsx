@@ -42,6 +42,38 @@ function useCarousel() {
   return context
 }
 
+/**
+ * Subscribes React to Embla's own change events, for use with
+ * `useSyncExternalStore`.
+ *
+ * Embla owns the scroll position; React only mirrors it. Reading it through a store
+ * subscription rather than copying it into state with an effect means there is no
+ * render pass where the two disagree, and no `setState` in an effect body — which is
+ * the pattern React flags for causing cascading renders.
+ *
+ * The identity of this callback changes when `api` does, so React re-subscribes and
+ * re-reads on its own once Embla finishes mounting. That is the whole reason the
+ * effect existed.
+ */
+function useEmblaSubscription(api: CarouselApi) {
+  return React.useCallback(
+    (onStoreChange: () => void) => {
+      if (!api) return () => {}
+
+      api.on('select', onStoreChange)
+      // `reInit` fires when slides are added or the breakpoint changes, which moves
+      // both the snap count and the current index.
+      api.on('reInit', onStoreChange)
+
+      return () => {
+        api.off('select', onStoreChange)
+        api.off('reInit', onStoreChange)
+      }
+    },
+    [api],
+  )
+}
+
 function Carousel({
   orientation = 'horizontal',
   opts,
@@ -58,14 +90,20 @@ function Carousel({
     },
     plugins,
   )
-  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-  const [canScrollNext, setCanScrollNext] = React.useState(false)
+  const subscribe = useEmblaSubscription(api)
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) return
-    setCanScrollPrev(api.canScrollPrev())
-    setCanScrollNext(api.canScrollNext())
-  }, [])
+  // `false` on the server and before Embla mounts: both arrows start disabled, which
+  // is the honest answer while there is nothing to scroll yet.
+  const canScrollPrev = React.useSyncExternalStore(
+    subscribe,
+    () => api?.canScrollPrev() ?? false,
+    () => false,
+  )
+  const canScrollNext = React.useSyncExternalStore(
+    subscribe,
+    () => api?.canScrollNext() ?? false,
+    () => false,
+  )
 
   const scrollPrev = React.useCallback(() => {
     api?.scrollPrev()
@@ -92,17 +130,6 @@ function Carousel({
     if (!api || !setApi) return
     setApi(api)
   }, [api, setApi])
-
-  React.useEffect(() => {
-    if (!api) return
-    onSelect(api)
-    api.on('reInit', onSelect)
-    api.on('select', onSelect)
-
-    return () => {
-      api?.off('select', onSelect)
-    }
-  }, [api, onSelect])
 
   return (
     <CarouselContext.Provider
@@ -232,21 +259,19 @@ function CarouselNavigation({ className }: { className?: string }) {
   const { api, canScrollNext, canScrollPrev, scrollNext, scrollPrev } = useCarousel()
   const tUI = useTranslations('ui.carousel')
   const tA11y = useTranslations('accessibility')
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  const subscribe = useEmblaSubscription(api)
 
-  React.useEffect(() => {
-    if (!api) {
-      return
-    }
-
-    setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
-
-    api.on('select', () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
-  }, [api])
+  const count = React.useSyncExternalStore(
+    subscribe,
+    () => api?.scrollSnapList().length ?? 0,
+    () => 0,
+  )
+  // One-based, to read as "slide 2 of 5" rather than as an index.
+  const current = React.useSyncExternalStore(
+    subscribe,
+    () => (api ? api.selectedScrollSnap() + 1 : 0),
+    () => 0,
+  )
 
   return (
     <>
