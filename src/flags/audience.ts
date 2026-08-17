@@ -13,16 +13,14 @@
  * geo rule on the wrong attribute, which silently forces that flag out of any
  * prerender. A constraint in the tooling beats a warning in a document.
  *
- * Adding a market means adding a value here and one prerendered page per locale —
- * a cost worth paying deliberately, which is exactly the property a `Set` of country
- * codes would destroy.
+ * Adding a market means adding a value here. Under precompute that costs no extra
+ * pages at all — the permutations are over flag *values*, not attributes — which is
+ * exactly the property a raw country code would destroy.
  */
-export const AUDIENCES = ['us', 'in', 'gb', 'row'] as const
-
-export type Audience = (typeof AUDIENCES)[number]
+export type Audience = 'us' | 'in' | 'gb' | 'row'
 
 /** Everyone who is not in a market with its own treatment. */
-export const DEFAULT_AUDIENCE: Audience = 'row'
+const DEFAULT_AUDIENCE: Audience = 'row'
 
 const BY_COUNTRY: Record<string, Audience> = {
   US: 'us',
@@ -48,8 +46,4 @@ export function audienceOf(country: string | null | undefined): Audience {
   if (!country) return DEFAULT_AUDIENCE
 
   return BY_COUNTRY[country.toUpperCase()] ?? DEFAULT_AUDIENCE
-}
-
-export function isAudience(value: string): value is Audience {
-  return (AUDIENCES as readonly string[]).includes(value)
 }
