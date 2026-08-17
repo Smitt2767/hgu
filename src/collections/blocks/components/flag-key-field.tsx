@@ -1,6 +1,6 @@
 'use client'
 
-import { rendersByDefault, type CatalogEntry } from '@/flags/catalog'
+import { isUrlDetermined, rendersByDefault, type CatalogEntry } from '@/flags/catalog'
 import { FieldLabel, SelectInput, useField, useForm } from '@payloadcms/ui'
 import type { FormState, TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
@@ -175,19 +175,35 @@ function Hint({
   if (!selected) return null
 
   return description(
-    `${selected.type} · serves ${selected.values.map(readable).join(', ')} · ${TIER_HINT[selected.tier]}`,
+    `${selected.type} · serves ${selected.values.map(readable).join(', ')} · ${whereItRenders(selected)}`,
   )
 }
 
 /**
- * Where the flag's decision can be rendered, in the terms an editor cares about: how
- * fast it changes and what it costs, not the cache mechanics behind it.
+ * Where this flag's decision is actually made, in the terms an editor cares about.
+ *
+ * Derived through `isUrlDetermined` — the same call `RenderBlocks` makes — rather
+ * than read off `tier`, because the two answer different questions and the gap
+ * between them is real. `tier` says where a flag *could* live; a flag targeting
+ * `audience` is classified `prerender` and will be prerendered once proxy encodes
+ * that into the URL, but until then nothing in the URL answers it and it streams.
+ *
+ * Keying the hint on `tier` alone said "still fully prerendered" about a module that
+ * visibly streams behind a placeholder — describing a future state as if it were the
+ * current one, which is worse than saying nothing.
  */
-const TIER_HINT: Record<CatalogEntry['tier'], string> = {
-  static: 'same for everyone',
-  prerender: 'varies by audience, still fully prerendered',
-  streamed: 'varies per visitor, streamed in',
-  private: 'personal to each visitor, never cached',
+function whereItRenders(entry: CatalogEntry): string {
+  // Checked first: an identity flag is never url-determined, and "personal" is the
+  // more important thing to say about it than "streamed".
+  if (entry.tier === 'private') return 'personal to each visitor, never shared'
+
+  if (isUrlDetermined(entry)) {
+    return entry.tier === 'static'
+      ? 'same for everyone, in the page itself'
+      : 'varies by locale, in the page itself'
+  }
+
+  return 'varies per visitor, streamed in after the page'
 }
 
 /** `layout.3.flag.key` → `layout.3.flag.rows`, for both paths and schema paths. */
