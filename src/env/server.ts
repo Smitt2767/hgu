@@ -20,9 +20,9 @@ export const serverEnv = createEnv({
     // ruleset. Read it from SDK Configuration → SDK Connections; used as the raw
     // HMAC key, not base64-decoded.
     GROWTHBOOK_WEBHOOK_SECRET: z.string().min(1).optional(),
-    // Signs precomputed URL segments. 32 random bytes, base64url. Only required
-    // once a flag moves to the precompute tier — `generatePermutations` throws at
-    // build time without it.
+    // Signs precomputed URL segments, and gates /api/flags/debug in production.
+    // 32 random bytes, base64url. Optional, but without it nothing is prebuilt and
+    // every request renders on demand — the build says so rather than looking fine.
     FLAGS_SECRET: z.string().min(1).optional(),
   },
   experimental__runtimeEnv: process.env,

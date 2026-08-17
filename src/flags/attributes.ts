@@ -1,7 +1,5 @@
 import { audienceOf, type Audience } from '@/flags/audience'
 import { VISITOR_COOKIE } from '@/flags/constants'
-import type { Identify } from 'flags'
-import { dedupe } from 'flags/next'
 import { getLocale } from 'next-intl/server'
 import { cookies, headers } from 'next/headers'
 
@@ -49,10 +47,9 @@ type Source = {
 /**
  * Attribute resolution as a pure function over (headers, cookies).
  *
- * Written this way from the start on purpose: three callers need it and only one
- * of them may use `next/headers`. A Server Component can, proxy cannot, and the
- * Flags SDK hands `identify` sealed stores instead. Retrofitting this shape later
- * means touching every call site.
+ * Written this way on purpose: two callers need it and only one of them may use
+ * `next/headers`. A Server Component can; proxy cannot, and proxy is where the
+ * precompute decision is made.
  */
 export function resolveAttributes(r: Source): Attributes {
   const ua = r.headers.get('user-agent') ?? ''
@@ -112,22 +109,3 @@ async function renderedLocale(): Promise<string | undefined> {
     return undefined
   }
 }
-
-/**
- * Reads the stores the SDK hands it rather than calling `next/headers` itself.
- *
- * That distinction matters: a flag evaluated against the synthetic request used
- * by `readStatic` would otherwise answer from the *real* request, targeting on
- * one visitor's attributes while claiming to be a build-time read.
- *
- * `dedupe` makes it run once per request no matter how many flags ask.
- *
- * Left on the cookie fallback for locale, unlike `readAttributes`. Asking next-intl
- * for the rendered locale is a request-scoped read, and this same function runs under
- * `readStatic`'s synthetic request during a prerender — where such a read is exactly
- * what that escape hatch exists to avoid. No flag is declared through the SDK yet, so
- * nothing depends on this today; a flag that does target `locale` must be resolved
- * through `readAttributes` instead.
- */
-export const identify = dedupe((({ headers, cookies }) =>
-  resolveAttributes({ headers, cookies })) satisfies Identify<Attributes>)

@@ -45,7 +45,6 @@
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
     "embla-carousel-react": "^8.6.0",
-    "flags": "^4.3.0",
     "graphql": "16.8.1",
     "gsap": "3.14.2",
     "lucide-react": "0.562.0",

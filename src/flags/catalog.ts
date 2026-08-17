@@ -9,20 +9,7 @@ import type { FeatureApiResponse, FeatureDefinition, FeatureRule } from '@growth
  * `tierOf` below. Adding an attribute here without also encoding it in proxy would
  * make the catalog lie.
  */
-export const PRERENDER_SAFE_ATTRIBUTES = ['audience', 'locale'] as const
-
-/**
- * Everything the routing can answer from the path, on a route that carries all of it.
- *
- * `locale` is a path segment by way of next-intl. `audience` is one because proxy
- * injects it — see `src/proxy.ts`. Both are therefore readable while rendering the
- * shell, with no request data touched.
- *
- * Whether a given *route* carries them is a separate question: only the pages
- * catch-all has the `[audience]` segment, so `isUrlDetermined` takes the attributes
- * actually available at the call site rather than assuming this whole list.
- */
-export const ROUTED_ATTRIBUTES: readonly string[] = ['locale', 'audience']
+const PRERENDER_SAFE_ATTRIBUTES = ['audience', 'locale'] as const
 
 /**
  * Whether this flag's answer is fully determined by the URL of the route asking, and
@@ -31,11 +18,13 @@ export const ROUTED_ATTRIBUTES: readonly string[] = ['locale', 'audience']
  * `static` qualifies trivially: no rules, so the same answer for everyone.
  *
  * `prerender` qualifies only where the route actually carries every attribute the
- * flag targets. That is why `available` is a parameter and not read off
- * `ROUTED_ATTRIBUTES`: an audience-targeted flag is answerable on the pages
- * catch-all, which proxy gives an `[audience]` segment, and not on `articles/[slug]`,
- * which has no such segment and would have to stream. Assuming the global list here
- * would quietly serve one visitor's audience to everybody.
+ * flag targets, so `available` is a required parameter with no default. There is no
+ * global answer to substitute: `locale` is a path segment everywhere, while anything
+ * else reaches the render only where proxy encoded it. Guessing here would quietly
+ * serve one visitor's answer to everybody.
+ *
+ * A precomputed flag never reaches this function — its answer arrives decoded from
+ * the URL segment, whatever it targets.
  *
  * Experiments never qualify, and need no special case: `tierOf` classifies any flag
  * with an experiment as `streamed`, whatever it hashes on. That matters beyond
@@ -43,10 +32,7 @@ export const ROUTED_ATTRIBUTES: readonly string[] = ['locale', 'audience']
  * rather than once per visitor, which corrupts the results while everything still
  * looks healthy.
  */
-export function isUrlDetermined(
-  entry: CatalogEntry,
-  available: readonly string[] = ROUTED_ATTRIBUTES,
-): boolean {
+export function isUrlDetermined(entry: CatalogEntry, available: readonly string[]): boolean {
   if (entry.tier === 'static') return true
   if (entry.tier !== 'prerender') return false
 
