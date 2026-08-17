@@ -189,7 +189,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           <StageBanner stage={page.stage} status={page._status} />
         </>
       )}
-      <RenderBlocks data={page.layout} precomputed={precomputed} code={code} />
+      <RenderBlocks data={page.layout} precomputed={precomputed} code={code} locale={locale} />
     </>
   )
 }
