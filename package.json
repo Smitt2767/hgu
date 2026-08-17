@@ -12,7 +12,7 @@
     "generate:db-schema": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:db-schema",
     "generate:importmap": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload generate:types",
-    "lint": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next lint",
+    "lint": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" eslint .",
     "payload": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload",
     "start": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" next start",
     "migrate": "cross-env NODE_OPTIONS=\"--no-deprecation --network-family-autoselection-attempt-timeout=3000\" payload migrate",
