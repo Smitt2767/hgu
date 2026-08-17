@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { getImageUrl } from '@/utils'
 import { getBrandingCssVars } from '@/utils/color'
 import { Metadata } from 'next'
+import { cacheLife } from 'next/cache'
 import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { Merriweather, Oswald } from 'next/font/google'
@@ -82,6 +83,30 @@ export const generateMetadata = async ({
   }
 }
 
+/**
+ * Resolves the route's params inside a cache scope.
+ *
+ * Under Cache Components `params` counts as runtime data, so awaiting it in the layout
+ * body takes any route that is not already prebuilt out of its prerender — and because
+ * this layout wraps every page, one read here is enough to fail all of them with
+ * "encountered uncached or runtime data during prerendering". Prebuilt routes survive
+ * only because the value is settled at build time, which is exactly why the bug is
+ * invisible until something renders on demand.
+ *
+ * Handing the unresolved promise to a `use cache` scope and awaiting it *inside* is
+ * what makes the read legal. The pages route already does this for its own segment;
+ * see `decode` in `[locale]/[code]/[[...slug]]/page.tsx`.
+ *
+ * `cacheLife('max')` because this is a pure function of the segment and can never go
+ * stale.
+ */
+async function resolveParams(params: Promise<{ locale: string }>) {
+  'use cache'
+  cacheLife('max')
+
+  return await params
+}
+
 export default async function LocaleLayout({
   children,
   params,
@@ -90,7 +115,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>
 }) {
   const { isEnabled } = await draftMode()
-  const { locale } = await params
+  const { locale } = await resolveParams(params)
   const site = await getSiteData(locale)
 
   setRequestLocale(locale)
