@@ -1,4 +1,4 @@
-import { resolveAttributes } from '@/flags/attributes'
+import { resolveAttributes, VISITOR_COOKIE } from '@/flags/attributes'
 import { recordExposures } from '@/flags/exposure'
 import { decode } from '@/flags/precompute'
 import { routing } from '@/i18n/routing'
@@ -39,21 +39,61 @@ const Body = z.object({
   locale: z.enum(routing.locales as unknown as [string, ...string[]]),
 })
 
-export async function POST(request: Request) {
-  const parsed = Body.safeParse(await request.json().catch(() => null))
+/**
+ * Every exit from this handler is a 204, which is right for a beacon nobody reads and
+ * useless for debugging — so each one says why on the way out. Filter Vercel's logs on
+ * `[exposure]` to see a beacon's whole path, here and through `@/flags/exposure`.
+ */
+const TAG = '[exposure]'
 
-  // A malformed beacon is a stale deploy or a probe, not something to explain.
-  if (!parsed.success) return new Response(null, { status: 204 })
+export async function POST(request: Request) {
+  const raw = await request.text().catch(() => '')
+
+  let payload: unknown = null
+  try {
+    payload = JSON.parse(raw)
+  } catch {
+    // Logged with the raw bytes because the usual cause is something other than our
+    // beacon posting here, and the body identifies it.
+    console.warn(`${TAG} unparseable body (${raw.length} bytes): ${raw.slice(0, 200)}`)
+    return new Response(null, { status: 204 })
+  }
+
+  const parsed = Body.safeParse(payload)
+
+  if (!parsed.success) {
+    // A shape mismatch usually means a prebuilt page from an older deploy is still
+    // beaconing with the previous contract, which is worth being able to see.
+    console.warn(
+      `${TAG} rejected body: ${parsed.error.issues.map((i) => `${i.path.join('.')} ${i.message}`).join('; ')}`,
+    )
+    return new Response(null, { status: 204 })
+  }
 
   const { code, keys, locale } = parsed.data
+
+  console.info(
+    `${TAG} beacon: keys=[${keys.join(',')}] locale=${locale} code=${code.slice(0, 12)}…` +
+      ` (${code.length} chars) referer=${request.headers.get('referer') ?? 'none'}`,
+  )
+
   const secret = process.env.FLAGS_SECRET
 
-  if (!secret) return new Response(null, { status: 204 })
+  if (!secret) {
+    console.warn(`${TAG} FLAGS_SECRET unset: cannot verify the code, so nothing is recorded`)
+    return new Response(null, { status: 204 })
+  }
 
   // Read before `after`, not inside it. Attributes come from this request, and the
   // whole point is that they belong to this visitor rather than to a build.
   const [h, c] = await Promise.all([headers(), cookies()])
   const attributes = resolveAttributes({ headers: h, cookies: c, locale })
+
+  if (attributes.id === 'anonymous') {
+    // Every experiment hashes on this, so a missing visitor cookie means the whole
+    // batch buckets on a constant and the arms cannot be told apart.
+    console.warn(`${TAG} no ${VISITOR_COOKIE} cookie: bucketing on the fallback id`)
+  }
 
   after(async () => {
     const decisions = await decode(code, secret)
@@ -61,11 +101,20 @@ export async function POST(request: Request) {
     // Fails closed. A code that does not verify tells us nothing about what was
     // rendered, and a guessed exposure is worse than a missing one.
     if (!decisions) {
-      console.warn('[flags] exposure beacon carried a code that did not verify')
+      console.warn(
+        `${TAG} code did not verify (${code.slice(0, 12)}…) — a FLAGS_SECRET that differs` +
+          ' between proxy and this route would do exactly this',
+      )
       return
     }
 
-    await recordExposures({ decisions, keys, attributes })
+    try {
+      await recordExposures({ decisions, keys, attributes })
+    } catch (error) {
+      // `recordExposures` is written not to throw; if it ever does, the response has
+      // already been sent and this is the only place the reason could surface.
+      console.error(`${TAG} recording threw after the response was sent`, error)
+    }
   })
 
   return new Response(null, { status: 204 })

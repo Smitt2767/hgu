@@ -48,6 +48,22 @@ import { GrowthBookClient, type Result } from '@growthbook/growthbook'
 /** GrowthBook's documented ceiling for one ingest request. */
 const MAX_EVENTS_PER_REQUEST = 100
 
+/**
+ * One prefix for every line this path emits.
+ *
+ * Filtering Vercel's logs on `[exposure]` should show the complete story of a beacon —
+ * what arrived, what each key resolved to, what was sent and what came back — and
+ * nothing else. That matters because every interesting failure here is silent: an
+ * experiment that records nothing looks exactly like an experiment nobody entered, and
+ * a 204 is returned either way.
+ *
+ * Logged at `info` on the happy path so the trail exists without an error to trigger it.
+ * If the volume ever becomes a problem the fix is to gate the `info` calls on an env
+ * flag, not to remove them — the `warn`/`error` lines are the ones that pay for
+ * themselves and should stay unconditional.
+ */
+const TAG = '[exposure]'
+
 export type ExposureReport = {
   /** Events accepted by the ingest endpoint. */
   sent: number
@@ -82,8 +98,20 @@ export async function recordExposures(args: {
 }): Promise<ExposureReport> {
   const { decisions, keys, attributes } = args
 
+  console.info(
+    `${TAG} recording: keys=[${keys.join(',')}] decided=[${Object.keys(decisions).join(',')}]` +
+      ` id=${attributes.id} locale=${attributes.locale} country=${attributes.country}` +
+      ` audience=${attributes.audience} device=${attributes.deviceType}`,
+  )
+
   const ruleset = await getRuleset()
-  if (!ruleset) return { sent: 0, mismatched: 0, dryRun: true }
+
+  if (!ruleset) {
+    // Not an error state on its own — GROWTHBOOK_CLIENT_KEY may simply be unset — but
+    // it means nothing can be attributed, so say so rather than returning a quiet zero.
+    console.warn(`${TAG} no ruleset available, nothing can be recorded`)
+    return { sent: 0, mismatched: 0, dryRun: true }
+  }
 
   // Only experiments produce exposures. A flag forced by a rule has no variant to
   // attribute a conversion to, and counting it would invent an experiment that does
@@ -94,6 +122,8 @@ export async function recordExposures(args: {
       .map((entry) => entry.key),
   )
 
+  console.info(`${TAG} experiments in ruleset: [${[...experiments].join(',')}]`)
+
   const events: IngestEvent[] = []
   let mismatched = 0
 
@@ -101,35 +131,76 @@ export async function recordExposures(args: {
   client.initSync({ payload: ruleset })
 
   for (const key of new Set(keys)) {
-    if (!experiments.has(key) || !(key in decisions)) continue
+    // Both skips are ordinary rather than broken, and both are worth naming: the first
+    // says the flag is not an experiment (so there is nothing to attribute), the second
+    // that it is not in this page's code (so it was decided some other way).
+    if (!experiments.has(key)) {
+      console.info(`${TAG} skip ${key}: not an experiment in the current ruleset`)
+      continue
+    }
 
-    client.evalFeature(key, {
+    if (!(key in decisions)) {
+      console.info(`${TAG} skip ${key}: absent from the decoded code`)
+      continue
+    }
+
+    let fired = false
+
+    const result = client.evalFeature(key, {
       attributes,
       // Per user context rather than on the client, so the closure can see which
       // decision this particular key was rendered under.
-      trackingCallback: (experiment, result) => {
-        if (!sameValue(result.value, decisions[key])) {
+      trackingCallback: (experiment, assignment) => {
+        fired = true
+
+        if (!sameValue(assignment.value, decisions[key])) {
           mismatched += 1
+          // Both values, because which way round it went is the whole diagnosis: the
+          // rendered one came from proxy at rewrite time, this one from re-evaluating
+          // moments later. They differ only if the ruleset changed in between.
+          console.warn(
+            `${TAG} mismatch ${key}: rendered=${JSON.stringify(decisions[key])}` +
+              ` re-evaluated=${JSON.stringify(assignment.value)} — dropping, not guessing`,
+          )
           return
         }
 
-        events.push(toEvent(experiment.key, result, attributes))
+        events.push(toEvent(experiment.key, assignment, attributes))
+
+        console.info(
+          `${TAG} queued ${key}: experimentId=${experiment.key} variationId=${assignment.key}` +
+            ` (index ${assignment.variationId}) via ${assignment.hashAttribute}=${assignment.hashValue}`,
+        )
       },
     })
+
+    // The quiet case, and the one most likely to be mistaken for a bug. The SDK calls
+    // `trackingCallback` only on genuine assignment, so a visitor who did not qualify
+    // produces no event and no warning — correctly. `source` says which rule answered
+    // instead, which is the difference between "not in the experiment" and "the
+    // experiment is not reaching anyone".
+    if (!fired) {
+      const outcome = result.experimentResult
+      console.info(
+        `${TAG} no exposure for ${key}: value=${JSON.stringify(result.value)}` +
+          ` source=${result.source} inExperiment=${outcome?.inExperiment ?? 'n/a'}` +
+          ` hashUsed=${outcome?.hashUsed ?? 'n/a'} — visitor was not assigned, so there is` +
+          ' nothing to attribute',
+      )
+    }
   }
 
   client.destroy()
 
-  if (mismatched) {
-    // Only reachable when the ruleset changed in the seconds between proxy's rewrite
-    // and this beacon. Worth a line each time: a rising count means codes and renders
-    // are drifting apart, which no other signal here would reveal.
-    console.warn(`[flags] ${mismatched} exposure(s) disagreed with the rendered variant`)
-  }
-
   const sent = await send(events)
+  const report = { sent, mismatched, dryRun: !serverEnv.GROWTHBOOK_INGEST_HOST }
 
-  return { sent, mismatched, dryRun: !serverEnv.GROWTHBOOK_INGEST_HOST }
+  console.info(
+    `${TAG} done: built=${events.length} sent=${sent} mismatched=${mismatched}` +
+      ` dryRun=${report.dryRun}`,
+  )
+
+  return report
 }
 
 type IngestEvent = {
@@ -173,27 +244,61 @@ async function send(events: IngestEvent[]): Promise<number> {
   const host = serverEnv.GROWTHBOOK_INGEST_HOST
   const key = serverEnv.GROWTHBOOK_CLIENT_KEY
 
-  if (!events.length) return 0
+  if (!events.length) {
+    console.info(`${TAG} nothing to send`)
+    return 0
+  }
 
+  // Named separately because they fail for different reasons: no host means the
+  // Managed Warehouse was never wired up, no key means GrowthBook itself is not
+  // configured and the ruleset would have been null too.
   if (!host || !key) {
-    console.info(`[flags] ${events.length} exposure(s) not sent: ingest not configured`)
+    console.warn(
+      `${TAG} ${events.length} event(s) NOT sent: ` +
+        `${!host ? 'GROWTHBOOK_INGEST_HOST unset' : 'GROWTHBOOK_CLIENT_KEY unset'}` +
+        ' — note Vercel bakes env vars in at deploy time, so a variable added after the' +
+        ' running deployment was built is not visible here until you redeploy',
+    )
     return 0
   }
 
   const batch = events.slice(0, MAX_EVENTS_PER_REQUEST)
 
+  if (batch.length < events.length) {
+    console.warn(`${TAG} truncated ${events.length} events to ${batch.length} for one request`)
+  }
+
+  const url = `${host}/track?client_key=${encodeURIComponent(key)}`
+  const body = JSON.stringify(batch)
+
+  // The host without the key, so the region is visible in logs and the credential is
+  // not. Sending to the wrong region succeeds and silently lands in a different
+  // ClickHouse cluster than the warehouse, which is otherwise indistinguishable from
+  // events never arriving.
+  console.info(`${TAG} POST ${host}/track — ${batch.length} event(s), ${body.length} bytes`)
+  console.info(`${TAG} payload ${body}`)
+
   try {
-    const res = await fetch(`${host}/track?client_key=${encodeURIComponent(key)}`, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(batch),
+      body,
     })
 
-    if (!res.ok) throw new Error(`ingest responded ${res.status}`)
+    if (!res.ok) {
+      // The body is the useful half of a rejection — it names the offending field —
+      // and it is gone by the time this surfaces anywhere else.
+      const detail = await res.text().catch(() => '<unreadable>')
+      console.error(`${TAG} ingest rejected ${res.status} ${res.statusText}: ${detail}`)
+      return 0
+    }
 
+    console.info(`${TAG} ingest accepted ${batch.length} event(s) (${res.status})`)
     return batch.length
   } catch (error) {
-    console.error('[flags] exposure ingest failed', error)
+    // A throw here is the network, not GrowthBook: DNS for a mistyped region, or the
+    // request outliving the invocation.
+    console.error(`${TAG} ingest request failed before a response`, error)
     return 0
   }
 }
