@@ -96,6 +96,28 @@ export const generateStaticParams = async () => {
  */
 
 /**
+ * Lets the on-demand branch of that fallback block instead of failing.
+ *
+ * This route is prerendered per decision, and for any code in the prebuilt set nothing
+ * here applies — those pages are files on disk and this export changes nothing about
+ * them. **It does not disable prerendering**; it only exempts the segment from
+ * instant-navigation validation, so the route still prerenders wherever it can.
+ *
+ * What it buys is the other half of `dynamicParams`. A code that was never prebuilt has
+ * to render at request time, and that render legitimately depends on data no shell can
+ * carry. Without this, any such request 500s instead of rendering — which is not a
+ * degraded fallback, it is a broken one, and `getPagesSlugs`' cap of 1 means almost
+ * every page takes that path in production.
+ *
+ * Deliberately paired with, not instead of, fixing the reads themselves: the ruleset's
+ * failure profile no longer produces a dynamic hole (see `getRuleset`), and the locale
+ * is passed into `RenderBlocks` rather than read mid-render. This is the backstop for
+ * whatever is left, because a 500 on the home page is a worse failure than a
+ * non-instant navigation.
+ */
+export const instant = false
+
+/**
  * Decodes the segment into the precomputed flag values.
  *
  * **`params` is taken as a promise and resolved in here, and that is not stylistic.**
