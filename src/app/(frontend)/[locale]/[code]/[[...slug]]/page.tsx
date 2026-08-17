@@ -2,6 +2,7 @@ import RenderBlocks from '@/components/blocks'
 import LivePreviewListener from '@/components/live-preview-listener'
 import StageBanner from '@/components/stage-banner'
 import { getPage, getPagesSlugs, getPreviewPage } from '@/data/page'
+import { buildCatalog } from '@/flags/catalog'
 import {
   codeIsOverlong,
   decode as decodeCode,
@@ -53,6 +54,21 @@ export const generateStaticParams = async () => {
   // prerendered" would be the wrong thing to believe about it.
   if (dropped.length) {
     console.warn(`[flags] over the permutation cap, not prebuilding: ${dropped.join(', ')}`)
+
+    // Louder, because this one costs data rather than latency. Exposure is reported by
+    // a client beacon that only precomputed pages render, so an experiment falling out
+    // of the set keeps running and quietly stops being measured — variants still serve,
+    // conversions still arrive, and no dashboard shows the denominator went missing.
+    const untracked = buildCatalog(ruleset)
+      .filter((entry) => entry.hasExperiment && dropped.includes(entry.key))
+      .map((entry) => entry.key)
+
+    if (untracked.length) {
+      console.warn(
+        `[flags] experiments dropped from precompute will NOT be tracked: ${untracked.join(', ')}` +
+          ' — raise MAX_PERMUTATIONS, narrow another flag, or track these from TargetedBlock',
+      )
+    }
   }
 
   const codes = await Promise.all(permutations(flags).map((d) => encode(d, secret)))
@@ -154,7 +170,7 @@ export const generateMetadata = async ({
 }
 
 export default async function Page({ params }: { params: Promise<Params> }) {
-  const { locale, slug, precomputed } = await decode(params)
+  const { locale, slug, precomputed, code } = await decode(params)
   setRequestLocale(locale)
 
   const { draft, page } = await resolvePage(slug?.[0] ?? '', locale)
@@ -173,7 +189,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           <StageBanner stage={page.stage} status={page._status} />
         </>
       )}
-      <RenderBlocks data={page.layout} precomputed={precomputed} />
+      <RenderBlocks data={page.layout} precomputed={precomputed} code={code} />
     </>
   )
 }

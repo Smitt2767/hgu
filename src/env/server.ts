@@ -24,6 +24,18 @@ export const serverEnv = createEnv({
     // 32 random bytes, base64url. Optional, but without it nothing is prebuilt and
     // every request renders on demand — the build says so rather than looking fine.
     FLAGS_SECRET: z.string().min(1).optional(),
+    // Origin of the GrowthBook Managed Warehouse ingest endpoint, region-specific:
+    // https://us1.gb-ingest.com or https://eu-west-1.gb-ingest.com. Provision the
+    // warehouse in GrowthBook (Settings → one click) to find out which.
+    //
+    // Optional, and while it is unset exposure events are counted and logged but not
+    // sent. That is the useful failure: an experiment silently recording nothing looks
+    // exactly like an experiment nobody has entered yet.
+    //
+    // Authentication is GROWTHBOOK_CLIENT_KEY on the query string, which is why this
+    // is read on the server and never shipped to the browser — that key also fetches
+    // the full ruleset, so exposing it hands over every flag rule in the project.
+    GROWTHBOOK_INGEST_HOST: z.url().optional(),
   },
   experimental__runtimeEnv: process.env,
   emptyStringAsUndefined: true,

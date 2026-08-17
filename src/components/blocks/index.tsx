@@ -14,6 +14,7 @@ import AnimatedQuote from './animated-quote'
 import ArticleCarousel from './article-carousel'
 import CardCarousel from './card-carousel'
 import CTA from './cta'
+import ExposureBeacon from './exposure'
 import FeaturedArticle from './featured-article'
 import FeaturedImage from './featured-image'
 import FeaturedVideo from './featured-video'
@@ -39,6 +40,14 @@ type RenderBlocksProps = {
    * for exactly this combination.
    */
   precomputed?: Record<string, unknown>
+  /**
+   * The signed segment this page was rendered under, where there is one.
+   *
+   * Passed through solely so the exposure beacon can hand it back. The browser cannot
+   * read it for itself — proxy rewrites without touching the address bar — and it is
+   * signed, so the route that receives it can trust what it says was rendered.
+   */
+  code?: string
 }
 
 const blockComponents: Partial<{
@@ -93,7 +102,7 @@ type LayoutBlock = NonNullable<LayoutData>[number]
  * it until proxy encodes it, so it streams today. `isUrlDetermined` is what keeps
  * those two ideas apart.
  */
-export default async function RenderBlocks({ data, precomputed }: RenderBlocksProps) {
+export default async function RenderBlocks({ data, precomputed, code }: RenderBlocksProps) {
   const hasBlocks = data && Array.isArray(data) && data.length > 0
 
   if (!hasBlocks) return null
@@ -111,7 +120,31 @@ export default async function RenderBlocks({ data, precomputed }: RenderBlocksPr
 
   const catalog = buildCatalog(ruleset)
 
-  return data.map((block) => {
+  /**
+   * Experiments whose module is on this page and whose variant the URL already carries.
+   *
+   * Collected up front so one beacon covers the page: a flag used by two blocks is one
+   * exposure, not two, and one request rather than two against an endpoint that rate
+   * limits.
+   *
+   * Membership is "present in the layout", not "rendered". A variant that hides its
+   * module still exposed the visitor, and excluding that arm would bias the comparison
+   * much harder than including it.
+   *
+   * Only precomputed flags qualify. A streamed flag is decided inside `TargetedBlock`,
+   * which runs per request, so its exposure has somewhere honest to happen already and
+   * does not need the round trip.
+   */
+  const exposureKeys = [
+    ...new Set(
+      data
+        .map((block) => flagOf(block)?.key)
+        .filter((key): key is string => Boolean(key && precomputed && key in precomputed))
+        .filter((key) => catalog.some((entry) => entry.key === key && entry.hasExperiment)),
+    ),
+  ]
+
+  const rendered = data.map((block) => {
     const flag = flagOf(block)
 
     if (!flag) return renderBlock(block, block.id)
@@ -143,6 +176,17 @@ export default async function RenderBlocks({ data, precomputed }: RenderBlocksPr
       </Suspense>
     )
   })
+
+  // `locale` is non-null whenever a key survived above, since both require a flag on
+  // the page — narrowed rather than asserted so that stays true if the guard moves.
+  if (!code || !locale || !exposureKeys.length) return rendered
+
+  return (
+    <>
+      {rendered}
+      <ExposureBeacon code={code} keys={exposureKeys} locale={locale} />
+    </>
+  )
 }
 
 /**
