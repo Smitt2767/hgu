@@ -1,6 +1,6 @@
 'use client'
 
-import { rendersByDefault, type CatalogEntry } from '@/flags/catalog'
+import { isUrlDetermined, rendersByDefault, type CatalogEntry } from '@/flags/catalog'
 import { FieldLabel, SelectInput, useField, useForm } from '@payloadcms/ui'
 import type { FormState, TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
@@ -175,19 +175,36 @@ function Hint({
   if (!selected) return null
 
   return description(
-    `${selected.type} · serves ${selected.values.map(readable).join(', ')} · ${TIER_HINT[selected.tier]}`,
+    `${selected.type} · serves ${selected.values.map(readable).join(', ')} · ${whereItRenders(selected)}`,
   )
 }
 
 /**
- * Where the flag's decision can be rendered, in the terms an editor cares about: how
- * fast it changes and what it costs, not the cache mechanics behind it.
+ * Where this flag's decision is actually made, in the terms an editor cares about.
+ *
+ * Never derived from `tier` alone. `tier` says where a flag *could* live, which is a
+ * different question from where it does — and an earlier version of this hint said
+ * "still fully prerendered" about a module that visibly streamed behind a
+ * placeholder, describing a future state as if it were the current one.
+ *
+ * `precomputed` comes from the endpoint, which runs the same selection proxy and the
+ * build run, so the admin cannot disagree with what ships. `isUrlDetermined` covers
+ * the rest: no rules at all, or targeting only what the path already carries.
  */
-const TIER_HINT: Record<CatalogEntry['tier'], string> = {
-  static: 'same for everyone',
-  prerender: 'varies by audience, still fully prerendered',
-  streamed: 'varies per visitor, streamed in',
-  private: 'personal to each visitor, never cached',
+function whereItRenders(entry: CatalogEntry): string {
+  // Checked first: an identity flag is never precomputed or url-determined, and
+  // "personal" is the more important thing to say about it than "streamed".
+  if (entry.tier === 'private') return 'personal to each visitor, never shared'
+
+  if (entry.precomputed) return 'decided before the page is sent, whatever it targets'
+
+  if (isUrlDetermined(entry, ['locale'])) {
+    return entry.tier === 'static'
+      ? 'same for everyone, in the page itself'
+      : 'varies by locale, in the page itself'
+  }
+
+  return 'varies per visitor, streamed in after the page'
 }
 
 /** `layout.3.flag.key` → `layout.3.flag.rows`, for both paths and schema paths. */

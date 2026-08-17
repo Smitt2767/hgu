@@ -1,5 +1,6 @@
 import { asUser } from '@/access'
 import { buildCatalog } from '@/flags/catalog'
+import { precomputable } from '@/flags/precompute'
 import { getRuleset } from '@/flags'
 import config from '@payload-config'
 import { headers as getHeaders } from 'next/headers'
@@ -27,11 +28,20 @@ export async function GET() {
 
   const ruleset = await getRuleset()
 
+  // Annotated here rather than inside `buildCatalog`, because whether a flag is
+  // precomputed depends on the whole set: the permutation cap can exclude one that
+  // qualifies on its own. This is the same call proxy and the build make, so the
+  // admin cannot disagree with what actually ships.
+  const precomputedKeys = new Set(precomputable(ruleset).flags.map((entry) => entry.key))
+
   return Response.json({
     // Distinguishes "GrowthBook has no features" from "we could not reach it", which
     // otherwise both render as an empty dropdown with nothing to explain it.
     reachable: ruleset !== null,
     dateUpdated: ruleset?.dateUpdated ?? null,
-    flags: buildCatalog(ruleset),
+    flags: buildCatalog(ruleset).map((entry) => ({
+      ...entry,
+      precomputed: precomputedKeys.has(entry.key),
+    })),
   })
 }
