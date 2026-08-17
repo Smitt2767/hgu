@@ -28,6 +28,8 @@ import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c08
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { FlagKeyField as FlagKeyField_54d384f239fa5339259edff37938d3aa } from '@/collections/blocks/components/flag-key-field'
+import { FlagRowLabel as FlagRowLabel_54ecd3b6db53b8153cb87dea6ac8e4f1 } from '@/collections/blocks/components/flag-row-label'
 import { TOTPField as TOTPField_3eb2cc20d1a2569c2ccbafcee15bd128 } from '@clocklimited/payload-2fa/rsc'
 import { RowLabel as RowLabel_4fbb7ae9b93451efd73dd382f85e6b9c } from '@/globals/socials/components/RowLabel'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
@@ -67,6 +69,8 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@/collections/blocks/components/flag-key-field#FlagKeyField": FlagKeyField_54d384f239fa5339259edff37938d3aa,
+  "@/collections/blocks/components/flag-row-label#FlagRowLabel": FlagRowLabel_54ecd3b6db53b8153cb87dea6ac8e4f1,
   "@clocklimited/payload-2fa/rsc#TOTPField": TOTPField_3eb2cc20d1a2569c2ccbafcee15bd128,
   "@/globals/socials/components/RowLabel#RowLabel": RowLabel_4fbb7ae9b93451efd73dd382f85e6b9c,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e,

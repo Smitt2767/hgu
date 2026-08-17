@@ -26,7 +26,16 @@ function ArticleDrawer({ open, article, showReadMore, onOpenChange }: ArticleDra
       <div className="p-4 overflow-y-auto">
         <div className="relative overflow-hidden aspect-video rounded-2xl mb-4">
           {article.image && typeof article.image === 'object' && (
-            <Image alt={article.image.alt} src={article.image.url!} fill sizes="100vw" priority />
+            // The drawer is `max-w-3xl mx-auto` (768px) with `p-4`, so the image is
+            // never wider than 736px. Declaring 100vw made the browser fetch a
+            // full-viewport source for a half-width slot on every desktop card.
+            <Image
+              alt={article.image.alt}
+              src={article.image.url!}
+              fill
+              sizes="(min-width: 768px) 736px, 100vw"
+              priority
+            />
           )}
         </div>
         <h2 className="font-sans text-2xl font-bold text-foreground mb-8">{article.title}</h2>
@@ -102,7 +111,16 @@ export default function ArticleCard({
       >
         <div className="relative overflow-hidden aspect-video">
           {article.image && typeof article.image === 'object' && (
-            <Image alt={article.image.alt} src={article.image.url!} fill sizes="100vw" priority />
+            // Matches the carousel item's `basis-[80%] md:basis-[48%]`. Rounded up
+            // rather than down: over-requesting costs bytes, under-requesting picks
+            // a source too small and the image renders soft.
+            <Image
+              alt={article.image.alt}
+              src={article.image.url!}
+              fill
+              sizes="(min-width: 768px) 48vw, 80vw"
+              priority
+            />
           )}
         </div>
         <div className="p-6">

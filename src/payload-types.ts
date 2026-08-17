@@ -440,6 +440,68 @@ export interface Page {
             backgroundVideo?: (number | null) | Media;
             desktopAspectRatio?: ('16:9' | '4:3') | null;
             mobileAspectRatio?: ('4:5' | '9:16') | null;
+            /**
+             * Optional. Serve a different version of this module — or none at all — depending on a GrowthBook flag. Leave the flag empty and the module renders for everyone, exactly as it does today.
+             */
+            flag?: {
+              key?: string | null;
+              /**
+               * One row per value the flag can serve, filled in from GrowthBook. Leave a field blank to inherit it from the module above.
+               */
+              rows?:
+                | {
+                    /**
+                     * Derived from GrowthBook. Stored as JSON so the string "true" and the boolean true stay distinguishable.
+                     */
+                    whenValue: string;
+                    /**
+                     * Off means the module is skipped entirely for this value — no markup ships for it.
+                     */
+                    render?: boolean | null;
+                    /**
+                     * GrowthBook no longer serves this value. The row is kept so the copy written into it is not lost; delete it once you are sure.
+                     */
+                    orphaned?: boolean | null;
+                    overrides?: {
+                      /**
+                       * The button text. Keep it short and action-oriented (e.g., "Start Now", "Learn More").
+                       */
+                      label?: string | null;
+                      /**
+                       * Optional supporting text above the button to provide context. Can be hidden using Show Title toggle.
+                       */
+                      message?: string | null;
+                      /**
+                       * Toggle to show or hide the message text above the button.
+                       */
+                      showTitle?: ('show' | 'hide') | null;
+                      /**
+                       * Internal links to pages within the site, or external links to outside URLs.
+                       */
+                      link?: (number | null) | Link;
+                      /**
+                       * Choose "None" for no background, "Color" for solid gray, "Image" for a background image, or "Video" for animated video background.
+                       */
+                      backgroundType?: ('none' | 'color' | 'image' | 'video') | null;
+                      /**
+                       * Hex color for the section background when Background Type is "Color". Defaults to dark gray (#1a1a1a).
+                       */
+                      backgroundColor?: string | null;
+                      /**
+                       * Image behind the CTA section when Background Type is "Image".
+                       */
+                      backgroundImage?: (number | null) | Media;
+                      /**
+                       * Looping video behind the CTA section when Background Type is "Video".
+                       */
+                      backgroundVideo?: (number | null) | Media;
+                      desktopAspectRatio?: ('16:9' | '4:3') | null;
+                      mobileAspectRatio?: ('4:5' | '9:16') | null;
+                    };
+                    id?: string | null;
+                  }[]
+                | null;
+            };
             id?: string | null;
             blockName?: string | null;
             blockType: 'cta';
@@ -481,80 +543,6 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'featuredVideo';
-          }
-        | {
-            /**
-             * Initial consent question (e.g., "Did anything here shift how you think about Jesus?").
-             */
-            questionText?: string | null;
-            /**
-             * Text for positive consent button. Default: "Yes".
-             */
-            yesButtonLabel?: string | null;
-            /**
-             * Text for negative consent button. Default: "No".
-             */
-            noButtonLabel?: string | null;
-            /**
-             * Title shown when user clicks Yes (e.g., "We're so glad...").
-             */
-            yesFormTitle?: string | null;
-            /**
-             * Title shown when user clicks No (e.g., "We'd love to hear more...").
-             */
-            noFormTitle?: string | null;
-            /**
-             * First Name (optional), Last Name (optional), Email (required), Message textarea (required). All use floating labels with yellow borders.
-             */
-            formFields?: {
-              /**
-               * Include First Name field (optional).
-               */
-              firstName?: boolean | null;
-              /**
-               * Include Last Name field (optional).
-               */
-              lastName?: boolean | null;
-              /**
-               * Include Email field (required).
-               */
-              email?: boolean | null;
-              /**
-               * Include Message textarea (required).
-               */
-              message?: boolean | null;
-            };
-            /**
-             * Required acknowledgment checkbox with link to privacy policy. Must be checked to submit.
-             */
-            privacyCheckbox: boolean;
-            /**
-             * Optional checkbox allowing user to consent to future contact.
-             */
-            contactCheckbox?: boolean | null;
-            /**
-             * URL to your privacy policy page.
-             */
-            privacyLink?: (number | null) | Link;
-            /**
-             * Returns to consent question. Default: "Back".
-             */
-            backButton?: string | null;
-            /**
-             * Submits the form. Default: "Submit".
-             */
-            submitButton?: string | null;
-            /**
-             * Title displayed after successful form submission. Default: "Thank You".
-             */
-            successTitle?: string | null;
-            /**
-             * Message displayed after successful form submission.
-             */
-            successDescription?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'feedback';
           }
         | {
             /**
@@ -644,87 +632,6 @@ export interface Page {
             id?: string | null;
             blockName?: string | null;
             blockType: 'justTitle';
-          }
-        | {
-            /**
-             * Array of intro lines displayed before the play button. Each line appears on its own row.
-             */
-            introLines?:
-              | {
-                  line?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Secondary instruction (e.g., 'Press play to begin').
-             */
-            subText?: string | null;
-            showSubText?: ('show' | 'hide') | null;
-            /**
-             * Array of scene objects. Each scene has: Title (rich text with yellow highlighting), Quote (italic text), and Body (rich text with line breaks). Use HTML spans for yellow: <span style="color: #feda00">word</span>
-             */
-            scenes: {
-              /**
-               * Rich text title with branded color highlighting. Use HTML spans for yellow: <span style="color: #feda00">word</span>
-               */
-              title?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              /**
-               * Italic text displayed in the scene.
-               */
-              quote?: string | null;
-              /**
-               * Rich text body content with line breaks.
-               */
-              body?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-            }[];
-            /**
-             * Total timer length in seconds. Default is 60 seconds. Time is distributed across all scenes.
-             */
-            duration?: number | null;
-            /**
-             * Controls the pace of word-by-word animation. Default: 1.0. Range: 0.1 (slower) to 3.0 (faster). Higher values make words appear faster.
-             */
-            animationSpeed?: number | null;
-            /**
-             * Ambient background for the experience. Can be image or looping video. Video plays silently.
-             */
-            backgroundType?: ('image' | 'video') | null;
-            backgroundImage?: (number | null) | Media;
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: '16:9' | null;
-            mobileAspectRatio?: '9:16' | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'pauseExperience';
           }
         | {
             /**
@@ -1170,80 +1077,6 @@ export interface Article {
           }
         | {
             /**
-             * Initial consent question (e.g., "Did anything here shift how you think about Jesus?").
-             */
-            questionText?: string | null;
-            /**
-             * Text for positive consent button. Default: "Yes".
-             */
-            yesButtonLabel?: string | null;
-            /**
-             * Text for negative consent button. Default: "No".
-             */
-            noButtonLabel?: string | null;
-            /**
-             * Title shown when user clicks Yes (e.g., "We're so glad...").
-             */
-            yesFormTitle?: string | null;
-            /**
-             * Title shown when user clicks No (e.g., "We'd love to hear more...").
-             */
-            noFormTitle?: string | null;
-            /**
-             * First Name (optional), Last Name (optional), Email (required), Message textarea (required). All use floating labels with yellow borders.
-             */
-            formFields?: {
-              /**
-               * Include First Name field (optional).
-               */
-              firstName?: boolean | null;
-              /**
-               * Include Last Name field (optional).
-               */
-              lastName?: boolean | null;
-              /**
-               * Include Email field (required).
-               */
-              email?: boolean | null;
-              /**
-               * Include Message textarea (required).
-               */
-              message?: boolean | null;
-            };
-            /**
-             * Required acknowledgment checkbox with link to privacy policy. Must be checked to submit.
-             */
-            privacyCheckbox: boolean;
-            /**
-             * Optional checkbox allowing user to consent to future contact.
-             */
-            contactCheckbox?: boolean | null;
-            /**
-             * URL to your privacy policy page.
-             */
-            privacyLink?: (number | null) | Link;
-            /**
-             * Returns to consent question. Default: "Back".
-             */
-            backButton?: string | null;
-            /**
-             * Submits the form. Default: "Submit".
-             */
-            submitButton?: string | null;
-            /**
-             * Title displayed after successful form submission. Default: "Thank You".
-             */
-            successTitle?: string | null;
-            /**
-             * Message displayed after successful form submission.
-             */
-            successDescription?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'feedback';
-          }
-        | {
-            /**
              * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
              */
             content: {
@@ -1366,87 +1199,6 @@ export interface Article {
             id?: string | null;
             blockName?: string | null;
             blockType: 'paragraphText';
-          }
-        | {
-            /**
-             * Array of intro lines displayed before the play button. Each line appears on its own row.
-             */
-            introLines?:
-              | {
-                  line?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Secondary instruction (e.g., 'Press play to begin').
-             */
-            subText?: string | null;
-            showSubText?: ('show' | 'hide') | null;
-            /**
-             * Array of scene objects. Each scene has: Title (rich text with yellow highlighting), Quote (italic text), and Body (rich text with line breaks). Use HTML spans for yellow: <span style="color: #feda00">word</span>
-             */
-            scenes: {
-              /**
-               * Rich text title with branded color highlighting. Use HTML spans for yellow: <span style="color: #feda00">word</span>
-               */
-              title?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              /**
-               * Italic text displayed in the scene.
-               */
-              quote?: string | null;
-              /**
-               * Rich text body content with line breaks.
-               */
-              body?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-            }[];
-            /**
-             * Total timer length in seconds. Default is 60 seconds. Time is distributed across all scenes.
-             */
-            duration?: number | null;
-            /**
-             * Controls the pace of word-by-word animation. Default: 1.0. Range: 0.1 (slower) to 3.0 (faster). Higher values make words appear faster.
-             */
-            animationSpeed?: number | null;
-            /**
-             * Ambient background for the experience. Can be image or looping video. Video plays silently.
-             */
-            backgroundType?: ('image' | 'video') | null;
-            backgroundImage?: (number | null) | Media;
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: '16:9' | null;
-            mobileAspectRatio?: '9:16' | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'pauseExperience';
           }
         | {
             /**
@@ -1806,80 +1558,6 @@ export interface Template {
           }
         | {
             /**
-             * Initial consent question (e.g., "Did anything here shift how you think about Jesus?").
-             */
-            questionText?: string | null;
-            /**
-             * Text for positive consent button. Default: "Yes".
-             */
-            yesButtonLabel?: string | null;
-            /**
-             * Text for negative consent button. Default: "No".
-             */
-            noButtonLabel?: string | null;
-            /**
-             * Title shown when user clicks Yes (e.g., "We're so glad...").
-             */
-            yesFormTitle?: string | null;
-            /**
-             * Title shown when user clicks No (e.g., "We'd love to hear more...").
-             */
-            noFormTitle?: string | null;
-            /**
-             * First Name (optional), Last Name (optional), Email (required), Message textarea (required). All use floating labels with yellow borders.
-             */
-            formFields?: {
-              /**
-               * Include First Name field (optional).
-               */
-              firstName?: boolean | null;
-              /**
-               * Include Last Name field (optional).
-               */
-              lastName?: boolean | null;
-              /**
-               * Include Email field (required).
-               */
-              email?: boolean | null;
-              /**
-               * Include Message textarea (required).
-               */
-              message?: boolean | null;
-            };
-            /**
-             * Required acknowledgment checkbox with link to privacy policy. Must be checked to submit.
-             */
-            privacyCheckbox: boolean;
-            /**
-             * Optional checkbox allowing user to consent to future contact.
-             */
-            contactCheckbox?: boolean | null;
-            /**
-             * URL to your privacy policy page.
-             */
-            privacyLink?: (number | null) | Link;
-            /**
-             * Returns to consent question. Default: "Back".
-             */
-            backButton?: string | null;
-            /**
-             * Submits the form. Default: "Submit".
-             */
-            submitButton?: string | null;
-            /**
-             * Title displayed after successful form submission. Default: "Thank You".
-             */
-            successTitle?: string | null;
-            /**
-             * Message displayed after successful form submission.
-             */
-            successDescription?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'feedback';
-          }
-        | {
-            /**
              * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
              */
             content: {
@@ -2002,87 +1680,6 @@ export interface Template {
             id?: string | null;
             blockName?: string | null;
             blockType: 'paragraphText';
-          }
-        | {
-            /**
-             * Array of intro lines displayed before the play button. Each line appears on its own row.
-             */
-            introLines?:
-              | {
-                  line?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Secondary instruction (e.g., 'Press play to begin').
-             */
-            subText?: string | null;
-            showSubText?: ('show' | 'hide') | null;
-            /**
-             * Array of scene objects. Each scene has: Title (rich text with yellow highlighting), Quote (italic text), and Body (rich text with line breaks). Use HTML spans for yellow: <span style="color: #feda00">word</span>
-             */
-            scenes: {
-              /**
-               * Rich text title with branded color highlighting. Use HTML spans for yellow: <span style="color: #feda00">word</span>
-               */
-              title?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              /**
-               * Italic text displayed in the scene.
-               */
-              quote?: string | null;
-              /**
-               * Rich text body content with line breaks.
-               */
-              body?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-            }[];
-            /**
-             * Total timer length in seconds. Default is 60 seconds. Time is distributed across all scenes.
-             */
-            duration?: number | null;
-            /**
-             * Controls the pace of word-by-word animation. Default: 1.0. Range: 0.1 (slower) to 3.0 (faster). Higher values make words appear faster.
-             */
-            animationSpeed?: number | null;
-            /**
-             * Ambient background for the experience. Can be image or looping video. Video plays silently.
-             */
-            backgroundType?: ('image' | 'video') | null;
-            backgroundImage?: (number | null) | Media;
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: '16:9' | null;
-            mobileAspectRatio?: '9:16' | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'pauseExperience';
           }
         | {
             /**
@@ -2483,80 +2080,6 @@ export interface Video {
           }
         | {
             /**
-             * Initial consent question (e.g., "Did anything here shift how you think about Jesus?").
-             */
-            questionText?: string | null;
-            /**
-             * Text for positive consent button. Default: "Yes".
-             */
-            yesButtonLabel?: string | null;
-            /**
-             * Text for negative consent button. Default: "No".
-             */
-            noButtonLabel?: string | null;
-            /**
-             * Title shown when user clicks Yes (e.g., "We're so glad...").
-             */
-            yesFormTitle?: string | null;
-            /**
-             * Title shown when user clicks No (e.g., "We'd love to hear more...").
-             */
-            noFormTitle?: string | null;
-            /**
-             * First Name (optional), Last Name (optional), Email (required), Message textarea (required). All use floating labels with yellow borders.
-             */
-            formFields?: {
-              /**
-               * Include First Name field (optional).
-               */
-              firstName?: boolean | null;
-              /**
-               * Include Last Name field (optional).
-               */
-              lastName?: boolean | null;
-              /**
-               * Include Email field (required).
-               */
-              email?: boolean | null;
-              /**
-               * Include Message textarea (required).
-               */
-              message?: boolean | null;
-            };
-            /**
-             * Required acknowledgment checkbox with link to privacy policy. Must be checked to submit.
-             */
-            privacyCheckbox: boolean;
-            /**
-             * Optional checkbox allowing user to consent to future contact.
-             */
-            contactCheckbox?: boolean | null;
-            /**
-             * URL to your privacy policy page.
-             */
-            privacyLink?: (number | null) | Link;
-            /**
-             * Returns to consent question. Default: "Back".
-             */
-            backButton?: string | null;
-            /**
-             * Submits the form. Default: "Submit".
-             */
-            submitButton?: string | null;
-            /**
-             * Title displayed after successful form submission. Default: "Thank You".
-             */
-            successTitle?: string | null;
-            /**
-             * Message displayed after successful form submission.
-             */
-            successDescription?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'feedback';
-          }
-        | {
-            /**
              * Rich editor supporting headings, paragraphs, bold, italic, links, and lists.
              */
             content: {
@@ -2679,87 +2202,6 @@ export interface Video {
             id?: string | null;
             blockName?: string | null;
             blockType: 'paragraphText';
-          }
-        | {
-            /**
-             * Array of intro lines displayed before the play button. Each line appears on its own row.
-             */
-            introLines?:
-              | {
-                  line?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            /**
-             * Secondary instruction (e.g., 'Press play to begin').
-             */
-            subText?: string | null;
-            showSubText?: ('show' | 'hide') | null;
-            /**
-             * Array of scene objects. Each scene has: Title (rich text with yellow highlighting), Quote (italic text), and Body (rich text with line breaks). Use HTML spans for yellow: <span style="color: #feda00">word</span>
-             */
-            scenes: {
-              /**
-               * Rich text title with branded color highlighting. Use HTML spans for yellow: <span style="color: #feda00">word</span>
-               */
-              title?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              /**
-               * Italic text displayed in the scene.
-               */
-              quote?: string | null;
-              /**
-               * Rich text body content with line breaks.
-               */
-              body?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-            }[];
-            /**
-             * Total timer length in seconds. Default is 60 seconds. Time is distributed across all scenes.
-             */
-            duration?: number | null;
-            /**
-             * Controls the pace of word-by-word animation. Default: 1.0. Range: 0.1 (slower) to 3.0 (faster). Higher values make words appear faster.
-             */
-            animationSpeed?: number | null;
-            /**
-             * Ambient background for the experience. Can be image or looping video. Video plays silently.
-             */
-            backgroundType?: ('image' | 'video') | null;
-            backgroundImage?: (number | null) | Media;
-            backgroundVideo?: (number | null) | Media;
-            desktopAspectRatio?: '16:9' | null;
-            mobileAspectRatio?: '9:16' | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'pauseExperience';
           }
         | {
             /**
@@ -3412,32 +2854,6 @@ export interface ArticlesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        feedback?:
-          | T
-          | {
-              questionText?: T;
-              yesButtonLabel?: T;
-              noButtonLabel?: T;
-              yesFormTitle?: T;
-              noFormTitle?: T;
-              formFields?:
-                | T
-                | {
-                    firstName?: T;
-                    lastName?: T;
-                    email?: T;
-                    message?: T;
-                  };
-              privacyCheckbox?: T;
-              contactCheckbox?: T;
-              privacyLink?: T;
-              backButton?: T;
-              submitButton?: T;
-              successTitle?: T;
-              successDescription?: T;
-              id?: T;
-              blockName?: T;
-            };
         justText?:
           | T
           | {
@@ -3478,35 +2894,6 @@ export interface ArticlesSelect<T extends boolean = true> {
               textAlignment?: T;
               textColor?: T;
               highlightedWords?: T;
-              id?: T;
-              blockName?: T;
-            };
-        pauseExperience?:
-          | T
-          | {
-              introLines?:
-                | T
-                | {
-                    line?: T;
-                    id?: T;
-                  };
-              subText?: T;
-              showSubText?: T;
-              scenes?:
-                | T
-                | {
-                    title?: T;
-                    quote?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              duration?: T;
-              animationSpeed?: T;
-              backgroundType?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
               id?: T;
               blockName?: T;
             };
@@ -3683,32 +3070,6 @@ export interface VideosSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        feedback?:
-          | T
-          | {
-              questionText?: T;
-              yesButtonLabel?: T;
-              noButtonLabel?: T;
-              yesFormTitle?: T;
-              noFormTitle?: T;
-              formFields?:
-                | T
-                | {
-                    firstName?: T;
-                    lastName?: T;
-                    email?: T;
-                    message?: T;
-                  };
-              privacyCheckbox?: T;
-              contactCheckbox?: T;
-              privacyLink?: T;
-              backButton?: T;
-              submitButton?: T;
-              successTitle?: T;
-              successDescription?: T;
-              id?: T;
-              blockName?: T;
-            };
         justText?:
           | T
           | {
@@ -3749,35 +3110,6 @@ export interface VideosSelect<T extends boolean = true> {
               textAlignment?: T;
               textColor?: T;
               highlightedWords?: T;
-              id?: T;
-              blockName?: T;
-            };
-        pauseExperience?:
-          | T
-          | {
-              introLines?:
-                | T
-                | {
-                    line?: T;
-                    id?: T;
-                  };
-              subText?: T;
-              showSubText?: T;
-              scenes?:
-                | T
-                | {
-                    title?: T;
-                    quote?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              duration?: T;
-              animationSpeed?: T;
-              backgroundType?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
               id?: T;
               blockName?: T;
             };
@@ -3937,32 +3269,6 @@ export interface TemplatesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        feedback?:
-          | T
-          | {
-              questionText?: T;
-              yesButtonLabel?: T;
-              noButtonLabel?: T;
-              yesFormTitle?: T;
-              noFormTitle?: T;
-              formFields?:
-                | T
-                | {
-                    firstName?: T;
-                    lastName?: T;
-                    email?: T;
-                    message?: T;
-                  };
-              privacyCheckbox?: T;
-              contactCheckbox?: T;
-              privacyLink?: T;
-              backButton?: T;
-              submitButton?: T;
-              successTitle?: T;
-              successDescription?: T;
-              id?: T;
-              blockName?: T;
-            };
         justText?:
           | T
           | {
@@ -4003,35 +3309,6 @@ export interface TemplatesSelect<T extends boolean = true> {
               textAlignment?: T;
               textColor?: T;
               highlightedWords?: T;
-              id?: T;
-              blockName?: T;
-            };
-        pauseExperience?:
-          | T
-          | {
-              introLines?:
-                | T
-                | {
-                    line?: T;
-                    id?: T;
-                  };
-              subText?: T;
-              showSubText?: T;
-              scenes?:
-                | T
-                | {
-                    title?: T;
-                    quote?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              duration?: T;
-              animationSpeed?: T;
-              backgroundType?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
               id?: T;
               blockName?: T;
             };
@@ -4188,6 +3465,33 @@ export interface PagesSelect<T extends boolean = true> {
               backgroundVideo?: T;
               desktopAspectRatio?: T;
               mobileAspectRatio?: T;
+              flag?:
+                | T
+                | {
+                    key?: T;
+                    rows?:
+                      | T
+                      | {
+                          whenValue?: T;
+                          render?: T;
+                          orphaned?: T;
+                          overrides?:
+                            | T
+                            | {
+                                label?: T;
+                                message?: T;
+                                showTitle?: T;
+                                link?: T;
+                                backgroundType?: T;
+                                backgroundColor?: T;
+                                backgroundImage?: T;
+                                backgroundVideo?: T;
+                                desktopAspectRatio?: T;
+                                mobileAspectRatio?: T;
+                              };
+                          id?: T;
+                        };
+                  };
               id?: T;
               blockName?: T;
             };
@@ -4223,32 +3527,6 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        feedback?:
-          | T
-          | {
-              questionText?: T;
-              yesButtonLabel?: T;
-              noButtonLabel?: T;
-              yesFormTitle?: T;
-              noFormTitle?: T;
-              formFields?:
-                | T
-                | {
-                    firstName?: T;
-                    lastName?: T;
-                    email?: T;
-                    message?: T;
-                  };
-              privacyCheckbox?: T;
-              contactCheckbox?: T;
-              privacyLink?: T;
-              backButton?: T;
-              submitButton?: T;
-              successTitle?: T;
-              successDescription?: T;
-              id?: T;
-              blockName?: T;
-            };
         justText?:
           | T
           | {
@@ -4278,35 +3556,6 @@ export interface PagesSelect<T extends boolean = true> {
               textAlignment?: T;
               textColor?: T;
               highlightedWords?: T;
-              id?: T;
-              blockName?: T;
-            };
-        pauseExperience?:
-          | T
-          | {
-              introLines?:
-                | T
-                | {
-                    line?: T;
-                    id?: T;
-                  };
-              subText?: T;
-              showSubText?: T;
-              scenes?:
-                | T
-                | {
-                    title?: T;
-                    quote?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              duration?: T;
-              animationSpeed?: T;
-              backgroundType?: T;
-              backgroundImage?: T;
-              backgroundVideo?: T;
-              desktopAspectRatio?: T;
-              mobileAspectRatio?: T;
               id?: T;
               blockName?: T;
             };

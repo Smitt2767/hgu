@@ -34,9 +34,9 @@ export default function AnimatedQuote({
           />
           <div className="absolute inset-0 flex flex-col items-center justify-between gap-8 p-8">
             <blockquote className="text-4xl md:text-4xl font-light leading-relaxed text-gray-400 text-center">
-              <span className="text-primary">"</span>
+              <span className="text-primary">&quot;</span>
               <HighlightedText text={quote} words={highlightedWords} />
-              <span className="text-primary">"</span>
+              <span className="text-primary">&quot;</span>
             </blockquote>
             <p className="text-lg font-bold text-white">{author}</p>
           </div>

@@ -1,16 +1,19 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
+import nextTypescript from 'eslint-config-next/typescript'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
-
+/**
+ * Flat config, spread straight from `eslint-config-next`.
+ *
+ * Previously this went through `FlatCompat` from `@eslint/eslintrc`, translating the
+ * old `extends: 'next/core-web-vitals'` strings. Next 16 ships real flat configs —
+ * `eslint-config-next/core-web-vitals` and `/typescript` each export a
+ * `Linter.Config[]` — so the shim has nothing left to translate, and the package it
+ * needed was never a direct dependency here. Lint had been failing to even start
+ * since the Next 16 upgrade because of it.
+ */
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   {
     rules: {
       '@typescript-eslint/ban-ts-comment': 'warn',
@@ -31,7 +34,12 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['.next/'],
+    // Build output and Payload's generated files: not ours to lint, and regenerated
+    // wholesale by `generate:importmap` and `migrate:create`. Migrations were most of
+    // the noise — every one is scaffolded with `{ db, payload, req }` destructured
+    // whether or not it uses them, and their real content is SQL inside a template
+    // string, which no rule here has anything to say about.
+    ignores: ['.next/', 'src/app/(payload)/admin/importMap.js', 'src/migrations/'],
   },
 ]
 

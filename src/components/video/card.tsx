@@ -37,10 +37,17 @@ export default function VideoCard({
   if (!video || typeof video !== 'object') return null
 
   const imageProps =
-    video.thumbnailType === 'image' && video.thumbnail && typeof video.thumbnail === 'object'
+    // `url` is part of the condition rather than asserted afterwards. It was
+    // `video.thumbnail?.url!`, which asserts non-null on an expression that is
+    // undefined precisely when the optional chain short-circuits — so the assertion
+    // was lying at the only moment it mattered, and `<Image>` got `src={undefined}`.
+    video.thumbnailType === 'image' &&
+    video.thumbnail &&
+    typeof video.thumbnail === 'object' &&
+    video.thumbnail.url
       ? ({
-          alt: video.thumbnail?.alt,
-          src: video.thumbnail?.url!,
+          alt: video.thumbnail.alt,
+          src: video.thumbnail.url,
           fill: true,
           sizes: '100vw',
           priority: true,

@@ -17,17 +17,16 @@ import { CTA } from './blocks/CTA'
 import { FeaturedArticle } from './blocks/FeaturedArticle'
 import { FeaturedImage } from './blocks/FeaturedImage'
 import { FeaturedVideo } from './blocks/FeaturedVideo'
-import { Feedback } from './blocks/Feedback'
 import { JustText } from './blocks/JustText'
 import { JustTitle } from './blocks/JustTitle'
 import { ParagraphText } from './blocks/ParagraphText'
-import { PauseExperience } from './blocks/PauseExperience'
 import { SocialShare } from './blocks/SocialShare'
 import { TakeOver } from './blocks/TakeOver'
 import { TextCarousel } from './blocks/TextCarousel'
 import { VideoCarousel } from './blocks/VideoCarousel'
 import { generatePreviewPath } from './helpers'
 import { revalidatePage } from './hooks'
+import { withFlags } from './shared/flags'
 import { resetStageOnPublish, stageField } from './shared/stage'
 
 export const Pages: CollectionConfig = {
@@ -89,14 +88,20 @@ export const Pages: CollectionConfig = {
                 AnimatedQuote,
                 ArticleCarousel,
                 CardCarousel,
-                CTA,
+                // CTA is the only flag-aware module for now. `withFlags.all([...])`
+                // is the whole-site rollout, deliberately not taken yet: every block
+                // it wraps adds a rows table, a locales table, and both of their
+                // version equivalents.
+                //
+                // Pages only. The same CTA in `templateBlocks` stays unflagged, which
+                // is fine — blocks are typed and stored per collection, so the two
+                // shapes never meet.
+                withFlags(CTA),
                 FeaturedArticle,
                 FeaturedImage,
                 FeaturedVideo,
-                Feedback,
                 JustText,
                 JustTitle,
-                PauseExperience,
                 ParagraphText,
                 SocialShare,
                 TakeOver,
