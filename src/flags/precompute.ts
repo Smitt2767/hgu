@@ -55,6 +55,22 @@ const MAX_PERMUTATIONS = 32
 /** Fixed-length base64url signature prefix. 16 bytes of HMAC-SHA256. */
 const SIGNATURE_LENGTH = 22
 
+/**
+ * The point at which a code is long enough to worry about.
+ *
+ * A prerendered page is written to disk as `<code>.html`, and most filesystems stop
+ * at 255 bytes for a single filename. The encoding is self-describing — it carries
+ * the flag keys, which is what makes it survive the set changing — so it grows with
+ * the number of flags rather than staying fixed. Two flags is around 90 characters;
+ * six or seven would reach the limit, and the build would fail on a filename rather
+ * than on anything mentioning flags.
+ *
+ * 200 leaves room to notice first. Past that the fix is a compact encoding: a short
+ * fingerprint of the key list plus positional values, with the page recovering the
+ * keys from the ruleset it already reads.
+ */
+const CODE_LENGTH_WARN = 200
+
 export type Decisions = Record<string, unknown>
 
 /**
@@ -64,15 +80,30 @@ export type Decisions = Record<string, unknown>
  * — so the rule can only read the ruleset, which is the one input both sides share.
  * It is deterministic on purpose: same ruleset in, same set out, no ordering luck.
  *
- * Three exclusions, each for its own reason:
+ * Almost everything qualifies, because the decision is made in proxy where every
+ * attribute exists. Country, device, campaign, experiment bucket — all of them
+ * collapse into a value, and only the value reaches the URL. Two exclusions:
  *
- * - **Experiments.** Prerendering a variant assignment would bake one visitor's
- *   bucket into a shared page, and an exposure event fired during a prerender fires
- *   once per build rather than once per visitor.
- * - **Identity-targeted flags.** A per-person answer in a shared page is served to
- *   whoever lands on it next. This is the worst failure available here.
- * - **Wide value domains.** They multiply the page count fastest, for the least
- *   benefit.
+ * - **Identity-targeted flags.** A rule forcing a value for specific `id`s has an
+ *   answer that belongs to one account, and a shared page carrying it is served to
+ *   whoever lands on it next. This is the worst failure available here, and the only
+ *   one this list exists to prevent.
+ * - **Wide value domains.** They multiply the page count fastest for the least
+ *   benefit. A cost decision, not a correctness one.
+ *
+ * **Experiments are included, and that is safe only because exposure is tracked on
+ * the client.** An experiment is an exposure event paired with a later conversion,
+ * not a variant rendering. An exposure fired inside a prerendered render would fire
+ * once per *build* while conversions kept attaching to every visitor — fifty thousand
+ * visitors, three variants, three exposures, and every dashboard still healthy. A
+ * client component fires on each page view whether the HTML was prerendered or not,
+ * which is what makes this sound. Move exposure into a Server Component inside these
+ * pages and the data goes quietly wrong.
+ *
+ * Assignment itself is unaffected: an experiment hashes `id`, so a third of visitors
+ * share a variant, and a shared decision is exactly what a shared page may carry.
+ * That is different from an identity *force* rule above, which is why `tierOf`
+ * separates the two.
  */
 export function precomputable(ruleset: FeatureApiResponse | null): {
   flags: CatalogEntry[]
@@ -81,7 +112,6 @@ export function precomputable(ruleset: FeatureApiResponse | null): {
   const eligible = buildCatalog(ruleset)
     .filter(
       (entry) =>
-        !entry.hasExperiment &&
         entry.tier !== 'private' &&
         entry.values.length > 1 &&
         entry.values.length <= MAX_VALUES_PER_FLAG,
@@ -135,6 +165,11 @@ export async function encode(decisions: Decisions, secret: string): Promise<stri
   const payload = base64url(new TextEncoder().encode(canonical(decisions)))
 
   return (await sign(payload, secret)) + payload
+}
+
+/** True once codes are long enough to threaten the filename limit. See the constant. */
+export function codeIsOverlong(code: string): boolean {
+  return code.length > CODE_LENGTH_WARN
 }
 
 /**

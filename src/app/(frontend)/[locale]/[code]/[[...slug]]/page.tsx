@@ -2,7 +2,13 @@ import RenderBlocks from '@/components/blocks'
 import LivePreviewListener from '@/components/live-preview-listener'
 import StageBanner from '@/components/stage-banner'
 import { getPage, getPagesSlugs, getPreviewPage } from '@/data/page'
-import { decode as decodeCode, encode, permutations, precomputable } from '@/flags/precompute'
+import {
+  codeIsOverlong,
+  decode as decodeCode,
+  encode,
+  permutations,
+  precomputable,
+} from '@/flags/precompute'
 import { getRuleset } from '@/flags/ruleset'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
@@ -50,6 +56,16 @@ export const generateStaticParams = async () => {
   }
 
   const codes = await Promise.all(permutations(flags).map((d) => encode(d, secret)))
+
+  // A prerendered page is a file named after its code, and filesystems stop at 255
+  // bytes. Said out loud here because the alternative is a build that fails on a
+  // filename with nothing to connect it to the number of flags.
+  if (codes.some(codeIsOverlong)) {
+    console.warn(
+      `[flags] precomputed codes are ${Math.max(...codes.map((c) => c.length))} characters; ` +
+        'approaching the filename limit — a compact encoding is needed before adding more flags',
+    )
+  }
 
   return routing.locales.flatMap((locale) =>
     codes.flatMap((code) => pages.map((slug) => ({ locale, code, slug: [slug] }))),
