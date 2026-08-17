@@ -4,7 +4,6 @@ import { evaluateValueWith } from '@/flags/evaluate'
 import { applyFlag, flagOf, type FlagConfig } from '@/flags/modules'
 import { getRuleset } from '@/flags/ruleset'
 import { Article, Page, Template, Video } from '@/payload-types'
-import { getLocale } from 'next-intl/server'
 import { BlockType, GetBlockProps } from '@/types/blocks'
 import { ComponentType, Suspense } from 'react'
 import Accordion from './accordion'
@@ -48,6 +47,21 @@ type RenderBlocksProps = {
    * signed, so the route that receives it can trust what it says was rendered.
    */
   code?: string
+  /**
+   * The locale being rendered, passed in rather than looked up.
+   *
+   * This used to be `await getLocale()` right here, which only avoided reading
+   * `headers()` because some ancestor had already primed next-intl's request-locale
+   * cache via `setRequestLocale` — an ordering nothing enforced. When it did not hold,
+   * the read became runtime data outside `<Suspense>` and took the entire route out of
+   * its prerender, reporting "uncached or runtime data during prerendering" against
+   * this component rather than against the missing call.
+   *
+   * Every caller already resolved the locale to fetch its own content, so passing it is
+   * both cheaper and impossible to get wrong. A prop cannot silently become a request
+   * read.
+   */
+  locale?: string
 }
 
 const blockComponents: Partial<{
@@ -102,7 +116,12 @@ type LayoutBlock = NonNullable<LayoutData>[number]
  * it until proxy encodes it, so it streams today. `isUrlDetermined` is what keeps
  * those two ideas apart.
  */
-export default async function RenderBlocks({ data, precomputed, code }: RenderBlocksProps) {
+export default async function RenderBlocks({
+  data,
+  precomputed,
+  code,
+  locale,
+}: RenderBlocksProps) {
   const hasBlocks = data && Array.isArray(data) && data.length > 0
 
   if (!hasBlocks) return null
@@ -110,13 +129,7 @@ export default async function RenderBlocks({ data, precomputed, code }: RenderBl
   // Only pay for either of these when something on this page actually uses them.
   const flagged = data.some((block) => flagOf(block))
 
-  // `getLocale` is safe to read while prerendering *because* every page calls
-  // `setRequestLocale` first — next-intl then returns that cached value and never
-  // touches `headers()`. Drop that call from a page and this silently becomes a
-  // dynamic read, taking the whole route out of its prerender.
-  const [ruleset, locale] = flagged
-    ? await Promise.all([getRuleset(), getLocale()])
-    : [null, undefined]
+  const ruleset = flagged ? await getRuleset() : null
 
   const catalog = buildCatalog(ruleset)
 

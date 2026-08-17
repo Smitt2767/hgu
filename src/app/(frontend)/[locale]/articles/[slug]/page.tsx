@@ -9,6 +9,7 @@ import {
 } from '@/data/article'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
+import { readRouteParams } from '@/utils/route-params'
 import { getDBSlug } from '@/utils/slug'
 import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
@@ -58,7 +59,7 @@ export default async function ArticlePage({
 }: {
   params: Promise<{ locale: string; slug: string }>
 }) {
-  const { locale, slug } = await params
+  const { locale, slug } = await readRouteParams(params)
   setRequestLocale(locale)
 
   const { draft, article } = await resolveArticle(slug, locale)
@@ -76,7 +77,7 @@ export default async function ArticlePage({
         </>
       )}
       <ArticleDetails article={article} />
-      <RenderBlocks data={layout} />
+      <RenderBlocks data={layout} locale={locale} />
     </>
   )
 }

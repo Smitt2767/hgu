@@ -5,6 +5,7 @@ import StageBanner from '@/components/stage-banner'
 import { getPreviewVideoWithTemplate, getVideosSlugs, getVideoWithTemplate } from '@/data/video'
 import { routing } from '@/i18n/routing'
 import { getImageUrl } from '@/utils'
+import { readRouteParams } from '@/utils/route-params'
 import { getDBSlug } from '@/utils/slug'
 import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
@@ -54,7 +55,7 @@ export default async function VideoPage({
 }: {
   params: Promise<{ locale: string; slug: string }>
 }) {
-  const { locale, slug } = await params
+  const { locale, slug } = await readRouteParams(params)
   setRequestLocale(locale)
 
   const { draft, video } = await resolveVideo(slug, locale)
@@ -72,7 +73,7 @@ export default async function VideoPage({
         </>
       )}
       <VideoDetails video={video} />
-      <RenderBlocks data={layout} />
+      <RenderBlocks data={layout} locale={locale} />
     </>
   )
 }

@@ -39,7 +39,7 @@ async function TemplatePreviewContent({ id, locale }: { id: string; locale: stri
     <>
       {draft && <LivePreviewListener />}
       <MockContentHeader contentType={template.contentType} />
-      <RenderBlocks data={template.layout} />
+      <RenderBlocks data={template.layout} locale={locale} />
     </>
   )
 }
