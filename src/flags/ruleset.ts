@@ -35,10 +35,23 @@ export async function getRuleset(): Promise<FeatureApiResponse | null> {
     // its own. The SDK webhook is what makes it immediate.
     cacheLife('hours')
   } else {
-    // Retry sooner than the happy path, but `stale` stays at five minutes: below
-    // that this scope stops being eligible for the route's static shell, and the
-    // build fails with a message about runtime data rather than cache lifetimes.
-    cacheLife({ stale: 300, revalidate: 30, expire: 300 })
+    // A failed read is still cached on a *prerenderable* profile, and that is the
+    // whole point of these numbers rather than an aside about retry latency.
+    //
+    // `revalidate` used to be 30 so an outage recovered quickly. But a profile whose
+    // `revalidate` is shorter than the prerender's effective lifetime cannot be
+    // included in a prerender at all — the scope becomes a dynamic hole, and since
+    // `RenderBlocks` awaits this directly rather than behind `<Suspense>`, the hole
+    // takes the whole route down with "uncached or runtime data during prerendering".
+    //
+    // That made a GrowthBook blip look like a Cache Components bug: the build
+    // succeeds, because GrowthBook is reachable at build time and the happy path uses
+    // `hours`. Only a request that misses the cache while GrowthBook is unreachable
+    // trips it, and then the error names the render rather than the fetch.
+    //
+    // 300 across the board keeps the scope prerenderable while still expiring in five
+    // minutes, so an outage costs at most that much staleness instead of the site.
+    cacheLife({ stale: 300, revalidate: 300, expire: 300 })
   }
 
   return payload
