@@ -182,22 +182,23 @@ function Hint({
 /**
  * Where this flag's decision is actually made, in the terms an editor cares about.
  *
- * Derived through `isUrlDetermined` — the same call `RenderBlocks` makes — rather
- * than read off `tier`, because the two answer different questions and the gap
- * between them is real. `tier` says where a flag *could* live; a flag targeting
- * `audience` is classified `prerender` and will be prerendered once proxy encodes
- * that into the URL, but until then nothing in the URL answers it and it streams.
+ * Never derived from `tier` alone. `tier` says where a flag *could* live, which is a
+ * different question from where it does — and an earlier version of this hint said
+ * "still fully prerendered" about a module that visibly streamed behind a
+ * placeholder, describing a future state as if it were the current one.
  *
- * Keying the hint on `tier` alone said "still fully prerendered" about a module that
- * visibly streams behind a placeholder — describing a future state as if it were the
- * current one, which is worse than saying nothing.
+ * `precomputed` comes from the endpoint, which runs the same selection proxy and the
+ * build run, so the admin cannot disagree with what ships. `isUrlDetermined` covers
+ * the rest: no rules at all, or targeting only what the path already carries.
  */
 function whereItRenders(entry: CatalogEntry): string {
-  // Checked first: an identity flag is never url-determined, and "personal" is the
-  // more important thing to say about it than "streamed".
+  // Checked first: an identity flag is never precomputed or url-determined, and
+  // "personal" is the more important thing to say about it than "streamed".
   if (entry.tier === 'private') return 'personal to each visitor, never shared'
 
-  if (isUrlDetermined(entry)) {
+  if (entry.precomputed) return 'decided before the page is sent, whatever it targets'
+
+  if (isUrlDetermined(entry, ['locale'])) {
     return entry.tier === 'static'
       ? 'same for everyone, in the page itself'
       : 'varies by locale, in the page itself'

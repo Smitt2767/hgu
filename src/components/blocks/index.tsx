@@ -31,6 +31,14 @@ type LayoutData = Page['layout'] | Template['layout'] | Video['layout'] | Articl
 
 type RenderBlocksProps = {
   data: LayoutData
+  /**
+   * Flag values already decided by proxy and decoded from the URL segment.
+   *
+   * Only the pages catch-all carries these — it is the route proxy rewrites. Any key
+   * present here is answered without evaluating anything, because the page was built
+   * for exactly this combination.
+   */
+  precomputed?: Record<string, unknown>
 }
 
 const blockComponents: Partial<{
@@ -85,7 +93,7 @@ type LayoutBlock = NonNullable<LayoutData>[number]
  * it until proxy encodes it, so it streams today. `isUrlDetermined` is what keeps
  * those two ideas apart.
  */
-export default async function RenderBlocks({ data }: RenderBlocksProps) {
+export default async function RenderBlocks({ data, precomputed }: RenderBlocksProps) {
   const hasBlocks = data && Array.isArray(data) && data.length > 0
 
   if (!hasBlocks) return null
@@ -108,14 +116,23 @@ export default async function RenderBlocks({ data }: RenderBlocksProps) {
 
     if (!flag) return renderBlock(block, block.id)
 
+    // Already decided, before this render started. Proxy resolved every precomputed
+    // flag against the full attribute set and encoded the answer into the URL, so
+    // this page *is* the page for that answer — there is nothing left to evaluate and
+    // nothing to stream, whatever the flag targets.
+    if (precomputed && flag.key in precomputed) {
+      return renderBlock(applyFlag(block, flag, precomputed[flag.key]), block.id)
+    }
+
     const entry = catalog.find((candidate) => candidate.key === flag.key)
 
-    // An unknown flag is decided here rather than streamed. It resolves to no value
-    // and therefore to the base module, and doing that in the shell means a
-    // GrowthBook outage cannot drag every flagged page out of its prerender.
-    if (!entry || isUrlDetermined(entry)) {
-      // Only what the URL already carries. Handing the evaluator anything else would
-      // put a per-visitor answer into a response that everyone shares.
+    // Not precomputed, but still answerable from the URL: a flag with no rules is the
+    // same for everyone, and one targeting only `locale` is settled by the path. An
+    // unknown flag lands here too and resolves to the base module, so a GrowthBook
+    // outage cannot drag every flagged page out of its prerender.
+    if (!entry || isUrlDetermined(entry, ['locale'])) {
+      // Only what this route carries. Handing the evaluator anything else would put a
+      // per-visitor answer into a response that everyone shares.
       const value = evaluateValueWith(ruleset, flag.key, { locale })
       return renderBlock(applyFlag(block, flag, value), block.id)
     }

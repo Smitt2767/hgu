@@ -12,44 +12,45 @@ import type { FeatureApiResponse, FeatureDefinition, FeatureRule } from '@growth
 export const PRERENDER_SAFE_ATTRIBUTES = ['audience', 'locale'] as const
 
 /**
- * The subset of the above that the routing *already* determines, with no precompute
- * built yet.
+ * Everything the routing can answer from the path, on a route that carries all of it.
  *
- * `locale` is in this list and `audience` is not, and the difference is only that
- * one is already a path segment. A flag targeting nothing but `locale` is therefore
- * fully answered by the URL today: it can be decided while rendering the shell, with
- * no request data read and no streamed region, because every page hands next-intl its
- * locale through `setRequestLocale` before rendering anything.
+ * `locale` is a path segment by way of next-intl. `audience` is one because proxy
+ * injects it — see `src/proxy.ts`. Both are therefore readable while rendering the
+ * shell, with no request data touched.
  *
- * `audience` joins this list the day proxy derives it and encodes it into the path.
- * Nothing else about flag handling changes then — which is the point of keeping the
- * two lists separate rather than assuming they are the same.
+ * Whether a given *route* carries them is a separate question: only the pages
+ * catch-all has the `[audience]` segment, so `isUrlDetermined` takes the attributes
+ * actually available at the call site rather than assuming this whole list.
  */
-export const ROUTED_ATTRIBUTES: readonly string[] = ['locale']
+export const ROUTED_ATTRIBUTES: readonly string[] = ['locale', 'audience']
 
 /**
- * Whether a flag's answer is fully determined by the URL, and can therefore be
- * decided in the static shell.
+ * Whether this flag's answer is fully determined by the URL of the route asking, and
+ * can therefore be decided in the static shell.
  *
  * `static` qualifies trivially: no rules, so the same answer for everyone.
  *
- * `prerender` qualifies only while every attribute it targets is already routed.
- * A flag targeting `audience` is prerenderable *in principle* — that is what the
- * tier means — but until proxy encodes it there is nothing in the URL to answer it
- * from, so it has to stream. Reading the tier alone here would quietly serve one
- * visitor's audience to everybody.
+ * `prerender` qualifies only where the route actually carries every attribute the
+ * flag targets. That is why `available` is a parameter and not read off
+ * `ROUTED_ATTRIBUTES`: an audience-targeted flag is answerable on the pages
+ * catch-all, which proxy gives an `[audience]` segment, and not on `articles/[slug]`,
+ * which has no such segment and would have to stream. Assuming the global list here
+ * would quietly serve one visitor's audience to everybody.
  *
- * Experiments never qualify, and do not need special-casing: `tierOf` classifies any
- * flag with an experiment as `streamed`, whatever it hashes on. That matters beyond
+ * Experiments never qualify, and need no special case: `tierOf` classifies any flag
+ * with an experiment as `streamed`, whatever it hashes on. That matters beyond
  * caching — an exposure event fired inside a shell render happens once per prerender
  * rather than once per visitor, which corrupts the results while everything still
  * looks healthy.
  */
-export function isUrlDetermined(entry: CatalogEntry): boolean {
+export function isUrlDetermined(
+  entry: CatalogEntry,
+  available: readonly string[] = ROUTED_ATTRIBUTES,
+): boolean {
   if (entry.tier === 'static') return true
   if (entry.tier !== 'prerender') return false
 
-  return entry.targetedAttributes.every((attribute) => ROUTED_ATTRIBUTES.includes(attribute))
+  return entry.targetedAttributes.every((attribute) => available.includes(attribute))
 }
 
 export type FlagValueType = 'boolean' | 'string' | 'number' | 'json'
@@ -74,6 +75,15 @@ export type CatalogEntry = {
   /** Attributes any rule reads, so the admin can explain *why* a tier was chosen. */
   targetedAttributes: string[]
   tier: FlagTier
+  /**
+   * Whether this flag's answer is baked into the URL segment proxy rewrites to.
+   *
+   * Set by the catalog endpoint rather than derived here, because the answer depends
+   * on the whole flag set — the permutation cap can exclude a flag that qualifies on
+   * its own merits. Absent means "not known", which is how a client that did not ask
+   * the endpoint should read it.
+   */
+  precomputed?: boolean
 }
 
 /**
