@@ -6,6 +6,13 @@
       "headers": {
         "Authorization": "Bearer ${PAYLOAD_MCP_API_KEY}"
       }
+    },
+    "payload-hgu-prod": {
+      "type": "http",
+      "url": "${PAYLOAD_MCP_PROD_URL:-https://payload-mcp-check.vercel.app/api/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${PAYLOAD_MCP_PROD_API_KEY}"
+      }
     }
   }
 }
