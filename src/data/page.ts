@@ -33,7 +33,11 @@ export const getPagesSlugs = cache(async () => {
           equals: 'published',
         },
       },
-      limit: 10,
+      // Precompute multiplies this by every flag permutation and every locale, so it
+      // is the one number that decides build cost. Kept at 1 while the demo only
+      // needs the home page; raise it when real content ships, knowing that it
+      // multiplies rather than adds.
+      limit: 1,
     })
 
     const slugs = data.docs.map((doc) => getSiteSlug(doc.slug))
