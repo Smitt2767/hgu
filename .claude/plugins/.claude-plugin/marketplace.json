@@ -1,0 +1,15 @@
+{
+  "name": "payload-growthbook",
+  "metadata": {
+    "description": "GrowthBook feature flags and experiments in a Payload CMS + Next.js App Router app with Cache Components"
+  },
+  "owner": {
+    "name": "smit-vekariya-us"
+  },
+  "plugins": [
+    {
+      "name": "payload-growthbook",
+      "source": "./payload-growthbook"
+    }
+  ]
+}

@@ -12,6 +12,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { Merriweather, Oswald } from 'next/font/google'
 import { draftMode } from 'next/headers'
+import { connection } from 'next/server'
 
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -36,6 +37,11 @@ export const generateMetadata = async ({
 }: {
   params: Promise<{ locale: string }>
 }): Promise<Metadata> => {
+  // Metadata is rendered in its own pass, so the opt-out has to be repeated here rather
+  // than inherited from the layout body.
+  const { isEnabled } = await draftMode()
+  if (isEnabled) await connection()
+
   const { locale } = await params
 
   const site = await getSiteData(locale)
@@ -115,6 +121,12 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>
 }) {
   const { isEnabled } = await draftMode()
+
+  // Same reason as the pages route: draft mode force-revalidates every cached scope
+  // without storing it, so a preview must not attempt a prerender. This layout wraps
+  // every page, and `getSiteData` below is the first cached call a preview reaches.
+  if (isEnabled) await connection()
+
   const { locale } = await resolveParams(params)
   const site = await getSiteData(locale)
 

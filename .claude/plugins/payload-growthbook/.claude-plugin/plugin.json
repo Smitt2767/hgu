@@ -1,0 +1,14 @@
+{
+  "name": "payload-growthbook",
+  "description": "Task-scoped skills for running GrowthBook feature flags and experiments in a Payload CMS + Next.js App Router app with Cache Components: audit, wire, flag a module or a page, track exposure, precompute, verify, retire.",
+  "version": "1.0.0",
+  "keywords": [
+    "payload",
+    "payloadcms",
+    "growthbook",
+    "feature-flags",
+    "experiments",
+    "nextjs",
+    "cache-components"
+  ]
+}

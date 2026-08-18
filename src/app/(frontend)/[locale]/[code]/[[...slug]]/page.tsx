@@ -18,6 +18,7 @@ import type { Metadata } from 'next'
 import { cacheLife } from 'next/cache'
 import { setRequestLocale } from 'next-intl/server'
 import { draftMode } from 'next/headers'
+import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 
 type Params = { locale: string; code: string; slug?: string[] }
@@ -83,8 +84,13 @@ export const generateStaticParams = async () => {
     )
   }
 
+  // An empty site slug is the home page, and for an optional catch-all the root is `[]`
+  // rather than `['']`. That distinction is not cosmetic: `['']` describes a path with
+  // an empty segment, which a real request never produces — it arrives as `undefined` —
+  // so the two phases of a prerender saw different params and only ever for this one
+  // page, surfacing as "unexpected cache miss after cache warming phase".
   return routing.locales.flatMap((locale) =>
-    codes.flatMap((code) => pages.map((slug) => ({ locale, code, slug: [slug] }))),
+    codes.flatMap((code) => pages.map((slug) => ({ locale, code, slug: slug ? [slug] : [] }))),
   )
 }
 
@@ -168,6 +174,19 @@ async function decode(params: Promise<Params>) {
  */
 const resolvePage = async (pageSlug: string, locale: string) => {
   const { isEnabled: draft } = await draftMode()
+
+  // Preview is per-request by definition, so say so rather than letting the route keep
+  // trying to prerender. Reading `isEnabled` deliberately does *not* mark this dynamic
+  // -- that is what keeps anonymous visitors on the prerendered path -- but the same
+  // property means a draft request still attempts a prerender, and while draft mode is
+  // on Next force-revalidates every cached scope and refuses to store the result. The
+  // warming phase then produces entries the final phase cannot find, which is exactly
+  // "unexpected cache miss after cache warming phase during prerendering".
+  //
+  // Inside the branch, so it costs the prerender nothing for everyone who is not
+  // previewing.
+  if (draft) await connection()
+
   const slug = getDBSlug(pageSlug)
 
   const page = draft ? await getPreviewPage(slug, locale) : await getPage(slug, locale)
@@ -192,6 +211,14 @@ export const generateMetadata = async ({
 }
 
 export default async function Page({ params }: { params: Promise<Params> }) {
+  // Before anything cached runs, not inside `resolvePage` further down. While draft
+  // mode is on Next force-revalidates every cached scope and refuses to store the
+  // result, so a preview that still attempts a prerender warms entries the final phase
+  // cannot find -- "unexpected cache miss after cache warming phase", once per cached
+  // scope in the tree. Opting out here means there is no prerender to miss.
+  const { isEnabled: previewing } = await draftMode()
+  if (previewing) await connection()
+
   const { locale, slug, precomputed, code } = await decode(params)
   setRequestLocale(locale)
 
