@@ -89,16 +89,25 @@ export function TextLinkButton({
     </>
   )
 
+  // `onClick` is forwarded to the link branches too, not just the button. It used to be
+  // dropped here, which meant anything attached to a CTA's click — analytics included —
+  // silently did nothing for exactly the links people actually click.
   if (href) {
     if (external) {
       return (
-        <a href={href} target={target} rel="noopener noreferrer" className={baseStyles}>
+        <a
+          href={href}
+          target={target}
+          rel="noopener noreferrer"
+          className={baseStyles}
+          onClick={onClick}
+        >
           {content}
         </a>
       )
     }
     return (
-      <Link href={href} className={baseStyles}>
+      <Link href={href} className={baseStyles} onClick={onClick}>
         {content}
       </Link>
     )

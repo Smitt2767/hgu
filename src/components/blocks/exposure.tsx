@@ -1,5 +1,6 @@
 'use client'
 
+import { beacon } from '@/flags/beacon'
 import { useEffect, useRef } from 'react'
 
 const ENDPOINT = '/api/flags/exposure'
@@ -41,25 +42,7 @@ export default function ExposureBeacon({ code, keys, locale }: ExposureBeaconPro
     if (sent.current) return
     sent.current = true
 
-    const body = JSON.stringify({ code, keys: list.split(','), locale })
-
-    // `sendBeacon` survives the page being closed mid-flight, which matters because
-    // this fires on a page a visitor may leave immediately. It returns false when the
-    // browser refuses to queue it at all.
-    const queued = navigator.sendBeacon?.(
-      ENDPOINT,
-      new Blob([body], { type: 'application/json' }),
-    )
-
-    if (queued) return
-
-    void fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body,
-      keepalive: true,
-      // Analytics must never surface as an error to the visitor.
-    }).catch(() => {})
+    beacon(ENDPOINT, { code, keys: list.split(','), locale })
   }, [code, list, locale])
 
   return null
